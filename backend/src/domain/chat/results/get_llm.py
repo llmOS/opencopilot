@@ -25,10 +25,11 @@ def execute(
 
 def _get_headers(email: str = None) -> Optional[Dict]:
     if settings.HELICONE_API_KEY:
-        if email is None:
-            email = ""
-        return {
+        headers = {
             "Helicone-Auth": "Bearer " + settings.HELICONE_API_KEY,
-            "Helicone-User-Id": email
+            "Helicone-User-Id": email or "",
         }
+        if email and settings.HELICONE_RATE_LIMIT_POLICY:
+            headers["Helicone-RateLimit-Policy"] = settings.HELICONE_RATE_LIMIT_POLICY
+        return headers
     return None

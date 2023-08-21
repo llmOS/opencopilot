@@ -82,6 +82,7 @@ API_KEY: str = os.getenv("API_KEY", "")
 
 HELICONE_BASE_URL = "https://oai.hconeai.com/v1"
 HELICONE_API_KEY: str = os.getenv("HELICONE_API_KEY", "")
+HELICONE_RATE_LIMIT_POLICY: Optional[str] = os.getenv("HELICONE_RATE_LIMIT_POLICY", None)
 
 AUTH_TYPE = os.getenv("AUTH_TYPE", "")
 if AUTH_TYPE == "none" or AUTH_TYPE == "None" or AUTH_TYPE.strip() == "":
