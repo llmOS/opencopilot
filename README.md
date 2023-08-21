@@ -104,3 +104,8 @@ pnpm run dev
 ```
 
 You can now access the front-end at http://localhost:3001.
+
+What next?
+
+* Make the copilot yours: [customize your copilot](https://docs.opencopilot.dev/improve/customize-your-copilot) by prompting, adding context, etc.
+* Read more about the core features and stack choices of OpenCopilot in [Overview](https://docs.opencopilot.dev/welcome/overview).
