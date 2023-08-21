@@ -1,10 +1,8 @@
-# OpenCopilot 🕊️
-
 <p align="center">
   <a href="https://docs.opencopilot.dev"><img src="https://mintlify.s3-us-west-1.amazonaws.com/opencopilot/logo/light.svg" alt="OpenCopilot"></a>
 </p>
 <p align="center">
-    <em>OpenCopilot is a Python framework for building custom and private copilots. It’s designed to be fast to get started, extensible, and easy to use.</em>
+    <em>OpenCopilot is a Python framework for building custom and private copilots.</em>
 </p>
 <p align="center">
 
@@ -40,7 +38,7 @@ Using OpenCopilot, you can see your copilot come live in 5 minutes, and
 making a fully functional copilot should take you **less than a day**.
 
 
-**Example Copilots built with OpenCopilot**
+Example Copilots built with OpenCopilot
 
 - [Ready Player Me Copilot](https://rpm.opencopilot.dev/) which helps developers integrate RPM avatar SDK into their games.
 - [Unity Copilot](https://unity.opencopilot.dev/) which helps Unity developers debug, write code and speed up their development flow.
