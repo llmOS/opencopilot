@@ -1,13 +1,10 @@
 # OpenCopilot 🕊️
 
-
-![Discord](https://img.shields.io/discord/1133675019478782072?logo=discord&label=OpenCopilot)
-
 <p align="center">
-  <a href="https://fastapi.tiangolo.com"><img src="https://fastapi.tiangolo.com/img/logo-margin/logo-teal.png" alt="FastAPI"></a>
+  <a href="https://docs.opencopilot.dev"><img src="https://mintlify.s3-us-west-1.amazonaws.com/opencopilot/logo/light.svg" alt="OpenCopilot"></a>
 </p>
 <p align="center">
-    <em>FastAPI framework, high performance, easy to learn, fast to code, ready for production</em>
+    <em>OpenCopilot is a Python framework for building custom and private copilots. It’s designed to be fast to get started, extensible, and easy to use.</em>
 </p>
 <p align="center">
 
