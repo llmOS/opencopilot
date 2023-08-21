@@ -10,15 +10,11 @@
     <img src="https://github.com/opencopilotdev/opencopilot/actions/workflows/unit_test.yml/badge.svg" alt="Unit tests">
 </a>
 
-<a href="https://github.com/opencopilotdev/opencopilot/actions/workflows/e2e_test_linux_native_openai.yml" target="_blank">
-    <img src="https://github.com/opencopilotdev/opencopilot/actions/workflows/e2e_test_linux_native_openai.yml/badge.svg" alt="E2E Test Linux Native">
-</a>
-
 <a href="https://twitter.com/OpenCopilot" target="_blank">
     <img src="https://img.shields.io/twitter/url/https/twitter.com/opencopilot.svg?style=social&label=Follow%20%40OpenCopilot" alt="Package version">
 </a>
 
-<a href="https://twitter.com/OpenCopilot" target="_blank">
+<a href="https://discord.gg/AmdF5d94vE" target="_blank">
     <img src="https://img.shields.io/discord/1133675019478782072?logo=discord&label=OpenCopilot" alt="Package version">
 </a>
 
@@ -116,6 +112,6 @@ You can now access the front-end at http://localhost:3001.
 
 If you have any questions about OpenCopilot, feel free to do any of the following:
 
-* Join our [Discord](https://discord.gg/todo) and ask in the **#support** channel.
+* Join our [Discord](https://discord.gg/AmdF5d94vE) and ask in the **#support** channel.
 * Report bugs or feature requests in [GitHub issues](https://github.com/opencopilotdev/opencopilot/issues).
 * Directly email Taivo, Co-founder & CTO of OpenCopilot: `taivo [at] opencopilot.dev`.
