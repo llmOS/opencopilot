@@ -27,7 +27,9 @@
 </a>
 </p>
 
-**Documentation**: [docs.opencopilot.dev](https://docs.opencopilot.dev/)
+<p align="center">
+  <b>Documentation**:</b> [docs.opencopilot.dev](https://docs.opencopilot.dev/)
+</p>
 
 
 ## Overview
