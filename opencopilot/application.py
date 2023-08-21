@@ -73,10 +73,6 @@ class OpenCopilot:
         from .repository.documents import document_store
         from opencopilot.repository.documents.document_store import WeaviateDocumentStore
         from opencopilot.repository.documents.document_store import EmptyDocumentStore
-        print("__call__")
-        print(" - data_loaders:", self.data_loaders)
-        print(" - local_files_dirs:", self.local_files_dirs)
-        print(" - local_file_paths:", self.local_file_paths)
         if self.data_loaders or self.local_files_dirs or self.local_file_paths:
             self.document_store = WeaviateDocumentStore()
         else:
@@ -90,7 +86,6 @@ class OpenCopilot:
             text_splitter = self.document_store.get_text_splitter()
             self.documents.extend(document_loader.execute(data_dir, False, text_splitter))
 
-        print("All Docs:", self.documents)
         if self.documents:
             self.document_store.ingest_data(self.documents)
 

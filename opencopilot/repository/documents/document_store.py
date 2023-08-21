@@ -44,6 +44,7 @@ class WeaviateDocumentStore(DocumentStore):
 
     def __init__(self):
         self.documents = []
+        self.embeddings = self.get_embeddings_model()
         self.weaviate_client = self._get_weaviate_client()
         self.vector_store = self._get_vector_store()
 
@@ -60,7 +61,7 @@ class WeaviateDocumentStore(DocumentStore):
             self.weaviate_client,
             index_name=self.weaviate_index_name,
             text_key="text",
-            embedding=self.get_embeddings_model(),
+            embedding=self.embeddings,
             attributes=attributes,
             by_text=False
         )
@@ -69,14 +70,13 @@ class WeaviateDocumentStore(DocumentStore):
         self.documents = documents
         batch_size = self.ingest_batch_size
         print(f"Got {len(documents)} documents, embedding with batch size: {batch_size}")
-        embeddings = self.get_embeddings_model()
         self.weaviate_client.schema.delete_all()
 
         for i in tqdm.tqdm(range(0, int(len(documents) / batch_size) + 1), desc="Embedding.."):
             batch = documents[i * batch_size: (i + 1) * batch_size]
             self.vector_store.add_documents(batch)
 
-        embeddings.save_local_cache()
+        self.embeddings.save_local_cache()
         self.vector_store = self._get_vector_store()
 
     def find(self, query: str, **kwargs) -> List[Document]:

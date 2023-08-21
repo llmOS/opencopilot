@@ -1,10 +1,10 @@
-from langchain.embeddings import OpenAIEmbeddings
-from typing import List
-import xxhash
 import pickle
-import os
-from opencopilot import settings
+from typing import List
 
+import xxhash
+from langchain.embeddings import OpenAIEmbeddings
+
+from opencopilot import settings
 from opencopilot.logger import api_logger
 
 logger = api_logger.get()
@@ -16,7 +16,7 @@ class CachedOpenAIEmbeddings(OpenAIEmbeddings):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         object.__setattr__(self, "_cache", {})
-        object.__setattr__(self, "_embeddings_cache_filename", os.path.join(settings.get().COPILOT_DIRECTORY, "embeddings_cache.pkl"))
+        object.__setattr__(self, "_embeddings_cache_filename", settings.get().COPILOT_NAME + "_embeddings_cache.pkl")
         self._load_local_cache()
 
     def embed_documents(self, texts: List[str]) -> List[List[float]]:
