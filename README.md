@@ -28,7 +28,7 @@
 </p>
 
 <p align="center">
-  <b>Documentation**:</b> [docs.opencopilot.dev](https://docs.opencopilot.dev/)
+  <b>Documentation:</b> <a href="https://docs.opencopilot.dev/">docs.opencopilot.dev</a>
 </p>
 
 
