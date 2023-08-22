@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://docs.opencopilot.dev"><img src="https://mintlify.s3-us-west-1.amazonaws.com/opencopilot/logo/light.svg" alt="OpenCopilot"></a>
+  <a href="https://docs.opencopilot.dev"><img src="https://github.com/opencopilotdev/opencopilot/assets/5147210/ff01df76-45f5-4c91-a4ef-cd9fcd73a971" alt="OpenCopilot"></a>
 </p>
 <p align="center">
     <em>OpenCopilot is a Python framework for building custom and private copilots.</em>
