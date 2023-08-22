@@ -61,9 +61,30 @@ Into a Python file (for example, `copilot.py`), add:
 ```python
 from opencopilot import OpenCopilot
 
-copilot = OpenCopilot()
+copilot = OpenCopilot(openai_api_key="your-openai-api-key")
+
+# Use a custom prompt
+copilot.add_prompt("my_prompt.txt")
+
+# Run the copilot
 copilot()
 ```
+
+Make sure your custom prompt file exists: in `my_prompt.txt`, add the following:
+
+```txt
+You are a Mirror Copilot. Your purpose is to reflect back to the user what they said, but in different words.
+
+=========
+{context}
+=========
+
+{history}
+User: {question}
+Mirror Copilot answer in Markdown:
+```
+
+The template variables will be filled at runtime; see our docs on [Prompting](https://docs.opencopilot.dev/improve/prompting) if you'd like to learn more.
 
 ### 3. Run the Copilot
 
