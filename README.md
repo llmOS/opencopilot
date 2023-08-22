@@ -38,11 +38,6 @@ OpenCopilot is a Python framework for building custom and private copilots.
 
 Building a Copilot that goes beyond a Twitter demo has been complex, time-consuming and unreliable. OpenCopilot makes building your own Copilot intuitive, fast and reliable: with it, you should be able to **build your copilot in a single day**.
 
-Example Copilots built with OpenCopilot:
-
-- [Ready Player Me Copilot](https://rpm.opencopilot.dev/) which helps developers integrate RPM avatar SDK into their games.
-- [Unity Copilot](https://unity.opencopilot.dev/) which helps Unity developers debug, write code and speed up their development flow.
-
 ## Quickstart
 
 ### 1. Install the Python package
