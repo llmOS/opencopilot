@@ -61,7 +61,10 @@ Into a Python file (for example, `copilot.py`), add:
 ```python
 from opencopilot import OpenCopilot
 
-copilot = OpenCopilot(openai_api_key="your-openai-api-key")
+copilot = OpenCopilot(
+    openai_api_key="your-openai-api-key",
+    llm_model_name="gpt-4"
+    )
 
 # Use a custom prompt
 copilot.add_prompt("my_prompt.txt")
