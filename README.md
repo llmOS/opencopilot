@@ -42,11 +42,11 @@ Building a Copilot that goes beyond a Twitter demo can be complex, time-consumin
 
 Here's what OpenCopilot comes with out of the box:
 
-* Intuitive way to [define copilots in Python code](/welcome/getting-started)
-* Support for adding [knowledge bases](/improve/knowledge-base) to your copilot ("chat with your data" style)
+* Intuitive way to [define copilots in Python code](https://docs.opencopilot.dev//welcome/getting-started)
+* Support for adding [knowledge bases](https://docs.opencopilot.dev//improve/knowledge-base) to your copilot ("chat with your data" style)
     * Use custom data sources, or any LangChain-compatible document loader
-* [REST API](/integrate/rest-api), including streaming support
-* [Monitoring](/integrate/monitoring) for your LLM & copilot usage
+* [REST API](https://docs.opencopilot.dev//integrate/rest-api), including streaming support
+* [Monitoring](https://docs.opencopilot.dev//integrate/monitoring) for your LLM & copilot usage
 * [Front-end](https://github.com/opencopilotdev/opencopilot-frontend) template
 * Use any LLM (`gpt-3.5-turbo-16k` by default)
 * Coming soon: dynamic context, evaluation, and more
