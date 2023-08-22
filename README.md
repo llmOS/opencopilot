@@ -113,12 +113,29 @@ The template variables will be filled at runtime; see our docs on [Prompting](ht
 python copilot.py
 ```
 
-That's it! The copilot is now running as an API service! 🎉 You can now chat with it: TODO how? (CLI, frontend, etc)
+That's it! The copilot is now running as an API service, at `localhost:3000` by default!
 
-OpenCopilot by default helps you setup a Python API service for your copilot. That is intentional: we expect most people to integrate the functionality into their own application. However, if you want to setup a front-end for your copilot, we provide a working NextJS application out of the box. Follow the steps below to do so.
+🎉 You can chat with it by calling the API:
+
+```bash
+curl -X 'POST' \
+  'http://127.0.0.1:3000/v0/conversation/85ceff11-8072-47c8-a09a-ef846b024c04' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "inputs": "Hi! Who are you?"
+}'
+```
+
+See the [interactive Swagger docs](http://localhost:3000/docs#/Chat/handle_conversation_v0_conversation__conversation_id__post) for full API documentation.
+
+What next?
+
+* **Start improving the copilot**: [customize your copilot](/improve/customize-your-copilot) by prompting, adding context, etc.
+* Read more about the core features and stack choices of OpenCopilot in [Overview](/welcome/overview).
 
 
-### Chat in front-end
+### Optional: front-end
 
 As a pre-requisite, you need to have [`pnpm`](https://pnpm.io/) installed.
 
@@ -148,11 +165,6 @@ pnpm run dev
 ```
 
 You can now access the front-end at http://localhost:3001.
-
-### What next?
-
-* Make the copilot yours: [customize your copilot](https://docs.opencopilot.dev/improve/customize-your-copilot) by prompting, adding context, etc.
-* Read more about the core features and stack choices of OpenCopilot in [Overview](https://docs.opencopilot.dev/welcome/overview).
 
 ### Getting help
 
