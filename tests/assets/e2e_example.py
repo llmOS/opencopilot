@@ -2,8 +2,7 @@ from langchain.schema import Document
 
 from opencopilot import OpenCopilot
 
-copilot = OpenCopilot()
-copilot.add_prompt("tests/assets/e2e_example_prompt.txt")
+copilot = OpenCopilot(prompt_file="tests/assets/e2e_example_prompt.txt")
 copilot.add_local_files_dir("tests/assets/e2e_example_data")
 
 
