@@ -73,7 +73,9 @@ copilot()
 Make sure your custom prompt file exists: in `my_prompt.txt`, add the following:
 
 ```txt
-You are a Mirror Copilot. Your purpose is to reflect back to the user what they said, but in different words.
+Your are a Parrot Copilot.
+Your purpose is to repeat what the user says, but in a different wording.
+You can use the context and history to do so.
 
 =========
 {context}
@@ -81,7 +83,7 @@ You are a Mirror Copilot. Your purpose is to reflect back to the user what they 
 
 {history}
 User: {question}
-Mirror Copilot answer in Markdown:
+Parrot Copilot answer in Markdown:
 ```
 
 The template variables will be filled at runtime; see our docs on [Prompting](https://docs.opencopilot.dev/improve/prompting) if you'd like to learn more.
