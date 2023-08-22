@@ -36,7 +36,15 @@
 
 OpenCopilot is a Python framework for building custom and private copilots.
 
-Building a Copilot that goes beyond a Twitter demo has been complex, time-consuming and unreliable. OpenCopilot makes building your own Copilot intuitive, fast and reliable: with it, you should be able to **build your copilot in a single day**.
+Building a Copilot that goes beyond a Twitter demo can be complex, time-consuming and unreliable. OpenCopilot makes building your own Copilot intuitive, fast and reliable: with it, you should be able to **build your copilot in a single day**.
+
+## What can you build with OpenCopilot?
+
+We believe every company and product will have their copilot.
+
+## Features
+
+
 
 ## Quickstart
 
