@@ -63,11 +63,9 @@ from opencopilot import OpenCopilot
 
 copilot = OpenCopilot(
     openai_api_key="your-openai-api-key",
-    llm_model_name="gpt-4"
+    llm_model_name="gpt-4",
+    prompt_file="my_prompt.txt"
     )
-
-# Use a custom prompt
-copilot.add_prompt("my_prompt.txt")
 
 # Run the copilot
 copilot()
