@@ -43,7 +43,7 @@ OpenCopilot solves this problem so building your own Copilot becomes intuitive, 
 **🛠️ Developer tooling Copilot**
 
 * Example: [Stripe Copilot](https://stripe.com/newsroom/news/stripe-and-openai)
-* End-to-end example: [Ready Player Me Copilot](https://github.com/opencopilotdev/opencopilot/tree/improve_readme/examples/ready_player_me_copilot)
+* End-to-end example: [Ready Player Me Copilot](https://github.com/opencopilotdev/opencopilot/tree/main/examples/ready_player_me_copilot) 
 
 **💾 SaaS Copilot**
 
