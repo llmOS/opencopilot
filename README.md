@@ -38,12 +38,29 @@ OpenCopilot is a Python framework for building custom and private copilots.
 
 Building a Copilot that goes beyond a Twitter demo can be complex, time-consuming and unreliable. OpenCopilot makes building your own Copilot intuitive, fast and reliable: with it, you should be able to **build your copilot in a single day**.
 
-## What can you build with OpenCopilot?
+### Key features
 
-We believe every company and product will have their copilot.
+Here's what OpenCopilot comes with out of the box:
 
-## Features
+* Intuitive way to [define copilots in Python code](/welcome/getting-started)
+* Support for adding [knowledge bases](/improve/knowledge-base) to your copilot ("chat with your data" style)
+    * Use custom data sources, or any LangChain-compatible document loader
+* [REST API](/integrate/rest-api), including streaming support
+* [Monitoring](/integrate/monitoring) for your LLM & copilot usage
+* [Front-end](https://github.com/opencopilotdev/opencopilot-frontend) template
+* Use any LLM (`gpt-3.5-turbo-16k` by default)
+* Coming soon: dynamic context, evaluation, and more
 
+
+### Use cases
+
+What can you do with copilots? Here are some examples:
+
+1.  **Developer tooling Copilot**: [Ready Player Me](https://readyplayerdev.me/), the leading avatar tooling platform, built a CTO Copilot that helps their users integrate avatar SDK to games. In addition to providing code snippets, the copilot helps developers understand the product, integration errors, licensing concerns, third-party integrations, and much more. Click [here](https://rpm.opencopilot.dev/) to see copilot in action. Impact for Ready Player Me: **increased developer retention and happiness.**
+2.  **SaaS Copilot**: [ChatSpot](https://chatspot.ai/), a Copilot by HubSpot enables their users to close deals faster, streamline RevOps and enable sales people to focus only on what matters by automating the tedious tasks. Most SaaS products are either overly complex and users don't get enough value of it. SaaS Copilots enable a human-like UX which drive their adoption.
+3.  **E-commerce Copilot**: [Shopify](https://www.shopify.com/magic) Copilot is designed for store owners to grow revenue and simplify commerce. Essentially, a Copilot that enables to become a better entrepreneur on the Internet.
+4.  **Company internal Copilot**: Companies spend enormous amount of money and time on building internal tools. Copilots can reduce that as it consolidates many SaaS products into one and can drive efficiency and cost savings across the company. For example, many startups pay hefty legal bills to their lawyers. At OpenCopilot we built an internal Legal Copilot which has reduced our legal spend by 50%. We've seen impactful Copilots built in the areas of HR, finance, operations, etc.
+5.  **Individual/Creator Copilot**: ChatGPT is extremely powerful but held back because it's too generic and not personal enough. All of the founders at OpenCopilot have built a Founder Copilot which is personal and enables us with strategic decision making, executing at a high clip, etc. Also, creators can create their own Copilots which helps scale their time with their community.
 
 
 ## Quickstart
