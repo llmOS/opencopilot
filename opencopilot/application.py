@@ -15,6 +15,7 @@ class OpenCopilot:
 
     def __init__(
             self,
+            prompt_file: str,
             openai_api_key: Optional[str] = None,
             copilot_name: str = "default",
             api_base_url: str = "http://127.0.0.1/",
@@ -64,6 +65,7 @@ class OpenCopilot:
                 HELICONE_RATE_LIMIT_POLICY=helicone_rate_limit_policy
             ))
 
+        assert self.add_prompt(prompt_file), "Valid prompt file is required"
         self.api_port = api_port
         self.data_loaders = []
         self.local_files_dirs = []
@@ -95,8 +97,8 @@ class OpenCopilot:
         uvicorn.run(app, port=self.api_port)
 
     @staticmethod
-    def add_prompt(prompt_file: str) -> None:
-        settings.init_prompt_file_location(prompt_file)
+    def add_prompt(prompt_file: str) -> bool:
+        return settings.init_prompt_file_location(prompt_file)
 
     def data_loader(
             self,

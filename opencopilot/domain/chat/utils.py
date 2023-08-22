@@ -28,8 +28,5 @@ def add_history(
 
 
 def get_system_message() -> str:
-    try:
-        with open(settings.get().PROMPT_FILE, "r") as f:
-            return f.read()
-    except:
-        return settings.get().DEFAULT_PROMPT
+    with open(settings.get().PROMPT_FILE, "r") as f:
+        return f.read()

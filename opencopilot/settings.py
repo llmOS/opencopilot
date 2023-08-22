@@ -50,18 +50,6 @@ class Settings:
 
     PROMPT_FILE: Optional[str] = None
 
-    DEFAULT_PROMPT: str = """Your are a Basketball Copilot. You are an expert on basketball.
-
-    =========
-    {context}
-    =========
-
-    {history}
-    User: {question}
-    Copilot answer in Markdown:"""
-
-    COPILOTS_ROOT_PATH = "copilots"
-
     HELICONE_BASE_URL = "https://oai.hconeai.com/v1"
 
     DATA_DIR: str = ""
@@ -113,12 +101,13 @@ def init_custom_loaders(config_file: str) -> None:
             pass
 
 
-def init_prompt_file_location(file_path: str) -> None:
+def init_prompt_file_location(file_path: str) -> bool:
     settings = get()
     if settings:
         if os.path.isfile(file_path):
             settings.PROMPT_FILE = file_path
-
+            return True
+    return False
 
 _settings: Optional[Settings] = None
 
