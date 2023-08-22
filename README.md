@@ -65,6 +65,8 @@ What can you do with copilots? Here are some examples:
 
 ## Quickstart
 
+As a prerequisite, you need to have **Python 3.8+** and **pip** installed.
+
 ### 1. Install the Python package
 
 ```bash
