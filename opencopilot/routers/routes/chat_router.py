@@ -61,6 +61,10 @@ For example, the message "I like to eat apples" might be streamed as follows:
 ```
 """
 
+CONVERSATION_ID_DESCRIPTION = """
+The ID of the conversation. To start a new conversation, you should pass in a random uuid version 4 (Python: `import uuid; uuid.uuid4()`). To continue a conversation, re-use the same uuid.
+"""
+
 
 class ConversationInput(BaseModel):
     inputs: str = Field(
@@ -109,7 +113,7 @@ async def handle_conversation(
     email: Optional[str] = Header(default=None),
     conversation_id: str = Path(
         ...,
-        description="The ID of the conversation. To start a new conversation, you should pass in a random uuid (Python: `import uuid; uuid.uuid4()`). To continue a conversation, re-use the same uuid.",
+        description=CONVERSATION_ID_DESCRIPTION,
     ),
     payload: ConversationInput = Body(
         ..., description="Input and parameters for the conversation."
@@ -145,7 +149,7 @@ async def handle_conversation(
 )
 async def handle_conversation_streaming(
     email: Optional[str] = Header(default=None),
-    conversation_id: str = Path(..., description="The ID of the conversation."),
+    conversation_id: str = Path(..., description=CONVERSATION_ID_DESCRIPTION),
     payload: ConversationInput = Body(
         ..., description="Input and parameters for the conversation."
     ),
