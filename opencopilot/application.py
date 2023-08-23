@@ -69,7 +69,7 @@ class OpenCopilot:
             )
         )
 
-        assert self.add_prompt(prompt_file), "Valid prompt file is required"
+        self.add_prompt(prompt_file)
         self.host = host
         self.api_port = api_port
         self.data_loaders = []
@@ -108,8 +108,8 @@ class OpenCopilot:
         uvicorn.run(app, host=self.host, port=self.api_port)
 
     @staticmethod
-    def add_prompt(prompt_file: str) -> bool:
-        return settings.init_prompt_file_location(prompt_file)
+    def add_prompt(prompt_file: str):
+        settings.init_prompt_file_location(prompt_file)
 
     def data_loader(self, function: Callable[[], Document]):
         self.data_loaders.append(function)
