@@ -9,7 +9,6 @@ from opencopilot import OpenCopilot
 
 load_dotenv()
 
-
 copilot = OpenCopilot(
     prompt_file="prompts/prompt_template.txt",
     copilot_name="llm",

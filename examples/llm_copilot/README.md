@@ -11,7 +11,7 @@ playwright install
 python copilot.py
 ```
 
-### Re-scraping 
+### Scraping and serializing the docs into `data` folder
 
 ```shell
 python scrape.py
