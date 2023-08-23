@@ -12,6 +12,7 @@ def pytest_sessionstart(session):
     """
     settings.set(Settings(
         COPILOT_NAME="unit_tests",
+        HOST="127.0.0.1",
         API_PORT=3000,
         API_BASE_URL="http://localhost:3000/",
         ENVIRONMENT="test",
