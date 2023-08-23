@@ -1,1 +1,2 @@
-opencopilot-ai==0.3.1
+opencopilot-ai==0.3.2
+playwright==1.37.0
