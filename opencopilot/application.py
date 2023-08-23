@@ -74,7 +74,7 @@ class OpenCopilot:
         self.local_file_paths = []
         self.documents = []
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, host: str = "127.0.0.1", *args, **kwargs):
         from .repository.documents import document_loader
         from .repository.documents import document_store
         from opencopilot.repository.documents.document_store import (
@@ -102,7 +102,7 @@ class OpenCopilot:
 
         from .app import app
 
-        uvicorn.run(app, port=self.api_port)
+        uvicorn.run(app, host=host, port=self.api_port)
 
     @staticmethod
     def add_prompt(prompt_file: str) -> bool:

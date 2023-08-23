@@ -50,4 +50,4 @@ def load_helicone_docs() -> List[Document]:
     documents = loader.load()
     return _chunk_documents(documents)
 
-copilot()
+copilot(host=os.getenv("HOST"))
