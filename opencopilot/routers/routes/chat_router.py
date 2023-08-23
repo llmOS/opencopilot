@@ -72,6 +72,9 @@ class ConversationInput(BaseModel):
         description="Message to be answered by the copilot.",
         example="How do I make a delicious lemon cheesecake?",
     )
+    response_message_id: Optional[str] = Field(
+        None,
+    )
 
     class Config:
         schema_extra = {
@@ -111,7 +114,7 @@ async def handle_conversation(
 ):
     request = ChatRequest(
         chat_id=conversation_id,
-        message=payload.inputs,
+        message=payload.message,
         response_message_id=payload.response_message_id,
         email=user_id or email,
     )
@@ -146,7 +149,7 @@ async def handle_conversation_streaming(
 ):
     request = ChatRequest(
         chat_id=conversation_id,
-        message=payload.inputs,
+        message=payload.message,
         response_message_id=payload.response_message_id,
         email=user_id or email,
     )
