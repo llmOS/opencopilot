@@ -1,1 +1,1 @@
-opencopilot-ai==0.3.0
+opencopilot-ai==0.3.1
