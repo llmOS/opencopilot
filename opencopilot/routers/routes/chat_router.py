@@ -90,9 +90,8 @@ class ConversationInput(BaseModel):
     tags=[TAG],
 )
 async def handle_get_conversation_history(
-    
-):
     email: Optional[str] = Header(default=None),
+):   
     return None
 
 
@@ -129,7 +128,7 @@ async def handle_conversation(
         logs_repository,
     )
     return routing_utils.to_json_response(
-        {"generated_text": response.message, "sources": response.sources}
+        {"copilot_message": response.message, "sources": response.sources}
     )
 
 
