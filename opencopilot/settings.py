@@ -14,6 +14,7 @@ from omegaconf import OmegaConf
 class Settings:
     COPILOT_NAME: str
 
+    HOST: str
     API_PORT: int
     API_BASE_URL: str
     ENVIRONMENT: str

@@ -24,6 +24,7 @@ def test_execute_invalid_credentials(mock_settings):
 def test_execute_valid_credentials(mock_time, mock_settings):
     settings.get.return_value = Settings(
         COPILOT_NAME="unit_tests",
+        HOST="127.0.0.1",
         API_PORT=3000,
         API_BASE_URL="http://localhost:3000/",
         ENVIRONMENT="test",

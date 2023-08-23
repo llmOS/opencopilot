@@ -17,6 +17,7 @@ class OpenCopilot:
         prompt_file: str,
         openai_api_key: Optional[str] = None,
         copilot_name: str = "default",
+        host: str = "127.0.0.1",
         api_base_url: str = "http://127.0.0.1/",
         api_port: int = 3000,
         environment: str = "local",
@@ -46,6 +47,7 @@ class OpenCopilot:
             Settings(
                 OPENAI_API_KEY=openai_api_key,
                 COPILOT_NAME=copilot_name,
+                HOST=host,
                 API_PORT=api_port,
                 API_BASE_URL=api_base_url,
                 ENVIRONMENT=environment,
@@ -68,6 +70,7 @@ class OpenCopilot:
         )
 
         assert self.add_prompt(prompt_file), "Valid prompt file is required"
+        self.host = host
         self.api_port = api_port
         self.data_loaders = []
         self.local_files_dirs = []
@@ -102,7 +105,7 @@ class OpenCopilot:
 
         from .app import app
 
-        uvicorn.run(app, port=self.api_port)
+        uvicorn.run(app, host=self.host, port=self.api_port)
 
     @staticmethod
     def add_prompt(prompt_file: str) -> bool:
