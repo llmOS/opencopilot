@@ -88,9 +88,21 @@ class ConversationInput(BaseModel):
         }
 
 
+@router.get(
+    "/conversations",
+    summary="List conversations.",
+    tags=[TAG],
+)
+async def handle_get_conversation_history(
+    
+):
+    email: Optional[str] = Header(default=None),
+    return None
+
+
 @router.post(
-    "/conversation/{conversation_id}",
-    summary="Send message to the base copilot.",
+    "/conversations/{conversation_id}",
+    summary="Send a message to the copilot.",
     tags=[TAG],
 )
 async def handle_conversation(
@@ -126,42 +138,8 @@ async def handle_conversation(
 
 
 @router.post(
-    "/conversation/{conversation_id}/feedback",
-    tags=[TAG],
-    summary="Send feedback to a conversation.",
-    response_model=ApiResponse,
-)
-async def post_feedback(
-    conversation_id: str = Path(..., description="The ID of the conversation."),
-    payload: ChatFeedbackRequest = Body(..., description="User feedback"),
-):
-    history_repository = ConversationHistoryRepositoryLocal()
-    response = chat_feedback_service.execute(
-        conversation_id=conversation_id, request=payload, repository=history_repository
-    )
-    return routing_utils.to_json_response(response.dict())
-
-
-@router.post(
-    "/conversation/{conversation_id}/context",
-    tags=[TAG],
-    summary="Send additional context for conversation.",
-    response_model=ApiResponse,
-)
-async def post_context(
-    conversation_id: str = Path(..., description="The ID of the conversation."),
-    payload: ChatContextRequest = Body(..., description="User context"),
-):
-    context_repository = ConversationUserContextRepositoryLocal()
-    response = chat_context_service.execute(
-        conversation_id=conversation_id, request=payload, repository=context_repository
-    )
-    return routing_utils.to_json_response(response.dict())
-
-
-@router.post(
-    "/conversation_stream/{conversation_id}",
-    summary="Send message to the base copilot and get the response as a stream.",
+    "/conversations/{conversation_id}/stream",
+    summary="Send a message to the copilot and get the response as a stream.",
     response_description=STREAM_RESPONSE_DESCRIPTION,
     tags=[TAG],
 )
@@ -200,8 +178,8 @@ async def handle_conversation_streaming(
 
 
 @router.get(
-    "/conversation/{conversation_id}/history",
-    summary="Retrieve conversation history.",
+    "/conversations/{conversation_id}",
+    summary="Retrieve a conversation, including all message history within.",
     tags=[TAG],
 )
 async def handle_get_conversation_history(

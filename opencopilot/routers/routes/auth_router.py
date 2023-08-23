@@ -14,9 +14,9 @@ logger = api_logger.get()
 
 
 @router.post(
-    "/token",
+    "/tokens",
     tags=[TAG],
-    summary="Generate token.",
+    summary="Generate a JSON Web Token.",
     response_model=TokenResponse,
 )
 async def evaluate(

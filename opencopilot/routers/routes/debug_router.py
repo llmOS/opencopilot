@@ -26,7 +26,7 @@ logger = api_logger.get()
 @router.get(
     "/debug/{conversation_id}/{message_id}",
     tags=[TAG],
-    summary="List custom copilots.",
+    summary="Get detailed debug information about a message.",
     response_model=GetMessageDebugResponse,
 )
 async def get_copilots(
@@ -42,15 +42,3 @@ async def get_copilots(
         history_repository,
         logs_repository,
     )
-
-
-@router.post(
-    "/debug/evaluate",
-    tags=[TAG],
-    summary="Evaluate an LLM response.",
-    response_model=EvaluationResponse,
-)
-async def evaluate(
-    payload: EvaluationInput = Body(..., description="Evaluated query.")
-):
-    return await evaluation_service.execute(payload)
