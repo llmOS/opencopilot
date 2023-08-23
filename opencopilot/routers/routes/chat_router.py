@@ -67,27 +67,16 @@ The ID of the conversation. To start a new conversation, you should pass in a ra
 
 
 class ConversationInput(BaseModel):
-    inputs: str = Field(
+    message: str = Field(
         ...,
-        description="Message to be answered by LLM.",
+        description="Message to be answered by the copilot.",
         example="How do I make a delicious lemon cheesecake?",
     )
-    response_message_id: Optional[str] = Field(
-        description="Optional message ID UUID, that can be used to get debug info.",
-        example="e0f07564-b26b-4074-876e-d47b92ef767a",
-    )
-
-    @validator("response_message_id")
-    # pylint: disable-next=no-self-argument
-    def id_check(cls, v, values):
-        if v:
-            utils.get_uuid(v, "response_message_id")
-        return v
 
     class Config:
         schema_extra = {
             "example": {
-                "inputs": "How do I make a delicious lemon cheesecake?",
+                "message": "How do I make a delicious lemon cheesecake?",
             }
         }
 
