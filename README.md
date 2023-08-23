@@ -55,6 +55,10 @@ OpenCopilot solves this problem so building your own Copilot becomes intuitive, 
   
 See more [use cases in docs](https://docs.opencopilot.dev/welcome/overview#use-cases).
 
+## How OpenCopilot fits into your stack
+
+![opencopilot_stack](https://github.com/opencopilotdev/opencopilot/assets/5147210/140ca313-cf8a-4635-913e-8dbb5e33e8d4)
+
 ## Quickstart
 
 As prerequisites, you need to have **Python 3.8+** and **pip** installed.
