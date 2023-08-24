@@ -84,10 +84,13 @@ def retrieve(
     from opencopilot.repository.documents.document_store import WeaviateDocumentStore
 
     document_store = WeaviateDocumentStore()
-    if source:
+    if query is not None:
+        where_filter = {"path": ["source"], "operator": "Like", "valueString": source} if source else None
+        document_chunks = document_store.find(query, where_filter=where_filter)
+    elif source:
         document_chunks = document_store.find_by_source(source)
-    elif query:
-        document_chunks = document_store.find(query)
+    else:
+        document_chunks = []
     documents = {}
     for chunk in document_chunks:
         source = chunk.metadata.get("source")
