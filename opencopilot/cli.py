@@ -62,8 +62,8 @@ def chat(message: str):
         message = input("Message: ")
 
 
-@app.command(help="Query the ingested documents")
-def docs(query: str):
+@app.command(help="Query the retrieval pipeline")
+def retrieve(query: str):
     _set_settings()
     from opencopilot.repository.documents.document_store import WeaviateDocumentStore
 
