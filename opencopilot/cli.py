@@ -69,10 +69,10 @@ def chat(message: str):
 
 
 @app.command(
-    help='Query the retrieval pipeline and print retrieved document sources. Example: retrieve "How to improve retrieval?" '
+    help="Query the retrieval pipeline and print retrieved document sources."
 )
 def retrieve(
-    query: Annotated[Optional[str], typer.Argument()] = None,
+    query: Annotated[Optional[str], typer.Argument(help="Your question, i.e. \"How to improve retrieval?\"")] = None,
     source: Annotated[
         str, typer.Option(help="source to match - supports wildcards")
     ] = "",
