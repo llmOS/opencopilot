@@ -2,7 +2,7 @@ import os
 from typing import List
 from dotenv import load_dotenv
 from langchain.schema import Document
-from langchain.text_splitter import CharacterTextSplitter
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.document_loaders.sitemap import SitemapLoader
 
 from opencopilot import OpenCopilot
@@ -24,11 +24,9 @@ copilot.add_local_files_dir("data")
 
 
 def _chunk_documents(documents: List[Document]) -> List[Document]:
-    text_splitter = CharacterTextSplitter.from_tiktoken_encoder(
+    text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
         chunk_size=2000,
         model_name="gpt-4",
-        separator="[ ,]",
-        is_separator_regex=True,
         disallowed_special=(),
     )
 
