@@ -15,7 +15,7 @@ from opencopilot.service.debug.entities import EvaluationResponse
 from opencopilot.service.debug.entities import GetMessageDebugResponse
 from opencopilot.service.evaluate import evaluation_service
 
-TAG = "Debug"
+TAG = "Conversation"
 router = APIRouter()
 router.openapi_tags = [TAG]
 router.title = "Debug router"

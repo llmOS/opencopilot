@@ -36,10 +36,10 @@ from opencopilot.service.chat.entities import ChatRequest
 from opencopilot.service.chat.entities import ChatResponse
 from opencopilot.service.entities import ApiResponse
 
-TAG = "Chat"
+TAG = "Conversation"
 router = APIRouter()
 router.openapi_tags = [TAG]
-router.title = "Chat router"
+router.title = "Conversation router"
 
 logger = api_logger.get()
 
