@@ -88,6 +88,22 @@ class WeaviateDocumentStore(DocumentStore):
         documents = self.vector_store.similarity_search(query, k=k)
         return documents[:k]
 
+    def find_by_source(self, source: str, **kwargs) -> List[Document]:
+        query = (
+            self._get_weaviate_client()
+            .query.get(self.weaviate_index_name, ["text", "source"])
+            .with_additional(["id"])
+            .with_where({"path": ["source"], "operator": "Like", "valueString": source})
+        )
+        result = (
+            query.do().get("data", {}).get("Get", {}).get(self.weaviate_index_name, [])
+        )
+        docs = []
+        for res in result:
+            text = res.pop("text")
+            docs.append(Document(page_content=text, metadata=res))
+        return docs
+
 
 class EmptyDocumentStore(DocumentStore):
     pass

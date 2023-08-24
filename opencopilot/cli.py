@@ -1,7 +1,9 @@
 import os
 import uuid
+from typing import Optional
 
 import typer
+from typing_extensions import Annotated
 from rich.console import Console
 from rich.table import Table
 
@@ -66,40 +68,32 @@ def chat(message: str):
         message = input("Message: ")
 
 
-@app.command(help="Query the retrieval pipeline")
-def retrieve(query: str):
+@app.command(
+    help='Query the retrieval pipeline and print retrieved document sources. Example: retrieve "How to improve retrieval?" '
+)
+def retrieve(
+    query: Annotated[Optional[str], typer.Argument()] = None,
+    source: Annotated[
+        str, typer.Option(help="source to match - supports wildcards")
+    ] = "",
+):
+    """
+    Say hi to QUERY very gently, like Dirk.
+    """
     _set_settings()
     from opencopilot.repository.documents.document_store import WeaviateDocumentStore
 
     document_store = WeaviateDocumentStore()
-    documents = document_store.find(query)
-    print("Retrieved documents:")
-    for document in documents:
-        print(f"\t{document.metadata.get('source')}")
-
-
-@app.command(help="Check if document was ingested")
-def is_ingested(source: str):
-    import weaviate
-
-    source_client = weaviate.Client(
-        url="http://localhost:8080/",  # Replace with your endpoint
-    )
-
-    query = (
-        source_client.query.get("LangChain", ["source"])
-        .with_additional(["id"])
-        .with_where(
-            {"path": ["source"], "operator": "Like", "valueString": f"*{source}*"}
-        )
-    )
-    document_chunks = query.do().get("data", {}).get("Get", {}).get("LangChain", [])
+    if source:
+        document_chunks = document_store.find_by_source(source)
+    elif query:
+        document_chunks = document_store.find(query)
     documents = {}
     for chunk in document_chunks:
-        source = chunk.get("source")
+        source = chunk.metadata.get("source")
         if source:
             documents[source] = documents.get(source, 0) + 1
-    print(f"Found {len(document_chunks)} chunks from {len(documents)} documents:")
+    print(f"Retrieved {len(document_chunks)} chunks from {len(documents)} documents:")
     table = Table("Source", "Chunks")
     for source in documents.keys():
         table.add_row(source, str(documents[source]))
