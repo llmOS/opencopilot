@@ -26,7 +26,7 @@ logger = api_logger.get()
 @router.get(
     "/debug/{conversation_id}/{message_id}",
     tags=[TAG],
-    summary="Get detailed debug information about a message.",
+    summary="Get debug information about a message.",
     response_model=GetMessageDebugResponse,
 )
 async def get_copilots(

@@ -134,7 +134,7 @@ async def handle_conversation(
 
 @router.post(
     "/conversations/{conversation_id}/stream",
-    summary="Send a message to the copilot and get the response as a stream.",
+    summary="Send a message to the copilot and stream the response.",
     response_description=STREAM_RESPONSE_DESCRIPTION,
     tags=[TAG],
 )
@@ -174,7 +174,7 @@ async def handle_conversation_streaming(
 
 @router.get(
     "/conversations/{conversation_id}",
-    summary="Retrieve a conversation, including all message history within.",
+    summary="Retrieve a conversation.",
     tags=[TAG],
 )
 async def handle_get_conversation_history(
