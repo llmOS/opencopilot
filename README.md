@@ -55,7 +55,9 @@ OpenCopilot solves this problem so building your own Copilot becomes intuitive, 
   
 See more [use cases in docs](https://docs.opencopilot.dev/welcome/overview#use-cases).
 
-## How OpenCopilot fits into your stack
+## OpenCopilot overview
+
+OpenCopilot provides one coherent end-to-end stack for building your copilot. From LLM selection (open-source LLMs upcoming), knowledge base, monitoring, evaluation, etc - it's purposely designed with all the necessary parts in order to get your copilot running in a single day with ease and iterate it towards production. 
 
 ![opencopilot_stack](https://github.com/opencopilotdev/opencopilot/assets/5147210/140ca313-cf8a-4635-913e-8dbb5e33e8d4)
 
