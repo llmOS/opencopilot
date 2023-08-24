@@ -74,5 +74,33 @@ def retrieve(query: str):
         print(f"\t{document.metadata.get('source')}")
 
 
+@app.command(help="Check if document was ingested")
+def check(source: str):
+    import weaviate
+
+    source_client = weaviate.Client(
+        url="http://localhost:8080/",  # Replace with your endpoint
+    )
+
+    query = (
+        source_client.query.get("LangChain", ["source"])
+        .with_additional(["id"])
+        .with_where({
+            "path": ["source"],
+            "operator": "Like",
+            "valueString": f"*{source}*"
+        })
+    )  
+    document_chunks = query.do().get("data", {}).get("Get", {}).get("LangChain", [])
+    documents = {}
+    for chunk in document_chunks:
+        source = chunk.get("source")
+        if source:
+            documents[source] = documents.get(source, 0) + 1
+    print(f"Found {len(document_chunks)} chunks from {len(documents)} documents:")
+    for source in documents.keys():
+        print(f"\t{source}")
+
+
 if __name__ == "__main__":
     app()
