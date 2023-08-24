@@ -97,7 +97,7 @@ def is_ingested(source: str):
             documents[source] = documents.get(source, 0) + 1
     print(f"Found {len(document_chunks)} chunks from {len(documents)} documents:")
     for source in documents.keys():
-        print(f"\t{source}")
+        print(f"\t{source} - \t {documents[source]} chunks")
 
 
 if __name__ == "__main__":
