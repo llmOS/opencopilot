@@ -97,7 +97,7 @@ async def handle_get_conversation_history(
 
 @router.post(
     "/conversations/{conversation_id}",
-    summary="Send a message to the copilot.",
+    summary="Send a message to the copilot and receive a non-streamed response.",
     tags=[TAG],
 )
 async def handle_conversation(
