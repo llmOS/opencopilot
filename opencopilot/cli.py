@@ -68,11 +68,12 @@ def chat(message: str):
         message = input("Message: ")
 
 
-@app.command(
-    help="Query the retrieval pipeline and print retrieved document sources."
-)
+@app.command(help="Query the retrieval pipeline and print retrieved document sources.")
 def retrieve(
-    query: Annotated[Optional[str], typer.Argument(help="Your question, i.e. \"How to improve retrieval?\"")] = None,
+    query: Annotated[
+        Optional[str],
+        typer.Argument(help='Your question, i.e. "How to improve retrieval?"'),
+    ] = None,
     source: Annotated[
         str, typer.Option(help="source to match - supports wildcards")
     ] = "",
@@ -85,7 +86,11 @@ def retrieve(
 
     document_store = WeaviateDocumentStore()
     if query is not None:
-        where_filter = {"path": ["source"], "operator": "Like", "valueString": source} if source else None
+        where_filter = (
+            {"path": ["source"], "operator": "Like", "valueString": source}
+            if source
+            else None
+        )
         document_chunks = document_store.find(query, where_filter=where_filter)
     elif source:
         document_chunks = document_store.find_by_source(source)
