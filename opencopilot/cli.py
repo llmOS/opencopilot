@@ -1,10 +1,41 @@
+import os
 import uuid
 
 import typer
 
+from opencopilot import settings
+from opencopilot.settings import Settings
 from opencopilot.scripts import chat as chat_script
 
 app = typer.Typer(add_completion=False, no_args_is_help=True)
+
+
+def _set_settings():
+    settings.set(
+        Settings(
+            COPILOT_NAME="cli",
+            HOST="127.0.0.1",
+            API_PORT=3000,
+            API_BASE_URL="http://localhost:3000/",
+            ENVIRONMENT="cli",
+            ALLOWED_ORIGINS="*",
+            APPLICATION_NAME="cli",
+            LOG_FILE_PATH="./logs/cli.log",
+            WEAVIATE_URL="http://localhost:8080/",
+            WEAVIATE_READ_TIMEOUT=120,
+            MODEL="gpt-4",
+            OPENAI_API_KEY=os.getenv("OPENAI_API_KEY"),
+            MAX_DOCUMENT_SIZE_MB=1,
+            SLACK_WEBHOOK="",
+            AUTH_TYPE=None,
+            API_KEY="",
+            JWT_CLIENT_ID="",
+            JWT_CLIENT_SECRET="",
+            JWT_TOKEN_EXPIRATION_SECONDS=1,
+            HELICONE_API_KEY="",
+            HELICONE_RATE_LIMIT_POLICY="",
+        )
+    )
 
 
 @app.command(help="Print info")
@@ -29,6 +60,18 @@ def chat(message: str):
         )
         print()
         message = input("Message: ")
+
+
+@app.command(help="Query the ingested documents")
+def docs(query: str):
+    _set_settings()
+    from opencopilot.repository.documents.document_store import WeaviateDocumentStore
+
+    document_store = WeaviateDocumentStore()
+    documents = document_store.find(query)
+    print("Retrieved documents:")
+    for document in documents:
+        print(f"\t{document.metadata.get('source')}")
 
 
 if __name__ == "__main__":
