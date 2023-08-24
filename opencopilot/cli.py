@@ -2,10 +2,14 @@ import os
 import uuid
 
 import typer
+from rich.console import Console
+from rich.table import Table
 
 from opencopilot import settings
 from opencopilot.settings import Settings
 from opencopilot.scripts import chat as chat_script
+
+console = Console()
 
 app = typer.Typer(add_completion=False, no_args_is_help=True)
 
@@ -96,9 +100,10 @@ def is_ingested(source: str):
         if source:
             documents[source] = documents.get(source, 0) + 1
     print(f"Found {len(document_chunks)} chunks from {len(documents)} documents:")
+    table = Table("Source", "Chunks")
     for source in documents.keys():
-        print(f"\t{source} - \t {documents[source]} chunks")
-
+        table.add_row(source, str(documents[source]))
+    console.print(table)
 
 if __name__ == "__main__":
     app()
