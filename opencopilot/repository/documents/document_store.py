@@ -56,7 +56,7 @@ class WeaviateDocumentStore(DocumentStore):
 
     def _get_vector_store(self):
         metadatas = [d.metadata for d in self.documents]
-        attributes = list(metadatas[0].keys()) if metadatas else ['source']
+        attributes = list(metadatas[0].keys()) if metadatas else ["source"]
         return Weaviate(
             self.weaviate_client,
             index_name=self.weaviate_index_name,
