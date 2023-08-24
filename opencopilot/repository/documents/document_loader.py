@@ -67,7 +67,7 @@ def execute(
         elif file_path.endswith(".xls") or file_path.endswith(".xlsx"):
             loader = UnstructuredExcelLoader(file_path)
             new_documents = loader.load()
-        elif file_path.endswith(".json") and file_path.replace(data_dir, "").startswith(
+        elif file_path.endswith(".json") and os.path.basename(file_path).startswith(
             "serialized_documents_"
         ):
             with open(file_path, "r") as f:
