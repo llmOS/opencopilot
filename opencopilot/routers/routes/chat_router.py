@@ -191,3 +191,14 @@ async def handle_get_conversation_history(
         history_repository,
     )
     return response
+
+
+@router.delete(
+    "/conversations/{conversation_id}",
+    summary="Delete a conversation.",
+    tags=[TAG],
+)
+async def handle_delete_conversation_history(
+    conversation_id: str = Path(..., description="The ID of the conversation."),
+):
+    pass
