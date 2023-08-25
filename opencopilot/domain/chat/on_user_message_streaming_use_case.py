@@ -54,7 +54,7 @@ async def execute(
             system_message,
             context,
             logs_repository=logs_repository,
-            history_repository=history_repository,
+            history=history,
             callback=callback,
         )
     )
@@ -110,7 +110,7 @@ def _get_context(
         context = []
         context.extend(
             document_store.find(
-                str,
+                query,
                 k=settings.get().MAX_CONTEXT_DOCUMENTS_COUNT - len(context),
             )
         )
