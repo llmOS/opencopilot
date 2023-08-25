@@ -14,6 +14,8 @@ from opencopilot.domain.chat.entities import StreamingChunk
 from opencopilot.domain.chat.entities import UserMessageInput
 from opencopilot.domain.chat.results import get_gpt_result_use_case
 from opencopilot.domain.chat.utils import get_system_message
+from opencopilot.domain.chat.utils import add_history
+from opencopilot.domain.chat.utils import get_context_query
 from opencopilot.repository.conversation_history_repository import (
     ConversationHistoryRepositoryLocal,
 )
@@ -35,8 +37,13 @@ async def execute(
     logs_repository: ConversationLogsRepositoryLocal,
 ) -> AsyncGenerator[StreamingChunk, None]:
     system_message = get_system_message()
-
-    context = _get_context(domain_input, system_message, document_store)
+    history = add_history(
+        system_message,
+        domain_input.chat_id,
+        history_repository,
+    )
+    context_query = get_context_query(domain_input.message, history)
+    context = _get_context(context_query, system_message, document_store)
     message_timestamp = datetime.now().timestamp()
 
     callback = CustomAsyncIteratorCallbackHandler()
@@ -95,7 +102,7 @@ async def execute(
 
 
 def _get_context(
-    domain_input: UserMessageInput, system_message: str, document_store: DocumentStore
+    query: str, system_message: str, document_store: DocumentStore
 ) -> List[Document]:
     # TODO: handle context length and all the edge cases somehow a bit better
     context = []
@@ -103,7 +110,7 @@ def _get_context(
         context = []
         context.extend(
             document_store.find(
-                domain_input.message,
+                str,
                 k=settings.get().MAX_CONTEXT_DOCUMENTS_COUNT - len(context),
             )
         )

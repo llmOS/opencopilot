@@ -9,13 +9,10 @@ from langchain.schema import HumanMessage
 from opencopilot import settings
 from opencopilot.logger import api_logger
 from opencopilot.domain.chat import get_token_count_use_case
-from opencopilot.domain.chat import utils
+from opencopilot.domain.chat.utils import History
 from opencopilot.domain.chat.entities import UserMessageInput
 from opencopilot.domain.chat.results import format_context_documents_use_case
 from opencopilot.domain.chat.results import get_llm
-from opencopilot.repository.conversation_history_repository import (
-    ConversationHistoryRepositoryLocal,
-)
 from opencopilot.repository.conversation_logs_repository import (
     ConversationLogsRepositoryLocal,
 )
@@ -31,16 +28,11 @@ async def execute(
     system_message: str,
     context: List[Document],
     logs_repository: ConversationLogsRepositoryLocal,
-    history_repository: ConversationHistoryRepositoryLocal,
+    history: History,
     callback: CustomAsyncIteratorCallbackHandler = None,
 ) -> str:
     llm = get_llm.execute(domain_input.email, callback)
 
-    history = utils.add_history(
-        system_message,
-        domain_input.chat_id,
-        history_repository,
-    )
     logs_repository.log_history(
         domain_input.chat_id,
         domain_input.message,
