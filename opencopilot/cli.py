@@ -1,6 +1,7 @@
 import os
 import uuid
 from typing import Optional
+from contextlib import nullcontext
 
 import typer
 from typing_extensions import Annotated
@@ -89,6 +90,7 @@ def retrieve(
     from opencopilot.repository.documents.document_store import WeaviateDocumentStore
 
     document_store = WeaviateDocumentStore()
+
     if text is not None:
         where_filter = (
             {"path": ["source"], "operator": "Like", "valueString": source}
@@ -109,10 +111,12 @@ def retrieve(
         source = chunk.metadata.get("source")
         if source:
             documents[source] = documents.get(source, 0) + 1
+
     table = Table("Source", "Chunks")
     for source in documents.keys():
         table.add_row(source, str(documents[source]))
-    with console.pager():
+
+    with nullcontext() if len(documents) < 50 else console.pager():
         console.print(table)
     print(f"{len(documents)} documents in {len(document_chunks)} chunks")
 
