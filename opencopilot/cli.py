@@ -81,7 +81,7 @@ def retrieve(
     source: Annotated[
         Optional[str],
         typer.Option("--source", "-s", help="Source to match - supports wildcards"),
-    ] = "",
+    ] = None,
     all: Annotated[
         Optional[bool], typer.Option("--all", "-a", help="Gets all documents ingested")
     ] = False,
@@ -98,7 +98,7 @@ def retrieve(
             else None
         )
         document_chunks = document_store.find(text, where_filter=where_filter)
-    elif source:
+    elif source is not None:
         document_chunks = document_store.find_by_source(source)
     elif all:
         document_chunks = document_store.get_all()
