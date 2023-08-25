@@ -84,8 +84,8 @@ class WeaviateDocumentStore(DocumentStore):
         self.vector_store = self._get_vector_store()
 
     def find(self, query: str, **kwargs) -> List[Document]:
-        k = kwargs.get("k") or settings.get().MAX_CONTEXT_DOCUMENTS_COUNT
-        documents = self.vector_store.similarity_search(query, k=k, **kwargs)
+        kwargs["k"] = kwargs.get("k", settings.get().MAX_CONTEXT_DOCUMENTS_COUNT)
+        documents = self.vector_store.similarity_search(query, **kwargs)
         return documents[:k]
 
     def find_by_source(self, source: str, **kwargs) -> List[Document]:
