@@ -68,32 +68,37 @@ def chat(message: str):
         message = input("Message: ")
 
 
-@app.command(help="Query the retrieval pipeline and print retrieved document sources.")
+@app.command(help="Query the retrieval pipeline.")
 def retrieve(
-    query: Annotated[
+    text: Annotated[
         Optional[str],
-        typer.Argument(help='Your question, i.e. "How to improve retrieval?"'),
+        typer.Option(
+            "--text", "-t", help='Your question, i.e. "How to improve retrieval?"'
+        ),
     ] = None,
     source: Annotated[
-        str, typer.Option(help="source to match - supports wildcards")
+        Optional[str],
+        typer.Option("--source", "-s", help="Source to match - supports wildcards"),
     ] = "",
+    all: Annotated[
+        Optional[bool], typer.Option("--all", "-a", help="Gets all documents ingested")
+    ] = False,
 ):
-    """
-    Say hi to QUERY very gently, like Dirk.
-    """
     _set_settings()
     from opencopilot.repository.documents.document_store import WeaviateDocumentStore
 
     document_store = WeaviateDocumentStore()
-    if query is not None:
+    if text is not None:
         where_filter = (
             {"path": ["source"], "operator": "Like", "valueString": source}
             if source
             else None
         )
-        document_chunks = document_store.find(query, where_filter=where_filter)
+        document_chunks = document_store.find(text, where_filter=where_filter)
     elif source:
         document_chunks = document_store.find_by_source(source)
+    elif all:
+        document_chunks = document_store.get_all()
     else:
         document_chunks = []
     documents = {}
@@ -101,11 +106,11 @@ def retrieve(
         source = chunk.metadata.get("source")
         if source:
             documents[source] = documents.get(source, 0) + 1
-    print(f"Retrieved {len(document_chunks)} chunks from {len(documents)} documents:")
     table = Table("Source", "Chunks")
     for source in documents.keys():
         table.add_row(source, str(documents[source]))
     console.print(table)
+    print(f"{len(documents)} documents in {len(document_chunks)} chunks")
 
 
 if __name__ == "__main__":
