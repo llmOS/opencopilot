@@ -113,16 +113,10 @@ python copilot.py
 
 That's it! Your minimal copilot is now running as an API service, at `localhost:3000` by default 🎉
 
-You can chat with it by calling the API:
+You can quickly test and chat with it in the terminal by running:
 
 ```bash
-curl -X 'POST' \
-  'http://127.0.0.1:3000/v0/conversation/85ceff11-8072-47c8-a09a-ef846b024c04' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "inputs": "Hi! Who are you?"
-}'
+opencopilot chat "Hello, who are you?"
 ```
 
 See the [interactive Swagger docs](http://localhost:3000/docs#/Chat/handle_conversation_v0_conversation__conversation_id__post) for full API documentation.
