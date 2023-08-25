@@ -70,6 +70,7 @@ def chat(message: str):
 
 @app.command(help="Query the retrieval pipeline.")
 def retrieve(
+    ctx: typer.Context,
     text: Annotated[
         Optional[str],
         typer.Option(
@@ -100,7 +101,9 @@ def retrieve(
     elif all:
         document_chunks = document_store.get_all()
     else:
-        document_chunks = []
+        typer.echo(ctx.get_help())
+        raise typer.Exit()
+
     documents = {}
     for chunk in document_chunks:
         source = chunk.metadata.get("source")
@@ -109,7 +112,8 @@ def retrieve(
     table = Table("Source", "Chunks")
     for source in documents.keys():
         table.add_row(source, str(documents[source]))
-    console.print(table)
+    with console.pager():
+        console.print(table)
     print(f"{len(documents)} documents in {len(document_chunks)} chunks")
 
 
