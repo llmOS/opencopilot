@@ -21,11 +21,13 @@ from typing import List
 import matplotlib.pyplot as plt
 from pathlib import Path
 from langchain.schema import Document
-from opencopilot.repository.documents import document_store
-
 from tqdm import tqdm
 
-from opencopilot import settings
+from opencopilot.utils.scripting import set_default_settings
+
+set_default_settings("eval_retrieval")
+
+from opencopilot.repository.documents import document_store
 from opencopilot.eval.retrieval import evaluate_retrieval_dataset
 from opencopilot.eval.entities import (
     RetrievalDataset,
@@ -151,11 +153,7 @@ def main(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--dataset_path",
-        type=str,
-        default=f"../copilots/{settings.get().COPILOT_NAME}/eval_data/retrieval_human.json",
-    )
+    parser.add_argument("--dataset_path", type=str, help="Dataset path", required=True)
     parser.add_argument(
         "-n",
         "--num_examples",
@@ -177,6 +175,11 @@ if __name__ == "__main__":
         help="Output file for evaluation results in JSON format.",
     )
     args = parser.parse_args()
+
+    from opencopilot.repository.documents import document_store
+    from opencopilot.repository.documents.document_store import WeaviateDocumentStore
+
+    document_store.init_document_store(WeaviateDocumentStore())
 
     metrics = main(
         args.dataset_path,

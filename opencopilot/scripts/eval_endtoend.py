@@ -8,6 +8,10 @@ import requests
 import tqdm
 
 from opencopilot import settings
+from opencopilot.utils.scripting import set_default_settings
+
+set_default_settings("eval_endtoend")
+
 from opencopilot.eval.endtoend import evaluate_endtoend_dataset
 from opencopilot.eval.entities import (
     EndToEndDataset,
@@ -58,6 +62,8 @@ def _get_api_url() -> str:
     base_url = settings.get().API_BASE_URL
     if base_url.endswith("/"):
         base_url = base_url[:-1]
+    if ":" in base_url:
+        return base_url
     return f"{base_url}:{settings.get().API_PORT}"
 
 
@@ -114,12 +120,7 @@ def main(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--dataset_path",
-        type=str,
-        required=False,
-        default=f"../copilots/{settings.get().COPILOT_NAME}/eval_data/endtoend_human.json",
-    )
+    parser.add_argument("--dataset_path", type=str, help="Dataset path", required=True)
     parser.add_argument(
         "-n",
         "--num_examples",

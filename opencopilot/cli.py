@@ -9,40 +9,13 @@ from rich.console import Console
 from rich.table import Table
 
 from opencopilot import settings
+from opencopilot.utils.scripting import set_default_settings
 from opencopilot.settings import Settings
 from opencopilot.scripts import chat as chat_script
 
 console = Console()
 
 app = typer.Typer(add_completion=False, no_args_is_help=True)
-
-
-def _set_settings():
-    settings.set(
-        Settings(
-            COPILOT_NAME="cli",
-            HOST="127.0.0.1",
-            API_PORT=3000,
-            API_BASE_URL="http://localhost:3000/",
-            ENVIRONMENT="cli",
-            ALLOWED_ORIGINS="*",
-            APPLICATION_NAME="cli",
-            LOG_FILE_PATH="./logs/cli.log",
-            WEAVIATE_URL="http://localhost:8080/",
-            WEAVIATE_READ_TIMEOUT=120,
-            MODEL="gpt-4",
-            OPENAI_API_KEY=os.getenv("OPENAI_API_KEY"),
-            MAX_DOCUMENT_SIZE_MB=1,
-            SLACK_WEBHOOK="",
-            AUTH_TYPE=None,
-            API_KEY="",
-            JWT_CLIENT_ID="",
-            JWT_CLIENT_SECRET="",
-            JWT_TOKEN_EXPIRATION_SECONDS=1,
-            HELICONE_API_KEY="",
-            HELICONE_RATE_LIMIT_POLICY="",
-        )
-    )
 
 
 @app.command(help="Print info")
@@ -86,7 +59,7 @@ def retrieve(
         Optional[bool], typer.Option("--all", "-a", help="Gets all documents ingested")
     ] = False,
 ):
-    _set_settings()
+    set_default_settings("cli")
     from opencopilot.repository.documents.document_store import WeaviateDocumentStore
 
     document_store = WeaviateDocumentStore()
