@@ -1,11 +1,14 @@
-name: E2E Test Full
+name: E2E Test Release
 
 on:
   push:
-    branches: [ main, removes-deps ]
+    branches: [ release-ci ]
+    # Pattern matched against refs/tags
+    tags:
+      - '**'           # Push events to every tag including hierarchical tags like v1.0/beta
 
 jobs:
-  e2e-test-full:
+  e2e-test-release:
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 5
@@ -18,7 +21,19 @@ jobs:
           python-version: '3.10'
       - name: "Install requirements"
         run: |
-          pip install -r requirements.txt
+          pip install --upgrade pip
+          pip install --upgrade build
+      - name: "Build opencopilot-ai"
+        run: |
+          python -m build
+      - name: "Install opencopilot-ai"
+        run: |
+          wheel_path=dist/$(ls dist | grep .whl)
+          pip install $wheel_path
+          pip install libmagic==1.0
+          pip install playwright==1.37.0
+          pip install beautifulsoup4
+          playwright install
       - name: "Setup env"
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -42,9 +57,13 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          PYTHONPATH=. nohup python tests/assets/e2e_example.py &> logs.log &
+          cd examples/ready_player_me_copilot
+          nohup python copilot.py &> logs.log &
           sleep 30
           cat logs.log
+      - name: "Ping until backend up"
+        run: |
+          PYTHONPATH=. python tests/assets/ping_backend.py
       - name: "Test Backend"
         run: |
-          PYTHONPATH=. python tests/e2e/test_backend_e2e_example.py
+          PYTHONPATH=. python tests/e2e/test_backend.py

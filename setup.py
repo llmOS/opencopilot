@@ -15,7 +15,7 @@ extra_files = package_files('opencopilot')
 
 setup(
     name='opencopilot-ai',
-    version='0.3.2',
+    version='0.3.3',
     packages=["opencopilot"],
     package_data={'': extra_files},
     license="MIT",
@@ -26,6 +26,7 @@ setup(
     py_modules=['opencopilot'],
     install_requires=[
         'fastapi',
+        'dataclasses-json',
         'python-dotenv',
         'python-json-logger',
         'uvicorn',
@@ -41,12 +42,8 @@ setup(
         'pypdf',
         'unstructured',
         'pdf2image',
-        'beautifulsoup4',
         'openai',
         'unstructured',
-        'dataclasses-json',
-        'pytesseract',
-        'aiohttp',
         'xxhash',
         'omegaconf',
         'openpyxl',
