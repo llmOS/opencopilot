@@ -48,7 +48,7 @@ def get_system_message() -> str:
 
 
 def get_context_query(query: str, history: History) -> str:
-    if history.formatted_history:
+    if settings.get().USE_CONVERSATIONAL_RETRIEVAL and history.formatted_history:
         try:
             llm = ChatOpenAI(model_name="gpt-3.5-turbo-16k")
             prompt = RETRIEVAL_PROMPT_TEMPLATE.format(

@@ -18,7 +18,9 @@ copilot = OpenCopilot(
     helicone_api_key=os.getenv("HELICONE_API_KEY"),
     jwt_client_id=os.getenv("JWT_CLIENT_ID") or "",
     jwt_client_secret=os.getenv("JWT_CLIENT_SECRET") or "",
-    jwt_token_expiration_seconds=int(os.getenv("JWT_TOKEN_EXPIRATION_SECONDS") or "0")
+    jwt_token_expiration_seconds=int(os.getenv("JWT_TOKEN_EXPIRATION_SECONDS") or "0"),
+    use_conversational_retrieval=True
+    
 )
 copilot.add_local_files_dir("data")
 

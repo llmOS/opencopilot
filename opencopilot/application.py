@@ -36,6 +36,7 @@ class OpenCopilot:
         jwt_token_expiration_seconds: int = timedelta(days=1).total_seconds(),
         helicone_api_key: str = "",
         helicone_rate_limit_policy: str = "3;w=60;s=user",
+        use_conversational_retrieval: bool = False
     ):
         if not openai_api_key:
             openai_api_key = os.getenv("OPENAI_API_KEY")
@@ -66,6 +67,7 @@ class OpenCopilot:
                 JWT_TOKEN_EXPIRATION_SECONDS=jwt_token_expiration_seconds,
                 HELICONE_API_KEY=helicone_api_key,
                 HELICONE_RATE_LIMIT_POLICY=helicone_rate_limit_policy,
+                USE_CONVERSATIONAL_RETRIEVAL=use_conversational_retrieval,
             )
         )
 

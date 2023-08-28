@@ -52,6 +52,8 @@ class Settings:
 
     DATA_DIR: str = ""
 
+    USE_CONVERSATIONAL_RETRIEVAL: bool = False
+
     def __post_init__(self):
         os.environ["OPENAI_API_KEY"] = self.OPENAI_API_KEY
 
