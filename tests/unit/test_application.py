@@ -6,7 +6,7 @@ from opencopilot.domain.errors import APIKeyError, ModelError, PromptError
 
 # API key
 LLM_MODEL_NAME = "gpt-3.5-turbo-16k"
-VALID_PROMPT_FILE = "tests/assets/prompts/minimal_prompt.txt"
+VALID_PROMPT_FILE = "tests/assets/prompts/valid_prompt.txt"
 
 
 def test_openai_api_key_empty():
@@ -33,10 +33,10 @@ def test_model_name_invalid():
 
 
 def test_openai_api_key_rejected():
-    pass # TODO - this should not be a unit test, rather an integration test?
+    pass # TODO - unit test of sth in openai calling with mock
 
 def test_openai_no_access_to_model():
-    pass # TODO - this should not be a unit test, rather an integration test?
+    pass # TODO - unit test of sth in openai calling with mock
 
 
 # Prompt file
@@ -57,4 +57,4 @@ def test_prompt_file_invalid():
 # KB
 
 def test_weaviate_not_running():
-    pass # TODO - this should not be a unit test, rather an integration test?
+    pass # TODO - unit test in weaviate DocumentStore
