@@ -32,6 +32,14 @@ def test_prompt_file_missing():
             openai_api_key=MOCK_OPENAI_API_KEY,
         )
 
+
+def test_prompt_file_valid():
+    copilot = OpenCopilot(
+        prompt_file=VALID_PROMPT_FILE,
+        openai_api_key=MOCK_OPENAI_API_KEY,
+    )
+
+
 def test_prompt_file_invalid():
     with pytest.raises(PromptError):
         copilot = OpenCopilot(
