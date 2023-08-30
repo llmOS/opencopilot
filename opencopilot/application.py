@@ -38,11 +38,10 @@ class OpenCopilot:
         helicone_api_key: str = "",
         helicone_rate_limit_policy: str = "3;w=60;s=user",
     ):
-        
         if not openai_api_key:
             openai_api_key = os.getenv("OPENAI_API_KEY")
-                
-        validate_openai_api_key(openai_api_key) 
+
+        validate_openai_api_key(openai_api_key)
 
         settings.set(
             Settings(
@@ -68,7 +67,7 @@ class OpenCopilot:
                 HELICONE_API_KEY=helicone_api_key,
                 HELICONE_RATE_LIMIT_POLICY=helicone_rate_limit_policy,
             )
-        )       
+        )
 
         self.add_prompt(prompt_file)
         self.host = host
