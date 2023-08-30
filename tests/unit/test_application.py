@@ -25,25 +25,6 @@ def test_openai_api_key_bad_format():
         )
 
 
-
-def test_model_name_invalid():
-    # TODO cannot make a validator for this without having a decent enum somewhere listing allowed models
-    pass
-    #with pytest.raises(ModelError):
-    #    copilot = OpenCopilot(
-    #        llm_model_name="gpt-not-a-valid-model-name",
-    #        openai_api_key=MOCK_OPENAI_API_KEY,
-    #        prompt_file=VALID_PROMPT_FILE,
-    #    )
-
-
-def test_openai_api_key_rejected():
-    pass # TODO - unit test of sth in openai calling with mock
-
-def test_openai_no_access_to_model():
-    pass # TODO - unit test of sth in openai calling with mock
-
-
 def test_prompt_file_missing():
     with pytest.raises(PromptError):
         copilot = OpenCopilot(
@@ -57,7 +38,3 @@ def test_prompt_file_invalid():
             prompt_file="tests/assets/prompts/no_user_question.txt",
             openai_api_key=MOCK_OPENAI_API_KEY,
         )
-
-
-def test_weaviate_not_running():
-    pass # TODO - unit test in weaviate DocumentStore
