@@ -30,7 +30,7 @@ class ConversationHistoryRepositoryLocal:
                 history = json.load(f)
             if not count or len(history) <= count:
                 return self._to_string(history)
-            return self._to_string(history[count * -1:])
+            return self._to_string(history[count * -1 :])
         except:
             logger.debug(f"Cannot load conversation history, id: {str(chat_id)}")
         return ""
@@ -72,10 +72,7 @@ class ConversationHistoryRepositoryLocal:
         )
         self._write_file(chat_id, history)
 
-    def remove_conversation(
-        self,
-        conversation_id: UUID
-    ) -> None:
+    def remove_conversation(self, conversation_id: UUID) -> None:
         file_path = self._get_file_path(conversation_id)
         if os.path.exists(file_path):
             try:

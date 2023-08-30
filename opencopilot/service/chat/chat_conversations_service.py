@@ -13,8 +13,6 @@ def execute(
         data_input=ChatConversationsInput(
             user_id=request.user_id,
         ),
-        users_repository=users_repository)
-    return ConversationsResponse(
-        response="OK",
-        conversations=result.conversations
+        users_repository=users_repository,
     )
+    return ConversationsResponse(response="OK", conversations=result.conversations)

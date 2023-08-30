@@ -89,10 +89,7 @@ async def handle_get_conversations(
 ):
     users_repository = UsersRepositoryLocal()
     response = chat_conversations_service.execute(
-        request=ConversationsRequest(
-            user_id=user_id
-        ),
-        users_repository=users_repository
+        request=ConversationsRequest(user_id=user_id), users_repository=users_repository
     )
     return response
 
@@ -128,7 +125,7 @@ async def handle_conversation(
         document_store.get_document_store(),
         history_repository,
         logs_repository,
-        users_repository
+        users_repository,
     )
     return routing_utils.to_json_response(
         {"copilot_message": response.message, "sources": response.sources}
@@ -169,7 +166,7 @@ async def handle_conversation_streaming(
             document_store.get_document_store(),
             history_repository,
             logs_repository,
-            users_repository
+            users_repository,
         ),
         headers=headers,
         media_type="text/event-stream",
@@ -217,6 +214,6 @@ async def handle_delete_conversation_history(
         ),
         users_repository=users_repository,
         history_repository=history_repository,
-        logs_repository=logs_repository
+        logs_repository=logs_repository,
     )
     return response

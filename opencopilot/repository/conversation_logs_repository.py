@@ -109,10 +109,7 @@ class ConversationLogsRepositoryLocal:
         except:
             return []
 
-    def remove_conversation(
-        self,
-        conversation_id: UUID
-    ):
+    def remove_conversation(self, conversation_id: UUID):
         file_path = self._get_file_path(conversation_id)
         if os.path.exists(file_path):
             try:

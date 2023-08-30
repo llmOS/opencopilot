@@ -16,7 +16,6 @@ logger = api_logger.get()
 
 
 class UsersRepositoryLocal:
-
     def __init__(self, users_dir: str = DEFAULT_USERS_DIR):
         self.users_dir = users_dir
 
@@ -27,9 +26,7 @@ class UsersRepositoryLocal:
         return []
 
     def add_conversation(
-        self,
-        conversation_id: UUID,
-        user_id: Optional[str] = None
+        self, conversation_id: UUID, user_id: Optional[str] = None
     ) -> None:
         data = self._read_file(user_id)
         if data.get("conversations"):
@@ -41,9 +38,7 @@ class UsersRepositoryLocal:
         self._write_file(data, user_id)
 
     def remove_conversation(
-        self,
-        conversation_id: UUID,
-        user_id: Optional[str] = None
+        self, conversation_id: UUID, user_id: Optional[str] = None
     ) -> None:
         data = self._read_file(user_id)
         if data.get("conversations"):

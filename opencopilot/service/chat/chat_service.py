@@ -20,7 +20,7 @@ async def execute(
     document_store: DocumentStore,
     history_repository: ConversationHistoryRepositoryLocal,
     logs_repository: ConversationLogsRepositoryLocal,
-    users_repository: UsersRepositoryLocal
+    users_repository: UsersRepositoryLocal,
 ) -> ChatResponse:
     chat_id = get_uuid(request.chat_id, "chat_id")
     domain_response = await on_user_message_use_case.execute(
@@ -33,7 +33,7 @@ async def execute(
         document_store,
         history_repository,
         logs_repository=logs_repository,
-        users_repository=users_repository
+        users_repository=users_repository,
     )
     return ChatResponse(
         response="OK",

@@ -34,7 +34,7 @@ async def execute(
     document_store: DocumentStore,
     history_repository: ConversationHistoryRepositoryLocal,
     logs_repository: ConversationLogsRepositoryLocal,
-    users_repository: UsersRepositoryLocal
+    users_repository: UsersRepositoryLocal,
 ) -> AsyncGenerator[StreamingChunk, None]:
     system_message = get_system_message()
 
@@ -95,8 +95,7 @@ async def execute(
             domain_input.response_message_id,
         )
         users_repository.add_conversation(
-            conversation_id=domain_input.chat_id,
-            user_id=domain_input.email
+            conversation_id=domain_input.chat_id, user_id=domain_input.email
         )
 
 
