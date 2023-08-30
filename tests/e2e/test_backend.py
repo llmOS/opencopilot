@@ -90,8 +90,6 @@ def _delete_conversations():
 
 
 def main():
-
-    print("Conversation ID:", conversation_id)
     _index()
     _chat_conversation()
     _chat_conversation_stream()

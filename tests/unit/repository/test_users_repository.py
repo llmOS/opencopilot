@@ -19,7 +19,7 @@ def teardown_function():
 
 
 def create_mock_user():
-    file_path = os.path.join(USERS_DIR, VALID_USER_ID) + ".json"
+    file_path = os.path.join(USERS_DIR, "a449a63e0d25c897") + ".json"
     data = {
         "conversations": [
             "69f88a74-7a67-4336-b601-4cfbcaed55ef",

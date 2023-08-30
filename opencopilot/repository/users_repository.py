@@ -5,6 +5,8 @@ from typing import List
 from typing import Optional
 from uuid import UUID
 
+import xxhash
+
 from opencopilot.logger import api_logger
 
 DEFAULT_USERS_DIR = "logs/users"
@@ -68,7 +70,7 @@ class UsersRepositoryLocal:
             file.write(json.dumps(data, indent=4))
 
     def _get_file_path(self, user_id: Optional[str] = None) -> str:
-        # TODO: base64 or somthing?
         if not user_id:
-            return os.path.join(self.users_dir, DEFAULT_USER_NAME) + ".json"
-        return os.path.join(self.users_dir, user_id) + ".json"
+            user_id = DEFAULT_USER_NAME
+        file_name = xxhash.xxh64(user_id.encode("utf-8")).hexdigest()
+        return os.path.join(self.users_dir, file_name) + ".json"
