@@ -12,7 +12,7 @@ DEFAULT_MESSAGE = "Hi"
 
 
 def _get_stream(url: str, message: str = DEFAULT_MESSAGE, jwt_token: str = None):
-    data = {"inputs": message}
+    data = {"message": message}
     if jwt_token:
         headers["Authorization"] = "Bearer " + jwt_token
     s = requests.Session()
@@ -42,8 +42,8 @@ def conversation(
     jwt_token = _get_jwt_token(base_url)
     if jwt_token:
         headers["Authorization"] = "Bearer " + jwt_token
-    url = f"{base_url}/v0/conversation/{conversation_id}"
-    data = {"inputs": message}
+    url = f"{base_url}/v0/conversations/{conversation_id}"
+    data = {"message": message}
     return requests.post(url, json=data, headers=headers)
 
 
@@ -54,7 +54,7 @@ def conversation_stream(
     stream: bool = False,
 ):
     jwt_token = _get_jwt_token(base_url)
-    url = f"{base_url}/v0/conversation_stream/{conversation_id}"
+    url = f"{base_url}/v0/conversations/{conversation_id}/stream"
     output = ""
     for text in _get_stream(url, message=message, jwt_token=jwt_token):
         text = _process_text(text)

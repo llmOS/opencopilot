@@ -10,6 +10,7 @@ from opencopilot.repository.conversation_logs_repository import (
     ConversationLogsRepositoryLocal,
 )
 from opencopilot.repository.documents.document_store import DocumentStore
+from opencopilot.repository.users_repository import UsersRepositoryLocal
 from opencopilot.service.chat.entities import ChatRequest
 from opencopilot.service.utils import get_uuid
 
@@ -19,6 +20,7 @@ async def execute(
     document_store: DocumentStore,
     history_repository: ConversationHistoryRepositoryLocal,
     logs_repository: ConversationLogsRepositoryLocal,
+    users_repository: UsersRepositoryLocal
 ) -> str:
     chat_id = get_uuid(request.chat_id, "chat_id")
     async for chunk in on_user_message_streaming_use_case.execute(
@@ -31,6 +33,7 @@ async def execute(
         document_store,
         history_repository,
         logs_repository,
+        users_repository
     ):
         data = chunk.to_dict()
         yield f"{json.dumps(data)}\n"

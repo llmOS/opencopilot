@@ -2,7 +2,7 @@ name: E2E Test Full
 
 on:
   push:
-    branches: [ main, removes-deps ]
+    branches: [ main, api_redesign ]
 
 jobs:
   e2e-test-full:

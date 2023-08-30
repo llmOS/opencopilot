@@ -1,40 +1,35 @@
 from typing import Optional
 
-from fastapi import APIRouter, Header
+from fastapi import APIRouter
 from fastapi import Body
 from fastapi import Depends
 from fastapi import Path
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from pydantic import Field
-from pydantic import validator
 
-from opencopilot.logger import api_logger
 from opencopilot.authorization import validate_api_key_use_case
+from opencopilot.logger import api_logger
 from opencopilot.repository.conversation_history_repository import (
     ConversationHistoryRepositoryLocal,
 )
 from opencopilot.repository.conversation_logs_repository import (
     ConversationLogsRepositoryLocal,
 )
-from opencopilot.repository.conversation_user_context_repository import (
-    ConversationUserContextRepositoryLocal,
-)
 from opencopilot.repository.documents import document_store
+from opencopilot.repository.users_repository import UsersRepositoryLocal
 from opencopilot.routers import routing_utils
-from opencopilot.service import utils
-from opencopilot.service.chat import chat_context_service, chat_service
-from opencopilot.service.chat import (
-    chat_feedback_service,
-    chat_streaming_service,
-    chat_history_service,
-)
-from opencopilot.service.chat.entities import ChatContextRequest
-from opencopilot.service.chat.entities import ChatFeedbackRequest
-from opencopilot.service.chat.entities import ChatHistoryRequest, ChatHistoryResponse
+from opencopilot.service.chat import chat_conversations_service
+from opencopilot.service.chat import chat_delete_service
+from opencopilot.service.chat import chat_history_service
+from opencopilot.service.chat import chat_service
+from opencopilot.service.chat import chat_streaming_service
+from opencopilot.service.chat.entities import ChatDeleteRequest
+from opencopilot.service.chat.entities import ChatHistoryRequest
+from opencopilot.service.chat.entities import ChatHistoryResponse
 from opencopilot.service.chat.entities import ChatRequest
 from opencopilot.service.chat.entities import ChatResponse
-from opencopilot.service.entities import ApiResponse
+from opencopilot.service.chat.entities import ConversationsRequest
 
 TAG = "Conversation"
 router = APIRouter()
@@ -89,10 +84,17 @@ class ConversationInput(BaseModel):
     summary="List conversations.",
     tags=[TAG],
 )
-async def handle_get_conversation_history(
-    email: Optional[str] = Header(default=None),
-):   
-    return None
+async def handle_get_conversations(
+    user_id: str = Depends(validate_api_key_use_case.execute),
+):
+    users_repository = UsersRepositoryLocal()
+    response = chat_conversations_service.execute(
+        request=ConversationsRequest(
+            user_id=user_id
+        ),
+        users_repository=users_repository
+    )
+    return response
 
 
 @router.post(
@@ -101,7 +103,6 @@ async def handle_get_conversation_history(
     tags=[TAG],
 )
 async def handle_conversation(
-    email: Optional[str] = Header(default=None),
     conversation_id: str = Path(
         ...,
         description=CONVERSATION_ID_DESCRIPTION,
@@ -115,17 +116,19 @@ async def handle_conversation(
         chat_id=conversation_id,
         message=payload.message,
         response_message_id=payload.response_message_id,
-        email=user_id or email,
+        email=user_id,
     )
 
     history_repository = ConversationHistoryRepositoryLocal()
     logs_repository = ConversationLogsRepositoryLocal()
+    users_repository = UsersRepositoryLocal()
 
     response: ChatResponse = await chat_service.execute(
         request,
         document_store.get_document_store(),
         history_repository,
         logs_repository,
+        users_repository
     )
     return routing_utils.to_json_response(
         {"copilot_message": response.message, "sources": response.sources}
@@ -139,7 +142,6 @@ async def handle_conversation(
     tags=[TAG],
 )
 async def handle_conversation_streaming(
-    email: Optional[str] = Header(default=None),
     conversation_id: str = Path(..., description=CONVERSATION_ID_DESCRIPTION),
     payload: ConversationInput = Body(
         ..., description="Input and parameters for the conversation."
@@ -150,11 +152,12 @@ async def handle_conversation_streaming(
         chat_id=conversation_id,
         message=payload.message,
         response_message_id=payload.response_message_id,
-        email=user_id or email,
+        email=user_id,
     )
 
     history_repository = ConversationHistoryRepositoryLocal()
     logs_repository = ConversationLogsRepositoryLocal()
+    users_repository = UsersRepositoryLocal()
 
     headers = {
         "X-Content-Type-Options": "nosniff",
@@ -166,6 +169,7 @@ async def handle_conversation_streaming(
             document_store.get_document_store(),
             history_repository,
             logs_repository,
+            users_repository
         ),
         headers=headers,
         media_type="text/event-stream",
@@ -179,6 +183,7 @@ async def handle_conversation_streaming(
 )
 async def handle_get_conversation_history(
     conversation_id: str = Path(..., description="The ID of the conversation."),
+    user_id: str = Depends(validate_api_key_use_case.execute),
 ):
     request = ChatHistoryRequest(
         chat_id=conversation_id,
@@ -199,6 +204,19 @@ async def handle_get_conversation_history(
     tags=[TAG],
 )
 async def handle_delete_conversation_history(
+    user_id: str = Depends(validate_api_key_use_case.execute),
     conversation_id: str = Path(..., description="The ID of the conversation."),
 ):
-    pass
+    users_repository = UsersRepositoryLocal()
+    history_repository = ConversationHistoryRepositoryLocal()
+    logs_repository = ConversationLogsRepositoryLocal()
+    response = chat_delete_service.execute(
+        request=ChatDeleteRequest(
+            conversation_id=conversation_id,
+            user_id=user_id,
+        ),
+        users_repository=users_repository,
+        history_repository=history_repository,
+        logs_repository=logs_repository
+    )
+    return response

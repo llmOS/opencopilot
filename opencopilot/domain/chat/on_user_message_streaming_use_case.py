@@ -21,6 +21,7 @@ from opencopilot.repository.conversation_logs_repository import (
     ConversationLogsRepositoryLocal,
 )
 from opencopilot.repository.documents.document_store import DocumentStore
+from opencopilot.repository.users_repository import UsersRepositoryLocal
 from opencopilot.utils.callbacks.callback_handler import (
     CustomAsyncIteratorCallbackHandler,
 )
@@ -33,6 +34,7 @@ async def execute(
     document_store: DocumentStore,
     history_repository: ConversationHistoryRepositoryLocal,
     logs_repository: ConversationLogsRepositoryLocal,
+    users_repository: UsersRepositoryLocal
 ) -> AsyncGenerator[StreamingChunk, None]:
     system_message = get_system_message()
 
@@ -91,6 +93,10 @@ async def execute(
             response_timestamp,
             domain_input.chat_id,
             domain_input.response_message_id,
+        )
+        users_repository.add_conversation(
+            conversation_id=domain_input.chat_id,
+            user_id=domain_input.email
         )
 
 

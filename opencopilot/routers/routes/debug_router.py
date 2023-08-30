@@ -1,7 +1,8 @@
 from fastapi import APIRouter
-from fastapi import Body
+from fastapi import Depends
 from fastapi import Path
 
+from opencopilot.authorization import validate_api_key_use_case
 from opencopilot.logger import api_logger
 from opencopilot.repository.conversation_history_repository import (
     ConversationHistoryRepositoryLocal,
@@ -10,10 +11,7 @@ from opencopilot.repository.conversation_logs_repository import (
     ConversationLogsRepositoryLocal,
 )
 from opencopilot.service.debug import message_debug_service
-from opencopilot.service.debug.entities import EvaluationInput
-from opencopilot.service.debug.entities import EvaluationResponse
 from opencopilot.service.debug.entities import GetMessageDebugResponse
-from opencopilot.service.evaluate import evaluation_service
 
 TAG = "Conversation"
 router = APIRouter()
@@ -32,6 +30,7 @@ logger = api_logger.get()
 async def get_copilots(
     conversation_id: str = Path(..., description="The ID of the conversation."),
     message_id: str = Path(..., description="The ID of the response message."),
+    user_id: str = Depends(validate_api_key_use_case.execute),
 ):
     history_repository = ConversationHistoryRepositoryLocal()
     logs_repository = ConversationLogsRepositoryLocal()

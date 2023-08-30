@@ -34,6 +34,7 @@ async def test_success():
         MagicMock(),
         MagicMock(),
         MagicMock(),
+        MagicMock()
     )
     assert response == ChatResponse(
         response="OK",

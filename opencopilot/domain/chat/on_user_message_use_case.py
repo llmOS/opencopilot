@@ -13,6 +13,7 @@ from opencopilot.repository.conversation_logs_repository import (
     ConversationLogsRepositoryLocal,
 )
 from opencopilot.repository.documents.document_store import DocumentStore
+from opencopilot.repository.users_repository import UsersRepositoryLocal
 
 logger = api_logger.get()
 
@@ -22,6 +23,7 @@ async def execute(
     document_store: DocumentStore,
     history_repository: ConversationHistoryRepositoryLocal,
     logs_repository: ConversationLogsRepositoryLocal,
+    users_repository: UsersRepositoryLocal
 ) -> MessageModel:
     system_message = get_system_message()
     context = []
@@ -47,6 +49,10 @@ async def execute(
         response_timestamp,
         domain_input.chat_id,
         domain_input.response_message_id,
+    )
+    users_repository.add_conversation(
+        conversation_id=domain_input.chat_id,
+        user_id=domain_input.email
     )
     sources = [document.metadata.get("source") for document in context]
 

@@ -1,4 +1,5 @@
 import json
+import os.path
 from typing import Dict
 from typing import List
 from typing import Optional
@@ -6,7 +7,6 @@ from uuid import UUID
 
 from opencopilot import settings
 from opencopilot.logger import api_logger
-from opencopilot.domain.chat.entities import ChatFeedbackInput
 
 DEFAULT_CONVERSATIONS_DIR = "logs/conversations"
 
@@ -30,7 +30,7 @@ class ConversationHistoryRepositoryLocal:
                 history = json.load(f)
             if not count or len(history) <= count:
                 return self._to_string(history)
-            return self._to_string(history[count * -1 :])
+            return self._to_string(history[count * -1:])
         except:
             logger.debug(f"Cannot load conversation history, id: {str(chat_id)}")
         return ""
@@ -72,18 +72,19 @@ class ConversationHistoryRepositoryLocal:
         )
         self._write_file(chat_id, history)
 
-    def add_feedback(self, chat_feedback: ChatFeedbackInput) -> None:
-        history = self.get_history(chat_feedback.conversation_id)
-        history[-1]["user_feedback"] = {
-            "correctness": chat_feedback.correctness,
-            "helpfulness": chat_feedback.helpfulness,
-            "easy_to_understand": chat_feedback.easy_to_understand,
-            "free_form_feedback": chat_feedback.free_form_feedback,
-        }
-        self._write_file(chat_feedback.conversation_id, history)
+    def remove_conversation(
+        self,
+        conversation_id: UUID
+    ) -> None:
+        file_path = self._get_file_path(conversation_id)
+        if os.path.exists(file_path):
+            try:
+                os.remove(file_path)
+            except:
+                pass
 
-    def _get_file_path(self, chat_id: UUID):
-        return f"{self.conversations_dir}/{str(chat_id)}.json"
+    def _get_file_path(self, conversation_id: UUID):
+        return f"{self.conversations_dir}/{str(conversation_id)}.json"
 
     def _write_file(self, chat_id: UUID, data):
         try:

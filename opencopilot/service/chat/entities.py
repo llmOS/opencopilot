@@ -1,4 +1,6 @@
-from typing import Optional, List
+from typing import List
+from typing import Optional
+from uuid import UUID
 
 from pydantic import BaseModel
 from pydantic import Field
@@ -6,10 +8,19 @@ from pydantic import Field
 from opencopilot.service.entities import ApiResponse
 
 
+class ConversationsRequest(BaseModel):
+    user_id: Optional[str] = None
+
+
+class ConversationsResponse(ApiResponse):
+    conversations: List[str]
+
+
 class ChatRequest(BaseModel):
     chat_id: str = Field(description="Chat id")
     message: str
     response_message_id: Optional[str] = None
+    # TODO: email to user_id
     email: Optional[str] = None
 
 
@@ -71,3 +82,12 @@ class ChatHistoryResponse(BaseModel):
 
 class ChatContextRequest(BaseModel):
     context: str = Field(description="Additional context relevant to conversation")
+
+
+class ChatDeleteRequest(BaseModel):
+    conversation_id: str = Field(description="Chat id")
+    user_id: Optional[str] = None
+
+
+class ChatDeleteResponse(ApiResponse):
+    pass

@@ -2,8 +2,8 @@ import json
 import os
 from uuid import UUID
 
-from opencopilot.domain.chat.entities import ChatFeedbackInput
-from opencopilot.repository.conversation_history_repository import ConversationHistoryRepositoryLocal
+from opencopilot.repository.conversation_history_repository import \
+    ConversationHistoryRepositoryLocal
 
 CONVERSATIONS_DIR = "tests/assets/conversations"
 CHAT_ID = UUID("79f88a74-7a67-4336-b601-4cfbcaed55ef")
@@ -94,25 +94,12 @@ def test_save_history():
     assert result == expected
 
 
-def test_add_feedback():
-    repository = ConversationHistoryRepositoryLocal(CONVERSATIONS_DIR)
-    repository.add_feedback(
-        chat_feedback=ChatFeedbackInput(
-            conversation_id=CHAT_ID,
-            correctness=1,
-            helpfulness=2,
-            easy_to_understand=3,
-            free_form_feedback="mock free form"
-        )
-    )
+def test_remove_conversation():
+    repository = ConversationHistoryRepositoryLocal(
+        CONVERSATIONS_DIR,
+        question_key="MockQues",
+        response_key="MockRes")
+    repository.remove_conversation(CHAT_ID)
     result = repository.get_history(CHAT_ID)
-    expected = [
-        {"prompt": "Prompt", "response": "Response"},
-        {"prompt": "Prompt2", "response": "Response2", "user_feedback": {
-            "correctness": 1,
-            "helpfulness": 2,
-            "easy_to_understand": 3,
-            "free_form_feedback": "mock free form"
-        }}
-    ]
-    assert result == expected
+    print(result)
+    assert result == []

@@ -1,6 +1,18 @@
 from dataclasses import dataclass
-from typing import List, Optional, Dict
+from typing import Dict
+from typing import List
+from typing import Optional
 from uuid import UUID
+
+
+@dataclass(frozen=True)
+class ChatConversationsInput:
+    user_id: Optional[str] = None
+
+
+@dataclass(frozen=True)
+class ChatConversationsOutput:
+    conversations: List[str]
 
 
 @dataclass(frozen=True)
@@ -15,6 +27,7 @@ class UserMessageInput:
     chat_id: UUID
     message: str
     response_message_id: str
+    # TODO: rename to user_id
     email: str = None
 
 
@@ -76,4 +89,15 @@ class ChatContextInput:
 
 @dataclass(frozen=True)
 class ChatContextOutput:
+    response: str
+
+
+@dataclass(frozen=True)
+class ChatDeleteInput:
+    conversation_id: UUID
+    user_id: Optional[str] = None
+
+
+@dataclass(frozen=True)
+class ChatDeleteOutput:
     response: str
