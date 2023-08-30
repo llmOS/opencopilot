@@ -20,7 +20,7 @@ def validate_system_prompt(file_path: str):
                 )
     else:
         raise PromptError(
-            f"'{file_path}' is not a file path. Please make sure your prompt file path points to a file that exists."
+            f"Prompt file '{file_path}' does not exist. Please make sure your prompt file path points to a file that exists."
         )
 
 
