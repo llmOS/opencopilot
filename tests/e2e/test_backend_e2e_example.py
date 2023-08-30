@@ -19,7 +19,7 @@ def _chat_conversation(message: str, expected: str):
     url = f"{base_url}/v0/conversation/{conversation_id}"
     print(f"\nresult from {url}\n  {result}")
     print("  json:", result.json(), "\n")
-    text = result.json()["generated_text"]
+    text = result.json()["copilot_message"]
     assert expected in text
 
 
