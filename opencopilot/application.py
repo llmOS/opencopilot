@@ -10,6 +10,7 @@ from langchain.schema import Document
 from .utils.validators import validate_openai_api_key
 from . import settings
 from .settings import Settings
+from .domain.errors import PromptError
 
 
 class OpenCopilot:
@@ -42,6 +43,22 @@ class OpenCopilot:
         if not openai_api_key:
             openai_api_key = os.getenv("OPENAI_API_KEY")
 
+        if prompt and prompt_file:
+            raise PromptError(
+                "You can only pass either a prompt or a prompt_file argument, not both."
+            )
+        if not prompt and not prompt_file:
+            raise PromptError(
+                "You need to pass either a prompt or a prompt_file argument."
+            )
+        
+        if prompt_file and not os.path.isfile(prompt_file):
+            raise PromptError(
+                f"Prompt file '{prompt_file}' does not exist. Please make sure your prompt file path points to a file that exists."
+            )
+        
+        prompt = prompt or open(prompt_file, "r").read()
+
         validate_openai_api_key(openai_api_key)
 
         settings.set(
@@ -70,7 +87,7 @@ class OpenCopilot:
             )
         )
 
-        self.add_prompt(prompt_file)
+        self.add_prompt(prompt)
         self.host = host
         self.api_port = api_port
         self.data_loaders = []
@@ -114,8 +131,8 @@ class OpenCopilot:
         uvicorn.run(app, host=self.host, port=self.api_port)
 
     @staticmethod
-    def add_prompt(prompt_file: str):
-        settings.init_prompt_file_location(prompt_file)
+    def add_prompt(prompt: str):
+        settings.init_prompt(prompt)
 
     def data_loader(self, function: Callable[[], Document]):
         self.data_loaders.append(function)

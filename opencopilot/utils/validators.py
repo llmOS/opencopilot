@@ -1,16 +1,6 @@
 import os
 from opencopilot.domain.errors import PromptError, APIKeyError
 
-def validate_system_prompt_file(file_path: str):
-    if not os.path.isfile(file_path):
-        raise PromptError(
-            f"Prompt file '{file_path}' does not exist. Please make sure your prompt file path points to a file that exists."
-        )
-
-    with open(file_path, "r") as f:
-        prompt = f.read()
-        validate_system_prompt(prompt)
-
 
 def validate_system_prompt(prompt: str):
     if not "{question}" in prompt:
