@@ -125,6 +125,5 @@ def root():
 def ui(request: Request):
     return templates.TemplateResponse("index.html", {
         "request": request,
-        "host": settings.get().HOST,
-        "port": settings.get().API_PORT,
+        "api_base_url": settings.get().API_BASE_URL,
     })
