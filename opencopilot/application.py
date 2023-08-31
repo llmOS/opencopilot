@@ -91,11 +91,16 @@ class OpenCopilot:
             self.document_store = EmptyDocumentStore()
         document_store.init_document_store(self.document_store)
 
+        text_splitter = self.document_store.get_text_splitter()
         for data_loader in self.data_loaders:
-            self.documents.extend(data_loader())
+            documents = data_loader()
+            for document in documents:
+                for chunk in text_splitter.split_text(document.page_content):
+                    self.documents.append(
+                        Document(page_content=chunk, metadata=document.metadata)
+                    )
 
         for data_dir in self.local_files_dirs:
-            text_splitter = self.document_store.get_text_splitter()
             self.documents.extend(
                 document_loader.execute(data_dir, False, text_splitter)
             )
