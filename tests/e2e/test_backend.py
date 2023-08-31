@@ -1,15 +1,13 @@
 import uuid
+from typing import Dict
 
 import requests
 
 from opencopilot.scripts import chat
+from opencopilot.scripts import get_jwt_token
 
 conversation_id = uuid.uuid4()
 base_url = f"http://0.0.0.0:3000"
-HEADERS = {
-    "accept": "application/json",
-    "Content-Type": "application/json"
-}
 
 
 def _index():
@@ -41,62 +39,63 @@ def _chat_conversation_stream():
     assert result
 
 
-def _chat_history():
+def _chat_history(headers: Dict):
     url = f"{base_url}/v0/conversations/{conversation_id}"
-    result = requests.get(url, headers=HEADERS)
+    result = requests.get(url, headers=headers)
     print(f"\nresult from GET {url}\n  {result}")
     print("  json:", result.json(), "\n")
     assert result.json()["response"] == "OK"
     assert len(result.json()["messages"]) > 1
 
 
-def _conversations():
+def _conversations(headers: Dict):
     url = f"{base_url}/v0/conversations/"
-    headers = {
-        "accept": "application/json",
-        "Content-Type": "application/json",
-        "user-id": "test@tester.com"
-    }
     result = requests.get(url, headers=headers)
     print(f"\nresult from GET {url}\n  {result}")
     print("  json:", result.json(), "\n")
     assert result.json()["response"] == "OK"
 
 
-def _conversation():
-    url = f"{base_url}/v0/conversations/{conversation_id}"
+def _conversation(headers: Dict):
     headers = {
         "accept": "application/json",
-        "Content-Type": "application/json",
-        "user-id": "test@tester.com"
+        "Content-Type": "application/json"
     }
+    url = f"{base_url}/v0/conversations/{conversation_id}"
     result = requests.get(url, headers=headers)
     print(f"\nresult from GET {url}\n  {result}")
     print("  json:", result.json(), "\n")
     assert result.json()["response"] == "OK"
 
 
-def _delete_conversations():
+def _delete_conversations(headers: Dict):
     url = f"{base_url}/v0/conversations/{conversation_id}"
-    headers = {
-        "accept": "application/json",
-        "Content-Type": "application/json",
-        "user-id": "test@tester.com"
-    }
     result = requests.delete(url, headers=headers)
     print(f"\nresult from DELETE {url}\n  {result}")
     print("  json:", result.json(), "\n")
     assert result.json()["response"] == "OK"
 
 
+def _get_headers():
+    headers = {
+        "accept": "application/json",
+        "Content-Type": "application/json"
+    }
+    jwt_token = get_jwt_token.execute(base_url)
+    if jwt_token:
+        headers["Authorization"] = "Bearer " + jwt_token
+    return headers
+
+
 def main():
+    headers = _get_headers()
     _index()
     _chat_conversation()
     _chat_conversation_stream()
-    _chat_history()
-    _conversations()
-    _conversation()
-    _delete_conversations()
+    _chat_history(headers)
+    _conversations(headers)
+    _conversation(headers)
+    _delete_conversations(headers)
 
 
 if __name__ == '__main__':

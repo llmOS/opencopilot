@@ -1,11 +1,9 @@
 import json
-import os
 import uuid
-from pathlib import Path
-from typing import Optional
 
 import requests
-from dotenv import load_dotenv
+
+from opencopilot.scripts import get_jwt_token
 
 headers = {"accept": "application/json", "Content-Type": "application/json"}
 DEFAULT_MESSAGE = "Hi"
@@ -39,7 +37,7 @@ def conversation(
     conversation_id: uuid.UUID,
     message: str = DEFAULT_MESSAGE,
 ):
-    jwt_token = _get_jwt_token(base_url)
+    jwt_token = get_jwt_token.execute(base_url)
     if jwt_token:
         headers["Authorization"] = "Bearer " + jwt_token
     url = f"{base_url}/v0/conversations/{conversation_id}"
@@ -53,7 +51,7 @@ def conversation_stream(
     message: str = DEFAULT_MESSAGE,
     stream: bool = False,
 ):
-    jwt_token = _get_jwt_token(base_url)
+    jwt_token = get_jwt_token.execute(base_url)
     url = f"{base_url}/v0/conversations/{conversation_id}/stream"
     output = ""
     for text in _get_stream(url, message=message, jwt_token=jwt_token):
@@ -62,25 +60,6 @@ def conversation_stream(
         if stream:
             print(text, end="", flush=True)
     return output
-
-
-def _get_jwt_token(base_url: str) -> Optional[str]:
-    env_path = Path(".") / ".env"
-    load_dotenv(dotenv_path=env_path)
-    jwt_client_id = os.getenv("JWT_CLIENT_ID", "")
-    jwt_client_secret = os.getenv("JWT_CLIENT_SECRET", "")
-    url = f"{base_url}/v0/token"
-    data = {
-        "client_id": jwt_client_id,
-        "client_secret": jwt_client_secret,
-        "user_id": "test@local.host",
-    }
-    try:
-        token_result = requests.post(url, headers=headers, json=data)
-        result_json = token_result.json()
-        return result_json["token"]
-    except:
-        return None
 
 
 if __name__ == "__main__":

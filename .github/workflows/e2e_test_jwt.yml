@@ -1,0 +1,42 @@
+name: E2E Test
+
+on:
+  push:
+    branches: [ main, api_redesign ]
+
+jobs:
+  e2e-test:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 5
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: "Set up Python 3.10"
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.10'
+      - name: "Install requirements"
+        run: |
+          pip install -r requirements.txt
+      - name: "Setup env"
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          HELICONE_API_KEY: ${{ secrets.HELICONE_API_KEY }}
+        run: |
+          export OPENAI_API_KEY="$OPENAI_API_KEY"
+          export HELICONE_API_KEY="$HELICONE_API_KEY"
+          echo 'AUTH_TYPE="jwt"' >> .env
+          echo 'JWT_CLIENT_ID="client_id"' >> .env
+          echo 'JWT_CLIENT_SECRET="client_secret"' >> .env
+      - name: "Start Copilot"
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          PYTHONPATH=. nohup python tests/assets/e2e_minimal_example.py &> logs.log &
+          sleep 30
+          cat logs.log
+      - name: "Test Backend"
+        run: |
+          PYTHONPATH=. python tests/e2e/test_backend.py
+          
