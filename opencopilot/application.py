@@ -7,7 +7,10 @@ from typing import Optional
 import uvicorn
 from langchain.schema import Document
 
-from .utils.validators import validate_openai_api_key, validate_prompt_and_prompt_file_config
+from .utils.validators import (
+    validate_openai_api_key,
+    validate_prompt_and_prompt_file_config,
+)
 from . import settings
 from .settings import Settings
 
@@ -45,9 +48,7 @@ class OpenCopilot:
         validate_openai_api_key(openai_api_key)
         validate_prompt_and_prompt_file_config(prompt, prompt_file)
 
-        
         prompt = prompt or open(prompt_file, "r").read()
-
 
         settings.set(
             Settings(
