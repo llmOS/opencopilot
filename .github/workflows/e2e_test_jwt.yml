@@ -1,11 +1,11 @@
-name: E2E Test
+name: E2E Test JWT
 
 on:
   push:
     branches: [ main, api_redesign ]
 
 jobs:
-  e2e-test:
+  e2e-test-jwt:
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 5

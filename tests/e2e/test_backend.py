@@ -57,10 +57,6 @@ def _conversations(headers: Dict):
 
 
 def _conversation(headers: Dict):
-    headers = {
-        "accept": "application/json",
-        "Content-Type": "application/json"
-    }
     url = f"{base_url}/v0/conversations/{conversation_id}"
     result = requests.get(url, headers=headers)
     print(f"\nresult from GET {url}\n  {result}")
