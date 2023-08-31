@@ -25,7 +25,7 @@ app = FastAPI()
 app.include_router(main_router.router, prefix="/v0")
 
 html_template_path = join(dirname(opencopilot.__file__), "html")
-# TODO Taivo: remove once sdk has been released or allow to load local files if dev mode
+# TODO Taivo & Kristjan: remove once sdk has been released
 app.mount(
     "/js",
     StaticFiles(directory=os.getenv("JS_SDK_DIST_PATH", html_template_path)),
