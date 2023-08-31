@@ -20,6 +20,7 @@ class Settings:
     LOG_FILE_PATH: str
 
     WEAVIATE_URL: str
+    WEAVIATE_API_KEY: Optional[str]
     WEAVIATE_READ_TIMEOUT: int
 
     MODEL: Literal["gpt-3.5-turbo-16k", "gpt-4"]

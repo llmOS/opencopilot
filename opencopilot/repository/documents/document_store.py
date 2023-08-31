@@ -51,6 +51,11 @@ class WeaviateDocumentStore(DocumentStore):
     def _get_weaviate_client(self):
         return weaviate.Client(
             url=settings.get().WEAVIATE_URL,
+            auth_client_secret=weaviate.AuthApiKey(
+                api_key=settings.get().WEAVIATE_API_KEY
+            )
+            if settings.get().WEAVIATE_API_KEY
+            else None,
             timeout_config=(10, settings.get().WEAVIATE_READ_TIMEOUT),
         )
 
