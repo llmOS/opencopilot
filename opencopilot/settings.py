@@ -4,7 +4,6 @@ from dataclasses import dataclass
 from typing import Literal
 from typing import Optional
 from omegaconf import OmegaConf
-from opencopilot.utils.validators import validate_system_prompt
 
 
 @dataclass(frozen=False)
@@ -109,7 +108,6 @@ def init_custom_loaders(config_file: str) -> None:
 def init_prompt(prompt: str):
     settings = get()
     if settings:
-        validate_system_prompt(prompt)
         settings.PROMPT = prompt
 
 

@@ -10,6 +10,7 @@ from langchain.schema import Document
 from .utils.validators import (
     validate_openai_api_key,
     validate_prompt_and_prompt_file_config,
+    validate_system_prompt,
 )
 from . import settings
 from .settings import Settings
@@ -49,6 +50,7 @@ class OpenCopilot:
         validate_prompt_and_prompt_file_config(prompt, prompt_file)
 
         prompt = prompt or open(prompt_file, "r").read()
+        validate_system_prompt(prompt)
 
         settings.set(
             Settings(
