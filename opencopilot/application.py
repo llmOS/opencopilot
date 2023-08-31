@@ -15,7 +15,8 @@ from .settings import Settings
 class OpenCopilot:
     def __init__(
         self,
-        prompt_file: str,
+        prompt: Optional[str] = None,
+        prompt_file: Optional[str] = None,
         openai_api_key: Optional[str] = None,
         copilot_name: str = "default",
         host: str = "127.0.0.1",

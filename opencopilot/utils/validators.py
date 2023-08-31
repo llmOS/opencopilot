@@ -1,27 +1,31 @@
 import os
 from opencopilot.domain.errors import PromptError, APIKeyError
 
-
-def validate_system_prompt(file_path: str):
-    if os.path.isfile(file_path):
-        with open(file_path, "r") as f:
-            prompt = f.read()
-            if not "{question}" in prompt:
-                raise PromptError(
-                    f"Template variable '{{question}}' is missing in prompt file '{file_path}'. Please make sure your prompt file includes all required template variables."
-                )
-            if not "{history}" in prompt:
-                raise PromptError(
-                    f"Template variable '{{history}}' is missing in prompt file '{file_path}'. Please make sure your prompt file includes all required template variables."
-                )
-            if not "{context}" in prompt:
-                raise PromptError(
-                    f"Template variable '{{context}}' is missing in prompt file '{file_path}'. Please make sure your prompt file includes all required template variables."
-                )
-    else:
+def validate_system_prompt_file(file_path: str):
+    if not os.path.isfile(file_path):
         raise PromptError(
             f"Prompt file '{file_path}' does not exist. Please make sure your prompt file path points to a file that exists."
         )
+
+    with open(file_path, "r") as f:
+        prompt = f.read()
+        validate_system_prompt(prompt)
+
+
+def validate_system_prompt(prompt: str):
+    if not "{question}" in prompt:
+        raise PromptError(
+            f"Template variable '{{question}}' is missing in prompt. Please make sure your prompt file includes all required template variables."
+        )
+    if not "{history}" in prompt:
+        raise PromptError(
+            f"Template variable '{{history}}' is missing in prompt. Please make sure your prompt file includes all required template variables."
+        )
+    if not "{context}" in prompt:
+        raise PromptError(
+            f"Template variable '{{context}}' is missing in prompt. Please make sure your prompt file includes all required template variables."
+        )
+        
 
 
 def validate_openai_api_key(key: str):
