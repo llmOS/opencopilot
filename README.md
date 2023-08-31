@@ -82,22 +82,8 @@ If you have access to GPT-4, change `llm_model_name` to `gpt-4`.
 ```python
 from opencopilot import OpenCopilot
 
-copilot = OpenCopilot(
-    openai_api_key="your-openai-api-key",
-    llm_model_name="gpt-3.5-turbo-16k",
-    prompt_file="my_prompt.txt"
-    )
-
-# Run the copilot
-copilot()
-```
-See our docs on [Configuration](https://docs.opencopilot.dev/integrate/configuration) if you'd like to learn more about other configuration options.
-
-### 3. Create a prompt template
-In the same directory create a text file, for example `my_prompt.txt`, add the following:
-
-```txt
-Your are a Parrot Copilot. Your purpose is to repeat what the user says, but in a different wording.
+PROMPT = """
+You are a Parrot Copilot. Your purpose is to repeat what the user says, but in a different wording.
 
 =========
 {context}
@@ -106,11 +92,23 @@ Your are a Parrot Copilot. Your purpose is to repeat what the user says, but in 
 {history}
 User: {question}
 Parrot Copilot answer in Markdown:
+"""
+
+copilot = OpenCopilot(
+    openai_api_key="your-openai-api-key",
+    llm_model_name="gpt-3.5-turbo-16k",
+    prompt=PROMPT
+    )
+
+# Run the copilot
+copilot()
 ```
 
-The template variables will be filled at runtime; see our docs on [Prompting](https://docs.opencopilot.dev/improve/prompting) if you'd like to learn more.
+In the prompt, the template variables will be filled at runtime; see our docs on [Prompting](https://docs.opencopilot.dev/improve/prompting) if you'd like to learn more.
 
-### 4. Run the Copilot
+See our docs on [Configuration](https://docs.opencopilot.dev/integrate/configuration) if you'd like to learn more about other configuration options.
+
+### 3. Run the Copilot
 
 ```bash
 python copilot.py
@@ -118,7 +116,7 @@ python copilot.py
 
 Your minimal copilot is now running as an API service, at `localhost:3000` by default. To see the full API documentation, go to [interactive Swagger docs](http://localhost:3000/docs#/Chat/handle_conversation_v0_conversation__conversation_id__post).
 
-### 5. Chat with the Copilot
+### 4. Chat with the Copilot
 You can quickly test out and chat with your copilot using the command-line interface by running:
 
 ```bash

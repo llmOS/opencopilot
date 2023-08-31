@@ -7,7 +7,11 @@ from typing import Optional
 import uvicorn
 from langchain.schema import Document
 
-from .utils.validators import validate_openai_api_key
+from .utils.validators import (
+    validate_openai_api_key,
+    validate_prompt_and_prompt_file_config,
+    validate_system_prompt,
+)
 from . import settings
 from .settings import Settings
 
@@ -15,7 +19,8 @@ from .settings import Settings
 class OpenCopilot:
     def __init__(
         self,
-        prompt_file: str,
+        prompt: Optional[str] = None,
+        prompt_file: Optional[str] = None,
         openai_api_key: Optional[str] = None,
         copilot_name: str = "default",
         host: str = "127.0.0.1",
@@ -42,6 +47,10 @@ class OpenCopilot:
             openai_api_key = os.getenv("OPENAI_API_KEY")
 
         validate_openai_api_key(openai_api_key)
+        validate_prompt_and_prompt_file_config(prompt, prompt_file)
+
+        prompt = prompt or open(prompt_file, "r").read()
+        validate_system_prompt(prompt)
 
         settings.set(
             Settings(
@@ -69,7 +78,7 @@ class OpenCopilot:
             )
         )
 
-        self.add_prompt(prompt_file)
+        self.add_prompt(prompt)
         self.host = host
         self.api_port = api_port
         self.data_loaders = []
@@ -113,8 +122,8 @@ class OpenCopilot:
         uvicorn.run(app, host=self.host, port=self.api_port)
 
     @staticmethod
-    def add_prompt(prompt_file: str):
-        settings.init_prompt_file_location(prompt_file)
+    def add_prompt(prompt: str):
+        settings.init_prompt(prompt)
 
     def data_loader(self, function: Callable[[], Document]):
         self.data_loaders.append(function)

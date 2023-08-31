@@ -4,7 +4,6 @@ from dataclasses import dataclass
 from typing import Literal
 from typing import Optional
 from omegaconf import OmegaConf
-from opencopilot.utils.validators import validate_system_prompt
 
 
 @dataclass(frozen=False)
@@ -46,7 +45,7 @@ class Settings:
     MAX_CONTEXT_DOCUMENTS_COUNT: int = 4
     MAX_TOKEN_COUNT: int = 2048
 
-    PROMPT_FILE: Optional[str] = None
+    PROMPT: Optional[str] = None
 
     HELICONE_BASE_URL = "https://oai.hconeai.com/v1"
 
@@ -106,11 +105,10 @@ def init_custom_loaders(config_file: str) -> None:
             pass
 
 
-def init_prompt_file_location(file_path: str):
+def init_prompt(prompt: str):
     settings = get()
     if settings:
-        validate_system_prompt(file_path)
-        settings.PROMPT_FILE = file_path
+        settings.PROMPT = prompt
 
 
 _settings: Optional[Settings] = None
