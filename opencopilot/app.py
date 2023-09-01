@@ -1,17 +1,17 @@
 import os
-from os.path import dirname, join
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
+from fastapi import Request
 from fastapi.openapi.utils import get_openapi
 from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 from starlette.middleware.cors import CORSMiddleware
 
 import opencopilot
 from opencopilot import settings
-from opencopilot.routers import main_router, routing_utils
+from opencopilot.routers import main_router
+from opencopilot.routers import routing_utils
 from opencopilot.service.exception_handlers.exception_handlers import (
     custom_exception_handler,
 )
@@ -24,16 +24,8 @@ app = FastAPI()
 
 app.include_router(main_router.router, prefix="/v0")
 
-html_template_path = join(dirname(opencopilot.__file__), "html")
-# TODO Taivo & Kristjan: remove once sdk has been released
-app.mount(
-    "/js",
-    StaticFiles(directory=os.getenv("JS_SDK_DIST_PATH", html_template_path)),
-    name="js",
-)
-
+html_template_path = os.path.join(os.path.dirname(opencopilot.__file__), "html")
 templates = Jinja2Templates(directory=html_template_path)
-
 
 API_TITLE = "API"
 API_DESCRIPTION = "API"
