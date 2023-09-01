@@ -10,12 +10,16 @@ from langchain.document_loaders import TextLoader
 from langchain.document_loaders import UnstructuredExcelLoader
 from langchain.document_loaders import UnstructuredFileLoader
 from langchain.schema import Document
+from langchain.text_splitter import TextSplitter
 
 from opencopilot import settings
+from opencopilot.repository.documents import split_documents_use_case
 
 
 def execute(
-    data_dir: str, is_loading_deprecated=False, text_splitter=None
+        data_dir: str,
+        is_loading_deprecated: bool,
+        text_splitter: TextSplitter
 ) -> List[Document]:
     files = []
     if not data_dir or not os.path.isdir(data_dir):
@@ -36,7 +40,7 @@ def execute(
     for file_path in files:
         new_documents = []
         if (
-            file_size := _get_file_size(file_path)
+                file_size := _get_file_size(file_path)
         ) > settings.get().MAX_DOCUMENT_SIZE_MB:
             print(
                 f"Document {file_path} too big ({file_size} > {settings.get().MAX_DOCUMENT_SIZE_MB}), skipping."
@@ -68,14 +72,14 @@ def execute(
             loader = UnstructuredExcelLoader(file_path)
             new_documents = loader.load()
         elif file_path.endswith(".json") and os.path.basename(file_path).startswith(
-            "serialized_documents_"
+                "serialized_documents_"
         ):
             with open(file_path, "r") as f:
                 document_dicts = json.load(f)
             for document in document_dicts:
                 metadata = document["metadata"]
                 if settings.get().copilot_config and metadata.get(
-                    "source"
+                        "source"
                 ) in settings.get().copilot_config.data.get("ignore", []):
                     continue
                 if "deprecated" in metadata.get("source", ""):
@@ -95,12 +99,8 @@ def execute(
             except Exception as e:
                 print(f"Error loading {file_path}")
         if text_splitter:
-            document_chunks = []
-            for document in new_documents:
-                for chunk in text_splitter.split_text(document.page_content):
-                    document_chunks.append(
-                        Document(page_content=chunk, metadata=document.metadata)
-                    )
+            document_chunks = split_documents_use_case.execute(
+                text_splitter, new_documents)
             print(
                 f"Generated {len(document_chunks)} document chunks from {len(new_documents)} documents"
             )

@@ -1,12 +1,14 @@
 import os
 from datetime import timedelta
 from typing import Callable
+from typing import List
 from typing import Literal
 from typing import Optional
 
 import uvicorn
 from langchain.schema import Document
 
+from .repository.documents import split_documents_use_case
 from .utils.validators import (
     validate_openai_api_key,
     validate_prompt_and_prompt_file_config,
@@ -18,30 +20,30 @@ from .settings import Settings
 
 class OpenCopilot:
     def __init__(
-        self,
-        prompt: Optional[str] = None,
-        prompt_file: Optional[str] = None,
-        openai_api_key: Optional[str] = None,
-        copilot_name: str = "default",
-        host: str = "127.0.0.1",
-        api_base_url: str = "http://127.0.0.1/",
-        api_port: int = 3000,
-        environment: str = "local",
-        allowed_origins: str = "*",
-        application_name: str = "my-copilot",
-        log_file_path="./logs/logs.log",
-        weaviate_url: str = "http://localhost:8080/",
-        weaviate_read_timeout: int = 120,
-        llm_model_name: Literal["gpt-3.5-turbo-16k", "gpt-4"] = "gpt-4",
-        max_document_size_mb: int = 50,
-        slack_webhook: str = "",
-        auth_type: Optional[str] = None,
-        api_key: str = "",
-        jwt_client_id: str = "",
-        jwt_client_secret: str = "",
-        jwt_token_expiration_seconds: int = timedelta(days=1).total_seconds(),
-        helicone_api_key: str = "",
-        helicone_rate_limit_policy: str = "3;w=60;s=user",
+            self,
+            prompt: Optional[str] = None,
+            prompt_file: Optional[str] = None,
+            openai_api_key: Optional[str] = None,
+            copilot_name: str = "default",
+            host: str = "127.0.0.1",
+            api_base_url: str = "http://127.0.0.1/",
+            api_port: int = 3000,
+            environment: str = "local",
+            allowed_origins: str = "*",
+            application_name: str = "my-copilot",
+            log_file_path="./logs/logs.log",
+            weaviate_url: str = "http://localhost:8080/",
+            weaviate_read_timeout: int = 120,
+            llm_model_name: Literal["gpt-3.5-turbo-16k", "gpt-4"] = "gpt-4",
+            max_document_size_mb: int = 50,
+            slack_webhook: str = "",
+            auth_type: Optional[str] = None,
+            api_key: str = "",
+            jwt_client_id: str = "",
+            jwt_client_secret: str = "",
+            jwt_token_expiration_seconds: int = timedelta(days=1).total_seconds(),
+            helicone_api_key: str = "",
+            helicone_rate_limit_policy: str = "3;w=60;s=user",
     ):
         if not openai_api_key:
             openai_api_key = os.getenv("OPENAI_API_KEY")
@@ -83,6 +85,7 @@ class OpenCopilot:
         self.api_port = api_port
         self.data_loaders = []
         self.local_files_dirs = []
+        self.data_urls = []
         self.local_file_paths = []
         self.documents = []
 
@@ -93,8 +96,12 @@ class OpenCopilot:
             WeaviateDocumentStore,
         )
         from opencopilot.repository.documents.document_store import EmptyDocumentStore
+        from .src.utils.loaders import urls_loader
 
-        if self.data_loaders or self.local_files_dirs or self.local_file_paths:
+        if (self.data_loaders
+                or self.local_files_dirs
+                or self.local_file_paths
+                or self.data_urls):
             self.document_store = WeaviateDocumentStore()
         else:
             self.document_store = EmptyDocumentStore()
@@ -103,15 +110,18 @@ class OpenCopilot:
         text_splitter = self.document_store.get_text_splitter()
         for data_loader in self.data_loaders:
             documents = data_loader()
-            for document in documents:
-                for chunk in text_splitter.split_text(document.page_content):
-                    self.documents.append(
-                        Document(page_content=chunk, metadata=document.metadata)
-                    )
+            document_chunks = split_documents_use_case.execute(
+                text_splitter, documents)
+            self.documents.extend(document_chunks)
 
         for data_dir in self.local_files_dirs:
             self.documents.extend(
                 document_loader.execute(data_dir, False, text_splitter)
+            )
+
+        if len(self.data_urls):
+            self.documents.extend(
+                urls_loader.execute(self.data_urls, text_splitter)
             )
 
         if self.documents:
@@ -130,6 +140,9 @@ class OpenCopilot:
 
     def add_local_files_dir(self, files_dir: str) -> None:
         self.local_files_dirs.append(files_dir)
+
+    def add_urls(self, urls: List[str]) -> None:
+        self.data_urls.extend(urls)
 
     # def add_local_file(self, file_path: str) -> None:
     #    self.local_file_paths.append(file_path)

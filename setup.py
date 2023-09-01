@@ -48,6 +48,7 @@ setup(
         'omegaconf',
         'openpyxl',
         'typer[all]',
+        'trafilatura',
     ],
     entry_points={
         'console_scripts': [
