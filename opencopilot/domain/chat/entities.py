@@ -68,31 +68,6 @@ class StreamingChunk:
 
 
 @dataclass(frozen=True)
-class ChatFeedbackInput:
-    conversation_id: UUID
-    correctness: int
-    helpfulness: int
-    easy_to_understand: int
-    free_form_feedback: Optional[str] = None
-
-
-@dataclass(frozen=True)
-class ChatFeedbackOutput:
-    response: str
-
-
-@dataclass(frozen=True)
-class ChatContextInput:
-    conversation_id: UUID
-    context: str
-
-
-@dataclass(frozen=True)
-class ChatContextOutput:
-    response: str
-
-
-@dataclass(frozen=True)
 class ChatDeleteInput:
     conversation_id: UUID
     user_id: Optional[str] = None

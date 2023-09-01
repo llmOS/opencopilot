@@ -87,5 +87,5 @@ class ConversationHistoryRepositoryLocal:
         try:
             with open(self._get_file_path(chat_id), "w") as f:
                 f.write(json.dumps(data, indent=4))
-        except Exception as e:
+        except Exception:
             logger.warning(f"Failed to save history for chat {str(chat_id)}")
