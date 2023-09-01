@@ -22,10 +22,6 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          cp template.env .env
-          sed -i "s/host.docker.internal/0.0.0.0/g" .env
-          sed -i "s/API_PORT=3000/API_PORT=5000/g" .env
-          sed -i "s/OPTIONAL-API-KEY-IF-MODEL-gpt-3.5-turbo-16k-OR-gpt-4/$OPENAI_API_KEY/g" .env
           pip install -r requirements.txt
       - name: "Backend Unit tests"
         run: |
