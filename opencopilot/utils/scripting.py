@@ -15,7 +15,6 @@ def set_default_settings(name: str = "script"):
             APPLICATION_NAME=name,
             LOG_FILE_PATH=f"./logs/{name}.log",
             WEAVIATE_URL="http://localhost:8080/",
-            WEAVIATE_API_KEY=None,
             WEAVIATE_READ_TIMEOUT=120,
             MODEL="gpt-4",
             OPENAI_API_KEY=os.getenv("OPENAI_API_KEY"),
