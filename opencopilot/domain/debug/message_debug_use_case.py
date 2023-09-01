@@ -11,6 +11,8 @@ from opencopilot.repository.conversation_history_repository import (
 from opencopilot.repository.conversation_logs_repository import (
     ConversationLogsRepositoryLocal,
 )
+from opencopilot.repository.users_repository import UsersRepositoryLocal
+from opencopilot.service.error_responses import ForbiddenAPIError
 
 
 def execute(
@@ -18,7 +20,13 @@ def execute(
     message_id: str,
     history_repository: ConversationHistoryRepositoryLocal,
     logs_repository: ConversationLogsRepositoryLocal,
+    users_repository: UsersRepositoryLocal,
+    user_id: Optional[str] = None,
 ) -> MessageDebugResult:
+    conversations = users_repository.get_conversations(user_id)
+    if str(conversation_id) not in conversations:
+        raise ForbiddenAPIError()
+
     history = history_repository.get_history(conversation_id)
     logs_history = logs_repository.get_logs_by_message(conversation_id, message_id)
     return MessageDebugResult(

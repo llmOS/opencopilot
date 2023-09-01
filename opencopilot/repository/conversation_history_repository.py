@@ -1,4 +1,5 @@
 import json
+import os.path
 from typing import Dict
 from typing import List
 from typing import Optional
@@ -6,7 +7,6 @@ from uuid import UUID
 
 from opencopilot import settings
 from opencopilot.logger import api_logger
-from opencopilot.domain.chat.entities import ChatFeedbackInput
 
 DEFAULT_CONVERSATIONS_DIR = "logs/conversations"
 
@@ -24,21 +24,23 @@ class ConversationHistoryRepositoryLocal:
         self.question_key = question_key or settings.get().PROMPT_QUESTION_KEY
         self.response_key = response_key or settings.get().PROMPT_ANSWER_KEY
 
-    def get_prompt_history(self, chat_id: UUID, count: Optional[int]) -> str:
+    def get_prompt_history(self, conversation_id: UUID, count: Optional[int]) -> str:
         try:
-            with open(self._get_file_path(chat_id), "r") as f:
+            with open(self._get_file_path(conversation_id), "r") as f:
                 history = json.load(f)
             if not count or len(history) <= count:
                 return self._to_string(history)
             return self._to_string(history[count * -1 :])
         except:
-            logger.debug(f"Cannot load conversation history, id: {str(chat_id)}")
+            logger.debug(
+                f"Cannot load conversation history, id: {str(conversation_id)}"
+            )
         return ""
 
-    def get_history(self, chat_id: UUID) -> List[Dict]:
+    def get_history(self, conversation_id: UUID) -> List[Dict]:
         history = []
         try:
-            with open(self._get_file_path(chat_id), "r") as f:
+            with open(self._get_file_path(conversation_id), "r") as f:
                 history = json.load(f)
         except:
             pass
@@ -57,10 +59,10 @@ class ConversationHistoryRepositoryLocal:
         result: str,
         prompt_timestamp: float,
         response_timestamp: float,
-        chat_id: UUID,
+        conversation_id: UUID,
         response_message_id: str,
     ) -> None:
-        history = self.get_history(chat_id)
+        history = self.get_history(conversation_id)
         history.append(
             {
                 "prompt": message,
@@ -70,24 +72,22 @@ class ConversationHistoryRepositoryLocal:
                 "response_message_id": response_message_id,
             }
         )
-        self._write_file(chat_id, history)
+        self._write_file(conversation_id, history)
 
-    def add_feedback(self, chat_feedback: ChatFeedbackInput) -> None:
-        history = self.get_history(chat_feedback.conversation_id)
-        history[-1]["user_feedback"] = {
-            "correctness": chat_feedback.correctness,
-            "helpfulness": chat_feedback.helpfulness,
-            "easy_to_understand": chat_feedback.easy_to_understand,
-            "free_form_feedback": chat_feedback.free_form_feedback,
-        }
-        self._write_file(chat_feedback.conversation_id, history)
+    def remove_conversation(self, conversation_id: UUID) -> None:
+        file_path = self._get_file_path(conversation_id)
+        if os.path.exists(file_path):
+            try:
+                os.remove(file_path)
+            except:
+                pass
 
-    def _get_file_path(self, chat_id: UUID):
-        return f"{self.conversations_dir}/{str(chat_id)}.json"
+    def _get_file_path(self, conversation_id: UUID):
+        return f"{self.conversations_dir}/{str(conversation_id)}.json"
 
-    def _write_file(self, chat_id: UUID, data):
+    def _write_file(self, conversation_id: UUID, data):
         try:
-            with open(self._get_file_path(chat_id), "w") as f:
+            with open(self._get_file_path(conversation_id), "w") as f:
                 f.write(json.dumps(data, indent=4))
-        except Exception as e:
-            logger.warning(f"Failed to save history for chat {str(chat_id)}")
+        except Exception:
+            logger.warning(f"Failed to save history for chat {str(conversation_id)}")

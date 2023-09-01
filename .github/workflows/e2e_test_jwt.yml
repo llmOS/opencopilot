@@ -1,11 +1,11 @@
-name: E2E Test Full
+name: E2E Test JWT
 
 on:
   push:
     branches: [ main, api_redesign ]
 
 jobs:
-  e2e-test-full:
+  e2e-test-jwt:
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 5
@@ -26,25 +26,17 @@ jobs:
         run: |
           export OPENAI_API_KEY="$OPENAI_API_KEY"
           export HELICONE_API_KEY="$HELICONE_API_KEY"
-      - name: "Start Weaviate"
-        run: |
-          docker run \
-            -e CONTEXTIONARY_URL="contextionary:9999" \
-            -e QUERY_DEFAULTS_LIMIT="25" \
-            -e AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED="true" \
-            -e PERSISTENCE_DATA_PATH="/var/lib/weaviate" \
-            -e CLUSTER_HOSTNAME="node1" \
-            -p 8080:8080 \
-            -d \
-            semitechnologies/weaviate:1.19.6 \
-              --host 0.0.0.0 --port '8080' --scheme http
+          echo 'AUTH_TYPE="jwt"' >> .env
+          echo 'JWT_CLIENT_ID="client_id"' >> .env
+          echo 'JWT_CLIENT_SECRET="client_secret"' >> .env
       - name: "Start Copilot"
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          PYTHONPATH=. nohup python tests/assets/e2e_example.py &> logs.log &
+          PYTHONPATH=. nohup python tests/assets/e2e_minimal_example.py &> logs.log &
           sleep 30
           cat logs.log
       - name: "Test Backend"
         run: |
-          PYTHONPATH=. python tests/e2e/test_backend_e2e_example.py
+          PYTHONPATH=. python tests/e2e/test_backend.py
+          

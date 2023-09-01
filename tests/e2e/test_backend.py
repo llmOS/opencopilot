@@ -1,47 +1,23 @@
 import uuid
+from typing import Dict
 
 import requests
+
 from opencopilot.scripts import chat
+from opencopilot.scripts import get_jwt_token
 
 conversation_id = uuid.uuid4()
 base_url = f"http://0.0.0.0:3000"
-headers = {
-    "accept": "application/json",
-    "Content-Type": "application/json"
-}
+
+message_id: str = ""
 
 
 def _index():
     url = f"{base_url}/"
     result = requests.get(url)
-    print(f"\nresult from {url}\n  {result}")
+    print(f"\nresult from GET {url}\n  {result}")
     assert result.status_code == 200
     assert result.json()
-
-
-def _chat_feedback():
-    url = f"{base_url}/v0/conversation/{conversation_id}/feedback"
-    data = {
-        "correctness": 5,
-        "helpfulness": 5,
-        "easy_to_understand": 5,
-        "free_form_feedback": "mock feedback"
-    }
-    result = requests.post(url, json=data, headers=headers)
-    print(f"\nresult from {url}\n  {result}")
-    print("  json:", result.json(), "\n")
-    assert result.json()["response"] == "OK"
-
-
-def _chat_context():
-    url = f"{base_url}/v0/conversation/{conversation_id}/context"
-    data = {
-        "context": "mock context"
-    }
-    result = requests.post(url, json=data, headers=headers)
-    print(f"\nresult from {url}\n  {result}")
-    print("  json:", result.json(), "\n")
-    assert result.json()["response"] == "OK"
 
 
 def _chat_conversation():
@@ -49,10 +25,10 @@ def _chat_conversation():
         base_url=base_url,
         conversation_id=conversation_id
     )
-    url = f"{base_url}/v0/conversation/{conversation_id}"
-    print(f"\nresult from {url}\n  {result}")
+    url = f"{base_url}/v0/conversations/{conversation_id}"
+    print(f"\nresult from POST {url}\n  {result}")
     print("  json:", result.json(), "\n")
-    assert result.json()["generated_text"]
+    assert result.json()["copilot_message"]
 
 
 def _chat_conversation_stream():
@@ -60,27 +36,80 @@ def _chat_conversation_stream():
         base_url=base_url,
         conversation_id=conversation_id
     )
-    url = f"{base_url}/v0/conversation_stream/{conversation_id}"
-    print(f"\nresult from {url}\n  {result}")
+    url = f"{base_url}/v0/conversations/{conversation_id}/stream"
+    print(f"\nresult from POST {url}\n  {result}")
     assert result
 
 
-def _chat_history():
-    url = f"{base_url}/v0/conversation/{conversation_id}/history"
+def _chat_history(headers: Dict):
+    url = f"{base_url}/v0/conversations/{conversation_id}"
     result = requests.get(url, headers=headers)
-    print(f"\nresult from {url}\n  {result}")
+    print(f"\nresult from GET {url}\n  {result}")
     print("  json:", result.json(), "\n")
     assert result.json()["response"] == "OK"
     assert len(result.json()["messages"]) > 1
+    global message_id
+    message_id = result.json()["messages"][0]["response_message_id"]
+
+
+def _conversations(headers: Dict):
+    url = f"{base_url}/v0/conversations/"
+    result = requests.get(url, headers=headers)
+    print(f"\nresult from GET {url}\n  {result}")
+    print("  json:", result.json(), "\n")
+    assert result.json()["response"] == "OK"
+
+
+def _conversation(headers: Dict):
+    url = f"{base_url}/v0/conversations/{conversation_id}"
+    result = requests.get(url, headers=headers)
+    print(f"\nresult from GET {url}\n  {result}")
+    print("  json:", result.json(), "\n")
+    assert result.json()["response"] == "OK"
+
+
+def _delete_conversations(headers: Dict):
+    url = f"{base_url}/v0/conversations/{conversation_id}"
+    result = requests.delete(url, headers=headers)
+    print(f"\nresult from DELETE {url}\n  {result}")
+    print("  json:", result.json(), "\n")
+    assert result.json()["response"] == "OK"
+
+
+def _debug(headers: Dict):
+    url = f"{base_url}/v0/debug/{conversation_id}/{message_id}"
+    result = requests.get(url, headers=headers)
+    print(f"\nresult from GET {url}\n  {result}")
+    print("  json:", result.json(), "\n")
+    assert result.json()["response"] == "OK"
+    assert result.json()["prompt_template"]
+    assert result.json()["user_question"]
+    assert result.json()["context"]
+    assert result.json()["full_prompt"]
+    assert result.json()["llm_response"]
+
+
+def _get_headers():
+    headers = {
+        "accept": "application/json",
+        "Content-Type": "application/json"
+    }
+    jwt_token = get_jwt_token.execute(base_url)
+    if jwt_token:
+        headers["Authorization"] = "Bearer " + jwt_token
+    return headers
 
 
 def main():
+    headers = _get_headers()
     _index()
     _chat_conversation()
-    _chat_feedback()
-    _chat_context()
     _chat_conversation_stream()
-    _chat_history()
+    _chat_history(headers)
+    _conversations(headers)
+    _conversation(headers)
+    _debug(headers)
+    _delete_conversations(headers)
 
 
 if __name__ == '__main__':

@@ -16,12 +16,12 @@ class History:
 
 def add_history(
     template: str,
-    chat_id: UUID,
+    conversation_id: UUID,
     history_repository: ConversationHistoryRepositoryLocal,
 ) -> History:
     os.makedirs(settings.get().CONVERSATIONS_DIR, exist_ok=True)
     history = history_repository.get_prompt_history(
-        chat_id, settings.get().PROMPT_HISTORY_INCLUDED_COUNT
+        conversation_id, settings.get().PROMPT_HISTORY_INCLUDED_COUNT
     )
     history = history.replace("{", "{{").replace("}", "}}")
     return History(

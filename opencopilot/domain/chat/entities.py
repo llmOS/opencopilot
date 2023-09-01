@@ -1,21 +1,33 @@
 from dataclasses import dataclass
-from typing import List, Optional, Dict
+from typing import Dict
+from typing import List
+from typing import Optional
 from uuid import UUID
 
 
 @dataclass(frozen=True)
+class ChatConversationsInput:
+    user_id: Optional[str] = None
+
+
+@dataclass(frozen=True)
+class ChatConversationsOutput:
+    conversations: List[str]
+
+
+@dataclass(frozen=True)
 class MessageModel:
-    chat_id: UUID
+    conversation_id: UUID
     content: str
     sources: List[str]
 
 
 @dataclass(frozen=True)
 class UserMessageInput:
-    chat_id: UUID
+    conversation_id: UUID
     message: str
     response_message_id: str
-    email: str = None
+    user_id: str = None
 
 
 @dataclass(frozen=True)
@@ -39,7 +51,7 @@ class LoadingMessage:
 
 @dataclass(frozen=True)
 class StreamingChunk:
-    chat_id: UUID
+    conversation_id: UUID
     text: str
     sources: List[str]
     error: Optional[str] = None
@@ -55,25 +67,11 @@ class StreamingChunk:
 
 
 @dataclass(frozen=True)
-class ChatFeedbackInput:
+class ChatDeleteInput:
     conversation_id: UUID
-    correctness: int
-    helpfulness: int
-    easy_to_understand: int
-    free_form_feedback: Optional[str] = None
+    user_id: Optional[str] = None
 
 
 @dataclass(frozen=True)
-class ChatFeedbackOutput:
-    response: str
-
-
-@dataclass(frozen=True)
-class ChatContextInput:
-    conversation_id: UUID
-    context: str
-
-
-@dataclass(frozen=True)
-class ChatContextOutput:
+class ChatDeleteOutput:
     response: str

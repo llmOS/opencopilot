@@ -109,6 +109,14 @@ class ConversationLogsRepositoryLocal:
         except:
             return []
 
+    def remove_conversation(self, conversation_id: UUID):
+        file_path = self._get_file_path(conversation_id)
+        if os.path.exists(file_path):
+            try:
+                os.remove(file_path)
+            except:
+                pass
+
     def _get_file_path(self, conversation_id: UUID):
         return os.path.join(self.conversation_logs_dir, str(conversation_id)) + ".jsonl"
 

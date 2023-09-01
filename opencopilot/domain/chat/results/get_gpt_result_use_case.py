@@ -34,15 +34,15 @@ async def execute(
     history_repository: ConversationHistoryRepositoryLocal,
     callback: CustomAsyncIteratorCallbackHandler = None,
 ) -> str:
-    llm = get_llm.execute(domain_input.email, callback)
+    llm = get_llm.execute(domain_input.user_id, callback)
 
     history = utils.add_history(
         system_message,
-        domain_input.chat_id,
+        domain_input.conversation_id,
         history_repository,
     )
     logs_repository.log_history(
-        domain_input.chat_id,
+        domain_input.conversation_id,
         domain_input.message,
         history.formatted_history,
         domain_input.response_message_id,
@@ -58,14 +58,14 @@ async def execute(
     )
 
     logs_repository.log_prompt_text(
-        domain_input.chat_id,
+        domain_input.conversation_id,
         domain_input.message,
         prompt_text,
         domain_input.response_message_id,
         token_count=get_token_count_use_case.execute(prompt_text, llm),
     )
     logs_repository.log_prompt_template(
-        domain_input.chat_id,
+        domain_input.conversation_id,
         domain_input.message,
         system_message,
         domain_input.response_message_id,
@@ -119,7 +119,7 @@ def _get_prompt_text(
         ):
             prompt_text = ""
         logs_repository.log_context(
-            domain_input.chat_id,
+            domain_input.conversation_id,
             domain_input.message,
             context_documents[0:context_documents_count],
             domain_input.response_message_id,

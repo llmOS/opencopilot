@@ -5,7 +5,7 @@ from opencopilot.service.authorization import token_service
 from opencopilot.service.authorization.entities import TokenRequest
 from opencopilot.service.authorization.entities import TokenResponse
 
-TAG = "Authorization"
+TAG = "Token"
 router = APIRouter()
 router.openapi_tags = [TAG]
 router.title = "Authorization router"
@@ -14,9 +14,9 @@ logger = api_logger.get()
 
 
 @router.post(
-    "/token",
+    "/tokens",
     tags=[TAG],
-    summary="Generate token.",
+    summary="Generate a JSON Web Token.",
     response_model=TokenResponse,
 )
 async def evaluate(

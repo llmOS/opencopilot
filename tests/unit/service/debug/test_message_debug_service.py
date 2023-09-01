@@ -48,6 +48,8 @@ def test_success():
         "message_id",
         MagicMock(),
         MagicMock(),
+        MagicMock(),
+        "user_id"
     )
     assert response == GetMessageDebugResponse(
         response="OK",

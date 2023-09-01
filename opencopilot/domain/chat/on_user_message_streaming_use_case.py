@@ -7,6 +7,7 @@ from typing import List
 from langchain.schema import Document
 
 from opencopilot import settings
+from opencopilot.domain.chat import is_user_allowed_to_chat_use_case
 from opencopilot.logger import api_logger
 from opencopilot.domain.chat import validate_urls_use_case
 from opencopilot.domain.chat.entities import LoadingMessage
@@ -21,6 +22,8 @@ from opencopilot.repository.conversation_logs_repository import (
     ConversationLogsRepositoryLocal,
 )
 from opencopilot.repository.documents.document_store import DocumentStore
+from opencopilot.repository.users_repository import UsersRepositoryLocal
+from opencopilot.service.error_responses import ForbiddenAPIError
 from opencopilot.utils.callbacks.callback_handler import (
     CustomAsyncIteratorCallbackHandler,
 )
@@ -33,7 +36,16 @@ async def execute(
     document_store: DocumentStore,
     history_repository: ConversationHistoryRepositoryLocal,
     logs_repository: ConversationLogsRepositoryLocal,
+    users_repository: UsersRepositoryLocal,
 ) -> AsyncGenerator[StreamingChunk, None]:
+    if not is_user_allowed_to_chat_use_case.execute(
+        domain_input.conversation_id,
+        domain_input.user_id,
+        history_repository,
+        users_repository,
+    ):
+        raise ForbiddenAPIError()
+
     system_message = get_system_message()
 
     context = _get_context(domain_input, system_message, document_store)
@@ -58,13 +70,13 @@ async def execute(
             parsed = json.loads(callback_result)
             if token := parsed.get("token"):
                 yield StreamingChunk(
-                    chat_id=domain_input.chat_id,
+                    conversation_id=domain_input.conversation_id,
                     text=token,
                     sources=[],
                 )
             if loading_message := parsed.get("loading_message"):
                 yield StreamingChunk(
-                    chat_id=domain_input.chat_id,
+                    conversation_id=domain_input.conversation_id,
                     text="",
                     sources=[],
                     loading_message=LoadingMessage.from_dict(loading_message),
@@ -74,13 +86,13 @@ async def execute(
     except Exception as exc:
         logger.error(f"Stream error: {exc}")
         yield StreamingChunk(
-            chat_id=domain_input.chat_id,
+            conversation_id=domain_input.conversation_id,
             text="",
             sources=[],
             error=f"OpenAI error: {type(exc).__name__}",
         )
     finally:
-        validate_urls_use_case.execute(result, domain_input.chat_id)
+        validate_urls_use_case.execute(result, domain_input.conversation_id)
 
         response_timestamp = datetime.now().timestamp()
 
@@ -89,8 +101,11 @@ async def execute(
             result,
             message_timestamp,
             response_timestamp,
-            domain_input.chat_id,
+            domain_input.conversation_id,
             domain_input.response_message_id,
+        )
+        users_repository.add_conversation(
+            conversation_id=domain_input.conversation_id, user_id=domain_input.user_id
         )
 
 

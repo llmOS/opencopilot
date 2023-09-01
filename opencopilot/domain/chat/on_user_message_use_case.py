@@ -1,11 +1,12 @@
 from datetime import datetime
 
-from opencopilot.logger import api_logger
+from opencopilot.domain.chat import is_user_allowed_to_chat_use_case
 from opencopilot.domain.chat import validate_urls_use_case
 from opencopilot.domain.chat.entities import MessageModel
 from opencopilot.domain.chat.entities import UserMessageInput
 from opencopilot.domain.chat.results import get_gpt_result_use_case
 from opencopilot.domain.chat.utils import get_system_message
+from opencopilot.logger import api_logger
 from opencopilot.repository.conversation_history_repository import (
     ConversationHistoryRepositoryLocal,
 )
@@ -13,6 +14,8 @@ from opencopilot.repository.conversation_logs_repository import (
     ConversationLogsRepositoryLocal,
 )
 from opencopilot.repository.documents.document_store import DocumentStore
+from opencopilot.repository.users_repository import UsersRepositoryLocal
+from opencopilot.service.error_responses import ForbiddenAPIError
 
 logger = api_logger.get()
 
@@ -22,7 +25,16 @@ async def execute(
     document_store: DocumentStore,
     history_repository: ConversationHistoryRepositoryLocal,
     logs_repository: ConversationLogsRepositoryLocal,
+    users_repository: UsersRepositoryLocal,
 ) -> MessageModel:
+    if not is_user_allowed_to_chat_use_case.execute(
+        domain_input.conversation_id,
+        domain_input.user_id,
+        history_repository,
+        users_repository,
+    ):
+        raise ForbiddenAPIError()
+
     system_message = get_system_message()
     context = []
     if "{context}" in system_message:
@@ -36,7 +48,7 @@ async def execute(
         history_repository=history_repository,
     )
 
-    validate_urls_use_case.execute(result, domain_input.chat_id)
+    validate_urls_use_case.execute(result, domain_input.conversation_id)
 
     response_timestamp = datetime.now().timestamp()
 
@@ -45,9 +57,14 @@ async def execute(
         result,
         message_timestamp,
         response_timestamp,
-        domain_input.chat_id,
+        domain_input.conversation_id,
         domain_input.response_message_id,
+    )
+    users_repository.add_conversation(
+        conversation_id=domain_input.conversation_id, user_id=domain_input.user_id
     )
     sources = [document.metadata.get("source") for document in context]
 
-    return MessageModel(chat_id=domain_input.chat_id, content=result, sources=sources)
+    return MessageModel(
+        conversation_id=domain_input.conversation_id, content=result, sources=sources
+    )
