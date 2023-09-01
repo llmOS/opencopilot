@@ -12,7 +12,17 @@ class ConversationsRequest(BaseModel):
 
 
 class ConversationsResponse(ApiResponse):
-    conversations: List[str]
+    conversation_ids: List[str]
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "response": "OK",
+                "conversation_ids": [
+                    "e91042aa-d53a-41eb-8884-67aa4947982d"
+                ]
+            }
+        }
 
 
 class ChatRequest(BaseModel):
@@ -55,6 +65,26 @@ class ChatHistoryResponse(BaseModel):
     messages: List[ChatHistoryItem] = Field(
         default_factory=list, description="Messages"
     )
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "response": "OK",
+                "conversation_id": "e91042aa-d53a-41eb-8884-67aa4947982d",
+                "messages": [
+                    {
+                        "content": "Hello",
+                        "timestamp": 1693562530,
+                        "response_message_id": "ed02eedf-7a74-4a31-8fbf-eeb4300faf31"
+                    },
+                    {
+                        "content": "Hello, how are you?",
+                        "timestamp": 1693562539,
+                        "response_message_id": "ed02eedf-7a74-4a31-8fbf-eeb4300faf31"
+                    }
+                ]
+            }
+        }
 
 
 class ChatDeleteRequest(BaseModel):

@@ -15,4 +15,4 @@ def execute(
         ),
         users_repository=users_repository,
     )
-    return ConversationsResponse(response="OK", conversations=result.conversations)
+    return ConversationsResponse(response="OK", conversation_ids=result.conversations)
