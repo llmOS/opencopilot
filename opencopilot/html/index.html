@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenCopilot Demo</title>
+    <script src="https://unpkg.com/opencopilot-ui@0.0.2/opencopilot.js"></script>
+</head>
+<body>
+    <div id="embedded" style="width: 100vw; height: 100vh;"></div>
+    <script>
+        OpenCopilot.initialize({
+            elementId: "embedded", // The argument is the id of the element where the component should be rendered
+            theme: "light",
+            apiUrl: "http://localhost:3000/", // Optional, defaults to the base URL this is rendered on
+            // authToken: "", // If auth is enabled in backend need to input JWT here
+        });
+    </script>
+</body>
+</html>
