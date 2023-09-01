@@ -12,19 +12,25 @@ from starlette.middleware.cors import CORSMiddleware
 import opencopilot
 from opencopilot import settings
 from opencopilot.routers import main_router, routing_utils
-from opencopilot.service.exception_handlers.exception_handlers import \
-    custom_exception_handler
+from opencopilot.service.exception_handlers.exception_handlers import (
+    custom_exception_handler,
+)
 from opencopilot.service.middleware.main_middleware import MainMiddleware
-from opencopilot.service.middleware.request_enrichment_middleware import \
-    RequestEnrichmentMiddleware
+from opencopilot.service.middleware.request_enrichment_middleware import (
+    RequestEnrichmentMiddleware,
+)
 
 app = FastAPI()
 
 app.include_router(main_router.router, prefix="/v0")
 
 html_template_path = join(dirname(opencopilot.__file__), "html")
-# TODO Taivo: remove once sdk has been released or allow to load local files if dev mode
-app.mount("/js", StaticFiles(directory=os.getenv("JS_SDK_DIST_PATH", html_template_path)), name="js")
+# TODO Taivo & Kristjan: remove once sdk has been released
+app.mount(
+    "/js",
+    StaticFiles(directory=os.getenv("JS_SDK_DIST_PATH", html_template_path)),
+    name="js",
+)
 
 templates = Jinja2Templates(directory=html_template_path)
 
@@ -123,7 +129,4 @@ def root():
 
 @app.get("/ui", include_in_schema=False, response_class=HTMLResponse)
 def ui(request: Request):
-    return templates.TemplateResponse("index.html", {
-        "request": request,
-        "api_base_url": settings.get().API_BASE_URL,
-    })
+    return templates.TemplateResponse("index.html", {"request": request})
