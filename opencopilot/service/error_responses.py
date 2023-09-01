@@ -114,3 +114,17 @@ class InvalidCredentialsAPIError(APIErrorResponse):
 
     def to_message(self) -> str:
         return "Invalid credentials"
+
+
+class ForbiddenAPIError(APIErrorResponse):
+    def __init__(self):
+        pass
+
+    def to_status_code(self) -> status:
+        return status.HTTP_403_FORBIDDEN
+
+    def to_code(self) -> str:
+        return "forbidden"
+
+    def to_message(self) -> str:
+        return "User does not have access rights to the content"

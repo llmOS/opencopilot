@@ -7,6 +7,7 @@ from typing import List
 from langchain.schema import Document
 
 from opencopilot import settings
+from opencopilot.domain.chat import is_user_allowed_to_chat_use_case
 from opencopilot.logger import api_logger
 from opencopilot.domain.chat import validate_urls_use_case
 from opencopilot.domain.chat.entities import LoadingMessage
@@ -22,6 +23,7 @@ from opencopilot.repository.conversation_logs_repository import (
 )
 from opencopilot.repository.documents.document_store import DocumentStore
 from opencopilot.repository.users_repository import UsersRepositoryLocal
+from opencopilot.service.error_responses import ForbiddenAPIError
 from opencopilot.utils.callbacks.callback_handler import (
     CustomAsyncIteratorCallbackHandler,
 )
@@ -36,6 +38,14 @@ async def execute(
     logs_repository: ConversationLogsRepositoryLocal,
     users_repository: UsersRepositoryLocal,
 ) -> AsyncGenerator[StreamingChunk, None]:
+    if not is_user_allowed_to_chat_use_case.execute(
+        domain_input.chat_id,
+        domain_input.email,
+        history_repository,
+        users_repository
+    ):
+        raise ForbiddenAPIError()
+
     system_message = get_system_message()
 
     context = _get_context(domain_input, system_message, document_store)

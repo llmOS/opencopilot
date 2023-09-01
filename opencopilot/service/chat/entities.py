@@ -65,6 +65,7 @@ class CustomChatRequest(BaseModel):
 
 class ChatHistoryRequest(BaseModel):
     chat_id: str = Field(description="Chat id")
+    user_id: Optional[str] = None
 
 
 class ChatHistoryItem(BaseModel):

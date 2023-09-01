@@ -184,13 +184,14 @@ async def handle_get_conversation_history(
 ):
     request = ChatHistoryRequest(
         chat_id=conversation_id,
+        user_id=user_id,
     )
 
     history_repository = ConversationHistoryRepositoryLocal()
+    users_repository = UsersRepositoryLocal()
 
     response: ChatHistoryResponse = await chat_history_service.execute(
-        request,
-        history_repository,
+        request, history_repository, users_repository
     )
     return response
 

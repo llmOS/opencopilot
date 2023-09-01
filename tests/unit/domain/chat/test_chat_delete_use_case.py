@@ -10,28 +10,13 @@ INVALID_CONVERSATION_ID = UUID("79f88a74-7a67-4336-b601-4cfbcaed55ef")
 USER_ID = "user_id"
 
 
-def test_remove_returns_ok():
-    result = use_case.execute(
-        data_input=ChatDeleteInput(
-            conversation_id=CONVERSATION_ID,
-            user_id=USER_ID
-        ),
-        users_repository=MagicMock(),
-        history_repository=MagicMock(),
-        logs_repository=MagicMock()
-    )
-    assert result == ChatDeleteOutput(
-        response="OK"
-    )
-
-
 def test_remove_calls_repository():
     users_repository = MagicMock()
     users_repository.get_conversations.return_value = [str(CONVERSATION_ID)]
     history_repository = MagicMock()
     logs_repository = MagicMock()
 
-    use_case.execute(
+    result = use_case.execute(
         data_input=ChatDeleteInput(
             conversation_id=CONVERSATION_ID,
             user_id=USER_ID
@@ -40,6 +25,7 @@ def test_remove_calls_repository():
         history_repository=history_repository,
         logs_repository=logs_repository,
     )
+    assert result == ChatDeleteOutput(response="OK")
     users_repository.remove_conversation.assert_called_with(
         conversation_id=CONVERSATION_ID,
         user_id=USER_ID
@@ -58,7 +44,7 @@ def test_remove_not_called_when_not_user_conversation():
     history_repository = MagicMock()
     logs_repository = MagicMock()
 
-    use_case.execute(
+    result = use_case.execute(
         data_input=ChatDeleteInput(
             conversation_id=INVALID_CONVERSATION_ID,
             user_id=USER_ID
@@ -67,6 +53,7 @@ def test_remove_not_called_when_not_user_conversation():
         history_repository=history_repository,
         logs_repository=logs_repository
     )
+    assert result == ChatDeleteOutput(response="NOK")
     users_repository.remove_conversation.assert_not_called()
     history_repository.remove_conversation.assert_not_called()
     logs_repository.remove_conversation.assert_not_called()

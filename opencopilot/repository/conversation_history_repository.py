@@ -35,10 +35,10 @@ class ConversationHistoryRepositoryLocal:
             logger.debug(f"Cannot load conversation history, id: {str(chat_id)}")
         return ""
 
-    def get_history(self, chat_id: UUID) -> List[Dict]:
+    def get_history(self, conversation_id: UUID) -> List[Dict]:
         history = []
         try:
-            with open(self._get_file_path(chat_id), "r") as f:
+            with open(self._get_file_path(conversation_id), "r") as f:
                 history = json.load(f)
         except:
             pass

@@ -1,16 +1,25 @@
+from typing import Optional
+from uuid import UUID
+
 from opencopilot.logger import api_logger
 from opencopilot.repository.conversation_history_repository import (
     ConversationHistoryRepositoryLocal,
 )
+from opencopilot.repository.users_repository import UsersRepositoryLocal
 from opencopilot.service.chat.entities import ChatHistoryItem
 
 logger = api_logger.get()
 
 
 async def execute(
-    chat_id: str,
+    chat_id: UUID,
+    user_id: Optional[str],
     history_repository: ConversationHistoryRepositoryLocal,
+    users_repository: UsersRepositoryLocal,
 ) -> [ChatHistoryItem]:
+    if not await is_user_conversation(chat_id, user_id, users_repository):
+        return []
+
     response = history_repository.get_history(chat_id)
     return_value = []
     timer = 0
@@ -30,3 +39,14 @@ async def execute(
         ]
 
     return return_value
+
+
+async def is_user_conversation(
+    chat_id: UUID,
+    user_id: Optional[str],
+    users_repository: UsersRepositoryLocal,
+) -> bool:
+    conversations = users_repository.get_conversations(user_id)
+    if str(chat_id) in conversations:
+        return True
+    return False

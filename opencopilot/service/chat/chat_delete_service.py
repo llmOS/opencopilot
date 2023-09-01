@@ -9,6 +9,7 @@ from opencopilot.repository.conversation_logs_repository import (
 from opencopilot.repository.users_repository import UsersRepositoryLocal
 from opencopilot.service.chat.entities import ChatDeleteRequest
 from opencopilot.service.chat.entities import ChatDeleteResponse
+from opencopilot.service.error_responses import ForbiddenAPIError
 from opencopilot.service.utils import get_uuid
 
 
@@ -27,4 +28,6 @@ def execute(
         history_repository=history_repository,
         logs_repository=logs_repository,
     )
+    if result.response == "NOK":
+        raise ForbiddenAPIError()
     return ChatDeleteResponse(response=result.response)

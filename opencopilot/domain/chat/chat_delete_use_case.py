@@ -22,5 +22,5 @@ def execute(
         users_repository.remove_conversation(
             conversation_id=data_input.conversation_id, user_id=data_input.user_id
         )
-
-    return ChatDeleteOutput(response="OK")
+        return ChatDeleteOutput(response="OK")
+    return ChatDeleteOutput(response="NOK")
