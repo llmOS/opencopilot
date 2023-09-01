@@ -8,6 +8,7 @@ from opencopilot.repository.conversation_history_repository import (
 from opencopilot.repository.conversation_logs_repository import (
     ConversationLogsRepositoryLocal,
 )
+from opencopilot.repository.users_repository import UsersRepositoryLocal
 from opencopilot.service import utils
 from opencopilot.service.debug.entities import GetMessageDebugResponse
 from opencopilot.service.debug.entities import ValueWithTokens
@@ -18,12 +19,16 @@ def execute(
     message_id: str,
     history_repository: ConversationHistoryRepositoryLocal,
     logs_repository: ConversationLogsRepositoryLocal,
+    users_repository: UsersRepositoryLocal,
+    user_id: Optional[str] = None,
 ) -> GetMessageDebugResponse:
     domain_response = message_debug_use_case.execute(
         utils.get_uuid(conversation_id, "conversation_id"),
         message_id,
         history_repository,
         logs_repository,
+        users_repository=users_repository,
+        user_id=user_id,
     )
     return GetMessageDebugResponse(
         response="OK",

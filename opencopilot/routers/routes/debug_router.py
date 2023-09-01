@@ -10,6 +10,7 @@ from opencopilot.repository.conversation_history_repository import (
 from opencopilot.repository.conversation_logs_repository import (
     ConversationLogsRepositoryLocal,
 )
+from opencopilot.repository.users_repository import UsersRepositoryLocal
 from opencopilot.service.debug import message_debug_service
 from opencopilot.service.debug.entities import GetMessageDebugResponse
 
@@ -34,10 +35,13 @@ async def get_copilots(
 ):
     history_repository = ConversationHistoryRepositoryLocal()
     logs_repository = ConversationLogsRepositoryLocal()
+    users_repository = UsersRepositoryLocal()
 
     return message_debug_service.execute(
         conversation_id,
         message_id,
         history_repository,
         logs_repository,
+        users_repository=users_repository,
+        user_id=user_id,
     )

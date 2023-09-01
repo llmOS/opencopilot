@@ -1,9 +1,27 @@
 from unittest.mock import MagicMock
 from uuid import UUID
 
+import pytest
+
 from opencopilot.domain.debug import message_debug_use_case as use_case
 from opencopilot.domain.debug.entities import MessageDebugResult
 from opencopilot.domain.debug.entities import TextWithTokens
+from opencopilot.service.error_responses import ForbiddenAPIError
+
+
+def test_not_authorized():
+    users_repository = MagicMock()
+    users_repository.get_conversations.return_value = [
+        "0fc265bb-7075-4060-bb0d-d246984836c3"
+    ]
+    with pytest.raises(ForbiddenAPIError):
+        use_case.execute(
+            UUID("0fc265bb-7075-4060-bb0d-d246984836c2"),
+            "dc739efa-64ec-4bb1-be4b-0548471ce0ea",
+            MagicMock(),
+            MagicMock(),
+            users_repository=users_repository,
+        )
 
 
 def test_success():
@@ -37,11 +55,16 @@ def test_success():
          "history": "mock-history",
          "token_count": 212},
     ]
+    users_repository = MagicMock()
+    users_repository.get_conversations.return_value = [
+        "0fc265bb-7075-4060-bb0d-d246984836c2"
+    ]
     response = use_case.execute(
         UUID("0fc265bb-7075-4060-bb0d-d246984836c2"),
         message_id,
         history_repository,
-        logs_repository
+        logs_repository,
+        users_repository=users_repository,
     )
     assert response == MessageDebugResult(
         prompt_template=None,
