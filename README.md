@@ -103,7 +103,7 @@ python copilot.py
 ```
 
 ### 4. Chat with the Copilot
-You can chat with your copilot in the UI at [localhost:3000](http://localhost:3000) or using the CLI:
+You can chat with your copilot in the UI at [localhost:3000/ui](http://localhost:3000/ui) or using the CLI:
 
 ```bash
 opencopilot chat "Hello, who are you?"
