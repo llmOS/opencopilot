@@ -1,10 +1,17 @@
+import os
+
 from fastapi import FastAPI
+from fastapi import Request
 from fastapi.openapi.utils import get_openapi
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 from starlette.middleware.cors import CORSMiddleware
 
+import opencopilot
 from opencopilot import settings
-from opencopilot.routers import main_router, routing_utils
+from opencopilot.routers import main_router
+from opencopilot.routers import routing_utils
 from opencopilot.service.exception_handlers.exception_handlers import (
     custom_exception_handler,
 )
@@ -16,6 +23,9 @@ from opencopilot.service.middleware.request_enrichment_middleware import (
 app = FastAPI()
 
 app.include_router(main_router.router, prefix="/v0")
+
+html_template_path = os.path.join(os.path.dirname(opencopilot.__file__), "html")
+templates = Jinja2Templates(directory=html_template_path)
 
 API_TITLE = "API"
 API_DESCRIPTION = "API"
@@ -107,3 +117,8 @@ def get_api_info() -> ApiInfo:
 )
 def root():
     return routing_utils.to_json_response(get_api_info().dict())
+
+
+@app.get("/ui", include_in_schema=False, response_class=HTMLResponse)
+def ui(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
