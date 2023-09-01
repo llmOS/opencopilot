@@ -12,15 +12,15 @@ logger = api_logger.get()
 
 
 async def execute(
-    chat_id: UUID,
+    conversation_id: UUID,
     user_id: Optional[str],
     history_repository: ConversationHistoryRepositoryLocal,
     users_repository: UsersRepositoryLocal,
 ) -> [ChatHistoryItem]:
-    if not await is_user_conversation(chat_id, user_id, users_repository):
+    if not await is_user_conversation(conversation_id, user_id, users_repository):
         return []
 
-    response = history_repository.get_history(chat_id)
+    response = history_repository.get_history(conversation_id)
     return_value = []
     timer = 0
     for message in response:
@@ -34,19 +34,27 @@ async def execute(
         )
         timer = max(timer, prompt_timestamp, response_timestamp) + 2
         return_value = return_value + [
-            ChatHistoryItem(content=message["prompt"], timestamp=prompt_timestamp),
-            ChatHistoryItem(content=message["response"], timestamp=response_timestamp),
+            ChatHistoryItem(
+                content=message["prompt"],
+                timestamp=prompt_timestamp,
+                response_message_id=message["response_message_id"],
+            ),
+            ChatHistoryItem(
+                content=message["response"],
+                timestamp=response_timestamp,
+                response_message_id=message["response_message_id"],
+            ),
         ]
 
     return return_value
 
 
 async def is_user_conversation(
-    chat_id: UUID,
+    conversation_id: UUID,
     user_id: Optional[str],
     users_repository: UsersRepositoryLocal,
 ) -> bool:
     conversations = users_repository.get_conversations(user_id)
-    if str(chat_id) in conversations:
+    if str(conversation_id) in conversations:
         return True
     return False

@@ -39,7 +39,7 @@ async def execute(
     users_repository: UsersRepositoryLocal,
 ) -> AsyncGenerator[StreamingChunk, None]:
     if not is_user_allowed_to_chat_use_case.execute(
-        domain_input.chat_id, domain_input.user_id, history_repository, users_repository
+        domain_input.conversation_id, domain_input.user_id, history_repository, users_repository
     ):
         raise ForbiddenAPIError()
 
@@ -67,13 +67,13 @@ async def execute(
             parsed = json.loads(callback_result)
             if token := parsed.get("token"):
                 yield StreamingChunk(
-                    chat_id=domain_input.chat_id,
+                    conversation_id=domain_input.conversation_id,
                     text=token,
                     sources=[],
                 )
             if loading_message := parsed.get("loading_message"):
                 yield StreamingChunk(
-                    chat_id=domain_input.chat_id,
+                    conversation_id=domain_input.conversation_id,
                     text="",
                     sources=[],
                     loading_message=LoadingMessage.from_dict(loading_message),
@@ -83,13 +83,13 @@ async def execute(
     except Exception as exc:
         logger.error(f"Stream error: {exc}")
         yield StreamingChunk(
-            chat_id=domain_input.chat_id,
+            conversation_id=domain_input.conversation_id,
             text="",
             sources=[],
             error=f"OpenAI error: {type(exc).__name__}",
         )
     finally:
-        validate_urls_use_case.execute(result, domain_input.chat_id)
+        validate_urls_use_case.execute(result, domain_input.conversation_id)
 
         response_timestamp = datetime.now().timestamp()
 
@@ -98,11 +98,11 @@ async def execute(
             result,
             message_timestamp,
             response_timestamp,
-            domain_input.chat_id,
+            domain_input.conversation_id,
             domain_input.response_message_id,
         )
         users_repository.add_conversation(
-            conversation_id=domain_input.chat_id, user_id=domain_input.user_id
+            conversation_id=domain_input.conversation_id, user_id=domain_input.user_id
         )
 
 

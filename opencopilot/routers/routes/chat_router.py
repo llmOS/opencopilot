@@ -110,7 +110,7 @@ async def handle_conversation(
     user_id: str = Depends(validate_api_key_use_case.execute),
 ):
     request = ChatRequest(
-        chat_id=conversation_id,
+        conversation_id=conversation_id,
         message=payload.message,
         response_message_id=payload.response_message_id,
         user_id=user_id,
@@ -146,7 +146,7 @@ async def handle_conversation_streaming(
     user_id: str = Depends(validate_api_key_use_case.execute),
 ):
     request = ChatRequest(
-        chat_id=conversation_id,
+        conversation_id=conversation_id,
         message=payload.message,
         response_message_id=payload.response_message_id,
         user_id=user_id,
@@ -183,7 +183,7 @@ async def handle_get_conversation_history(
     user_id: str = Depends(validate_api_key_use_case.execute),
 ):
     request = ChatHistoryRequest(
-        chat_id=conversation_id,
+        conversation_id=conversation_id,
         user_id=user_id,
     )
 

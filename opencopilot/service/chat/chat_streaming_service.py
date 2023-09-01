@@ -22,12 +22,12 @@ async def execute(
     logs_repository: ConversationLogsRepositoryLocal,
     users_repository: UsersRepositoryLocal,
 ) -> str:
-    chat_id = get_uuid(request.chat_id, "chat_id")
+    conversation_id = get_uuid(request.conversation_id, "conversation_id")
     async for chunk in on_user_message_streaming_use_case.execute(
         UserMessageInput(
-            chat_id=chat_id,
+            conversation_id=conversation_id,
             message=request.message,
-            response_message_id=request.response_message_id or str(uuid.uuid4()),
+            response_message_id=str(uuid.uuid4()),
             user_id=request.user_id,
         ),
         document_store,

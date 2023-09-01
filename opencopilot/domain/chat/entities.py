@@ -17,17 +17,16 @@ class ChatConversationsOutput:
 
 @dataclass(frozen=True)
 class MessageModel:
-    chat_id: UUID
+    conversation_id: UUID
     content: str
     sources: List[str]
 
 
 @dataclass(frozen=True)
 class UserMessageInput:
-    chat_id: UUID
+    conversation_id: UUID
     message: str
     response_message_id: str
-    # TODO: rename to user_id
     user_id: str = None
 
 
@@ -52,7 +51,7 @@ class LoadingMessage:
 
 @dataclass(frozen=True)
 class StreamingChunk:
-    chat_id: UUID
+    conversation_id: UUID
     text: str
     sources: List[str]
     error: Optional[str] = None

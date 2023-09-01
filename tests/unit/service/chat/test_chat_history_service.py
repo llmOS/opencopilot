@@ -13,7 +13,8 @@ from opencopilot.service.error_responses import ForbiddenAPIError
 MESSAGES = [
     ChatHistoryItem(
         content="mock",
-        timestamp=1
+        timestamp=1,
+        response_message_id="rmi"
     )
 ]
 
@@ -29,17 +30,17 @@ async def task_from_result(result):
 
 @pytest.mark.asyncio
 async def test_returns_ok():
-    chat_id = uuid.uuid4()
+    conversation_id = uuid.uuid4()
     result = await service.execute(
         request=ChatHistoryRequest(
-            chat_id=str(chat_id),
+            conversation_id=str(conversation_id),
         ),
         history_repository=MagicMock(),
         users_repository=MagicMock(),
     )
     assert result == ChatHistoryResponse(
         response="OK",
-        chat_id=str(chat_id),
+        conversation_id=str(conversation_id),
         messages=MESSAGES,
     )
 
@@ -50,11 +51,11 @@ async def test_raises_forbidden():
     f.set_result([])
     service.get_chat_history_use_case.execute.return_value = f
 
-    chat_id = uuid.uuid4()
+    conversation_id = uuid.uuid4()
     with pytest.raises(ForbiddenAPIError):
         await service.execute(
             request=ChatHistoryRequest(
-                chat_id=str(chat_id),
+                conversation_id=str(conversation_id),
             ),
             history_repository=MagicMock(),
             users_repository=MagicMock(),

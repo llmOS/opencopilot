@@ -13,10 +13,10 @@ URL_REGEX = r"""((?:(?:https|ftp|http)?:(?:/{1,3}|[a-z0-9%])|[a-z0-9.\-]+[.](?:c
 logger = api_logger.get()
 
 
-def execute(text: str, chat_id: UUID) -> None:
+def execute(text: str, conversation_id: UUID) -> None:
     urls: List[str] = _find_urls(text)
     for url in urls:
-        _validate_url(url, chat_id)
+        _validate_url(url, conversation_id)
 
 
 def _find_urls(text: str) -> List[str]:
@@ -24,18 +24,20 @@ def _find_urls(text: str) -> List[str]:
     return ["".join(x for x in url if x in string.printable) for url in urls]
 
 
-def _validate_url(url: str, chat_id: UUID) -> None:
+def _validate_url(url: str, conversation_id: UUID) -> None:
     try:
         response = requests.get(url)
         if response.status_code in [404, 410]:
-            logger.warning(f"Error querying url {url}, conversation_id: {str(chat_id)}")
+            logger.warning(
+                f"Error querying url {url}, conversation_id: {str(conversation_id)}")
             slack_messenger.post_error(
-                f"Error querying url {url}, conversation_id: {str(chat_id)}",
+                f"Error querying url {url}, conversation_id: {str(conversation_id)}",
                 f"status_code {response.status_code}",
             )
     except Exception as e:
-        logger.warning(f"Error querying url {url}, conversation_id: {str(chat_id)}")
+        logger.warning(
+            f"Error querying url {url}, conversation_id: {str(conversation_id)}")
         slack_messenger.post_error(
-            f"Error querying url {url}, conversation_id: {str(chat_id)}",
+            f"Error querying url {url}, conversation_id: {str(conversation_id)}",
             str(e),
         )

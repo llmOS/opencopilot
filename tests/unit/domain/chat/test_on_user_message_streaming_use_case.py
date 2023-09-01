@@ -16,7 +16,7 @@ async def test_not_allowed_to_chat():
     with pytest.raises(ForbiddenAPIError):
         async for _ in use_case.execute(
             domain_input=UserMessageInput(
-                chat_id=uuid.uuid4(),
+                conversation_id=uuid.uuid4(),
                 message="msg",
                 response_message_id="rmi"
             ),

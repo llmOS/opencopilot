@@ -26,6 +26,7 @@ def setup_function():
             "response_timestamp": 1693482044,
             "prompt": "p1",
             "response": "r1",
+            "response_message_id": "rmi"
         }
     ]
 
@@ -37,14 +38,14 @@ def setup_function():
 @pytest.mark.asyncio
 async def test_chat_belongs_to_user():
     result = await use_case.execute(
-        chat_id=VALID_CONVERSATION_ID,
+        conversation_id=VALID_CONVERSATION_ID,
         user_id=USER_ID,
         history_repository=history_repository,
         users_repository=users_repository
     )
     assert result == [
-        ChatHistoryItem(content='p1', timestamp=1693482043),
-        ChatHistoryItem(content='r1', timestamp=1693482044)
+        ChatHistoryItem(content='p1', timestamp=1693482043, response_message_id="rmi"),
+        ChatHistoryItem(content='r1', timestamp=1693482044, response_message_id="rmi")
     ]
 
 
@@ -52,7 +53,7 @@ async def test_chat_belongs_to_user():
 async def test_chat_no_belongs_to_user():
     users_repository.get_conversations.return_value = [str(INVALID_CONVERSATION_ID)]
     result = await use_case.execute(
-        chat_id=VALID_CONVERSATION_ID,
+        conversation_id=VALID_CONVERSATION_ID,
         user_id=USER_ID,
         history_repository=history_repository,
         users_repository=users_repository

@@ -9,6 +9,8 @@ from opencopilot.scripts import get_jwt_token
 conversation_id = uuid.uuid4()
 base_url = f"http://0.0.0.0:3000"
 
+message_id: str = ""
+
 
 def _index():
     url = f"{base_url}/"
@@ -46,6 +48,9 @@ def _chat_history(headers: Dict):
     print("  json:", result.json(), "\n")
     assert result.json()["response"] == "OK"
     assert len(result.json()["messages"]) > 1
+    global message_id
+    message_id = result.json()["messages"][0]["response_message_id"]
+    print("MESSAGE ID:", message_id)
 
 
 def _conversations(headers: Dict):
@@ -72,6 +77,19 @@ def _delete_conversations(headers: Dict):
     assert result.json()["response"] == "OK"
 
 
+def _debug(headers: Dict):
+    url = f"{base_url}/v0/debug/{conversation_id}/{message_id}"
+    result = requests.get(url, headers=headers)
+    print(f"\nresult from GET {url}\n  {result}")
+    print("  json:", result.json(), "\n")
+    assert result.json()["response"] == "OK"
+    assert result.json()["prompt_template"]
+    assert result.json()["user_question"]
+    assert result.json()["context"]
+    assert result.json()["full_prompt"]
+    assert result.json()["llm_response"]
+
+
 def _get_headers():
     headers = {
         "accept": "application/json",
@@ -91,6 +109,7 @@ def main():
     _chat_history(headers)
     _conversations(headers)
     _conversation(headers)
+    _debug(headers)
     _delete_conversations(headers)
 
 

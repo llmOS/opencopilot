@@ -9,10 +9,10 @@ from opencopilot.repository.conversation_logs_repository import \
 
 CONVERSATION_LOGS_DIR = "tests/assets/conversation_logs"
 
-CHAT_ID = UUID("79f88a74-7a67-4336-b601-4cfbcaed55ea")
-CHAT_ID_INVALID = UUID("79f88a74-7a67-4336-b601-4cfbcaed55eb")
+CONVERSATION_ID = UUID("79f88a74-7a67-4336-b601-4cfbcaed55ea")
+CONVERSATION_ID_INVALID = UUID("79f88a74-7a67-4336-b601-4cfbcaed55eb")
 
-FILE_PATH = os.path.join(CONVERSATION_LOGS_DIR, str(CHAT_ID) + ".jsonl")
+FILE_PATH = os.path.join(CONVERSATION_LOGS_DIR, str(CONVERSATION_ID) + ".jsonl")
 
 
 def setup_function():
@@ -32,7 +32,7 @@ def delete_file():
 
 def test_log_prompt_text():
     repository = ConversationLogsRepositoryLocal(CONVERSATION_LOGS_DIR)
-    repository.log_prompt_text(CHAT_ID, "mock msg", "mock prompt text",
+    repository.log_prompt_text(CONVERSATION_ID, "mock msg", "mock prompt text",
                                "mock-response-msg-id")
     result = _read_file()
     expected = '{"response_message_id": "mock-response-msg-id", ' \
@@ -44,7 +44,7 @@ def test_log_prompt_text():
 def test_log_prompt_text_with_tokens():
     repository = ConversationLogsRepositoryLocal(CONVERSATION_LOGS_DIR)
     repository.log_prompt_text(
-        CHAT_ID,
+        CONVERSATION_ID,
         "mock msg",
         "mock prompt text",
         "mock-response-msg-id",
@@ -59,7 +59,7 @@ def test_log_prompt_text_with_tokens():
 
 def test_log_context():
     repository = ConversationLogsRepositoryLocal(CONVERSATION_LOGS_DIR)
-    repository.log_context(CHAT_ID, "mock msg", [Document(page_content="mock content")],
+    repository.log_context(CONVERSATION_ID, "mock msg", [Document(page_content="mock content")],
                            "mock-response-msg-id")
     result = _read_file()
     expected = '{"response_message_id": "mock-response-msg-id", "message": "mock msg", ' \
@@ -70,7 +70,7 @@ def test_log_context():
 def test_log_context_with_tokens():
     repository = ConversationLogsRepositoryLocal(CONVERSATION_LOGS_DIR)
     repository.log_context(
-        CHAT_ID,
+        CONVERSATION_ID,
         "mock msg",
         [Document(page_content="mock content", metadata={"source": "secret"})],
         "mock-response-msg-id",
@@ -85,11 +85,11 @@ def test_log_context_with_tokens():
 def test_remove_conversation():
     repository = ConversationLogsRepositoryLocal(CONVERSATION_LOGS_DIR)
     repository.log_context(
-        CHAT_ID,
+        CONVERSATION_ID,
         "mock msg",
         [Document(page_content="mock content")],
         "mock-response-msg-id")
-    repository.remove_conversation(CHAT_ID)
+    repository.remove_conversation(CONVERSATION_ID)
     result = _read_file()
     assert result is None
 

@@ -14,9 +14,9 @@ async def execute(
     history_repository: ConversationHistoryRepositoryLocal,
     users_repository: UsersRepositoryLocal,
 ) -> ChatHistoryResponse:
-    chat_id = get_uuid(request.chat_id, "chat_id")
+    conversation_id = get_uuid(request.conversation_id, "conversation_id")
     messages = await get_chat_history_use_case.execute(
-        chat_id=chat_id,
+        conversation_id=conversation_id,
         user_id=request.user_id,
         history_repository=history_repository,
         users_repository=users_repository,
@@ -25,6 +25,6 @@ async def execute(
         raise ForbiddenAPIError()
     return ChatHistoryResponse(
         response="OK",
-        chat_id=str(chat_id),
+        conversation_id=str(conversation_id),
         messages=messages,
     )
