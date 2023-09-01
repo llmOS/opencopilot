@@ -39,10 +39,7 @@ async def execute(
     users_repository: UsersRepositoryLocal,
 ) -> AsyncGenerator[StreamingChunk, None]:
     if not is_user_allowed_to_chat_use_case.execute(
-        domain_input.chat_id,
-        domain_input.user_id,
-        history_repository,
-        users_repository
+        domain_input.chat_id, domain_input.user_id, history_repository, users_repository
     ):
         raise ForbiddenAPIError()
 

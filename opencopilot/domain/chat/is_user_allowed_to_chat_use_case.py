@@ -24,7 +24,7 @@ def execute(
 def _is_user_conversation(
     conversation_id: UUID,
     user_id: Optional[str],
-    users_repository: UsersRepositoryLocal
+    users_repository: UsersRepositoryLocal,
 ) -> bool:
     conversations = users_repository.get_conversations(user_id)
     if str(conversation_id) in conversations:
