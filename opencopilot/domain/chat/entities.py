@@ -28,7 +28,7 @@ class UserMessageInput:
     message: str
     response_message_id: str
     # TODO: rename to user_id
-    email: str = None
+    user_id: str = None
 
 
 @dataclass(frozen=True)

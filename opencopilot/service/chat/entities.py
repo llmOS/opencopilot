@@ -20,8 +20,7 @@ class ChatRequest(BaseModel):
     chat_id: str = Field(description="Chat id")
     message: str
     response_message_id: Optional[str] = None
-    # TODO: email to user_id
-    email: Optional[str] = None
+    user_id: Optional[str] = None
 
 
 class ChatResponse(ApiResponse):

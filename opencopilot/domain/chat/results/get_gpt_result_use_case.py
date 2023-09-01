@@ -34,7 +34,7 @@ async def execute(
     history_repository: ConversationHistoryRepositoryLocal,
     callback: CustomAsyncIteratorCallbackHandler = None,
 ) -> str:
-    llm = get_llm.execute(domain_input.email, callback)
+    llm = get_llm.execute(domain_input.user_id, callback)
 
     history = utils.add_history(
         system_message,

@@ -28,7 +28,7 @@ async def execute(
             chat_id=chat_id,
             message=request.message,
             response_message_id=request.response_message_id or str(uuid.uuid4()),
-            email=request.email,
+            user_id=request.user_id,
         ),
         document_store,
         history_repository,

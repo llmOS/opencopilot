@@ -29,7 +29,7 @@ async def execute(
 ) -> MessageModel:
     if not is_user_allowed_to_chat_use_case.execute(
         domain_input.chat_id,
-        domain_input.email,
+        domain_input.user_id,
         history_repository,
         users_repository
     ):
@@ -61,7 +61,7 @@ async def execute(
         domain_input.response_message_id,
     )
     users_repository.add_conversation(
-        conversation_id=domain_input.chat_id, user_id=domain_input.email
+        conversation_id=domain_input.chat_id, user_id=domain_input.user_id
     )
     sources = [document.metadata.get("source") for document in context]
 

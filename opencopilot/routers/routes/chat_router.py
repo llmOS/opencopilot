@@ -113,7 +113,7 @@ async def handle_conversation(
         chat_id=conversation_id,
         message=payload.message,
         response_message_id=payload.response_message_id,
-        email=user_id,
+        user_id=user_id,
     )
 
     history_repository = ConversationHistoryRepositoryLocal()
@@ -149,7 +149,7 @@ async def handle_conversation_streaming(
         chat_id=conversation_id,
         message=payload.message,
         response_message_id=payload.response_message_id,
-        email=user_id,
+        user_id=user_id,
     )
 
     history_repository = ConversationHistoryRepositoryLocal()

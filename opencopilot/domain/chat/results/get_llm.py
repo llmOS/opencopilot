@@ -10,7 +10,7 @@ from opencopilot.utils.callbacks.callback_handler import (
 
 
 def execute(
-    email: str = None,
+    user_id: str = None,
     callback: CustomAsyncIteratorCallbackHandler = None,
 ) -> ChatOpenAI:
     if settings.get().HELICONE_API_KEY:
@@ -20,18 +20,18 @@ def execute(
         model_name=settings.get().MODEL,
         streaming=callback is not None,
         callbacks=[callback] if callback is not None else None,
-        headers=_get_headers(email),
+        headers=_get_headers(user_id),
     )
     return llm
 
 
-def _get_headers(email: str = None) -> Optional[Dict]:
+def _get_headers(user_id: str = None) -> Optional[Dict]:
     if settings.get().HELICONE_API_KEY:
         headers = {
             "Helicone-Auth": "Bearer " + settings.get().HELICONE_API_KEY,
-            "Helicone-User-Id": email or "",
+            "Helicone-User-Id": user_id or "",
         }
-        if email and settings.get().HELICONE_RATE_LIMIT_POLICY:
+        if user_id and settings.get().HELICONE_RATE_LIMIT_POLICY:
             headers[
                 "Helicone-RateLimit-Policy"
             ] = settings.get().HELICONE_RATE_LIMIT_POLICY
