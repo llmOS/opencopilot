@@ -103,14 +103,15 @@ python copilot.py
 ```
 
 ### 4. Chat with the Copilot
-Your minimal copilot is now running as an API service, chat with the copilot at [localhost:3000/ui](http://localhost:3000/ui) or using CLI command below:
+You can chat with your copilot in the UI at [localhost:3000](http://localhost:3000) or using the CLI:
+
 ```bash
 opencopilot chat "Hello, who are you?"
 ```
 
 ### 5. Create your own copilot
 
-After seeing how easy it is to make a minimum viable copilot, you can now create your own and level it up step by step. For this, see [docs.opencopilot.dev](https://docs.opencopilot.dev/improve/customize-your-copilot)
+After seeing how easy it is to set up a copilot, you can now create your own and level it up step by step. For this, see [docs.opencopilot.dev](https://docs.opencopilot.dev/improve/customize-your-copilot)
 
 ## 🔍 Stack Overview
 OpenCopilot provides one coherent end-to-end stack which is purposely designed for building a variety of copilots. From LLM selection (OSS LLMs upcoming), knowledge base, monitoring, evaluation, etc - it covers all the needs to build a useful copilot.
