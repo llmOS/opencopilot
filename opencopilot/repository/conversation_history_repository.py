@@ -32,7 +32,9 @@ class ConversationHistoryRepositoryLocal:
                 return self._to_string(history)
             return self._to_string(history[count * -1 :])
         except:
-            logger.debug(f"Cannot load conversation history, id: {str(conversation_id)}")
+            logger.debug(
+                f"Cannot load conversation history, id: {str(conversation_id)}"
+            )
         return ""
 
     def get_history(self, conversation_id: UUID) -> List[Dict]:

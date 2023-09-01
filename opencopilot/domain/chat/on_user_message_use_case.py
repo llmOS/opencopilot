@@ -28,7 +28,10 @@ async def execute(
     users_repository: UsersRepositoryLocal,
 ) -> MessageModel:
     if not is_user_allowed_to_chat_use_case.execute(
-        domain_input.conversation_id, domain_input.user_id, history_repository, users_repository
+        domain_input.conversation_id,
+        domain_input.user_id,
+        history_repository,
+        users_repository,
     ):
         raise ForbiddenAPIError()
 
@@ -62,4 +65,6 @@ async def execute(
     )
     sources = [document.metadata.get("source") for document in context]
 
-    return MessageModel(conversation_id=domain_input.conversation_id, content=result, sources=sources)
+    return MessageModel(
+        conversation_id=domain_input.conversation_id, content=result, sources=sources
+    )

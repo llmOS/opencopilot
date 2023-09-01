@@ -85,7 +85,7 @@ class ConversationInput(BaseModel):
     "/conversations",
     summary="List conversations.",
     tags=[TAG],
-    response_model=ConversationsResponse
+    response_model=ConversationsResponse,
 )
 async def handle_get_conversations(
     user_id: str = Depends(validate_api_key_use_case.execute),
@@ -101,7 +101,7 @@ async def handle_get_conversations(
     "/conversations/{conversation_id}",
     summary="Send a message to the copilot and receive a non-streamed response.",
     tags=[TAG],
-    response_model=ChatResponse
+    response_model=ChatResponse,
 )
 async def handle_conversation(
     conversation_id: str = Path(
@@ -181,7 +181,7 @@ async def handle_conversation_streaming(
     "/conversations/{conversation_id}",
     summary="Retrieve a conversation.",
     tags=[TAG],
-    response_model=ChatHistoryResponse
+    response_model=ChatHistoryResponse,
 )
 async def handle_get_conversation_history(
     conversation_id: str = Path(..., description="The ID of the conversation."),

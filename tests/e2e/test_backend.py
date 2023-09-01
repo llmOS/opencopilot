@@ -50,7 +50,6 @@ def _chat_history(headers: Dict):
     assert len(result.json()["messages"]) > 1
     global message_id
     message_id = result.json()["messages"][0]["response_message_id"]
-    print("MESSAGE ID:", message_id)
 
 
 def _conversations(headers: Dict):

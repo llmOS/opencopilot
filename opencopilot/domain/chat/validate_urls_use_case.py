@@ -29,14 +29,16 @@ def _validate_url(url: str, conversation_id: UUID) -> None:
         response = requests.get(url)
         if response.status_code in [404, 410]:
             logger.warning(
-                f"Error querying url {url}, conversation_id: {str(conversation_id)}")
+                f"Error querying url {url}, conversation_id: {str(conversation_id)}"
+            )
             slack_messenger.post_error(
                 f"Error querying url {url}, conversation_id: {str(conversation_id)}",
                 f"status_code {response.status_code}",
             )
     except Exception as e:
         logger.warning(
-            f"Error querying url {url}, conversation_id: {str(conversation_id)}")
+            f"Error querying url {url}, conversation_id: {str(conversation_id)}"
+        )
         slack_messenger.post_error(
             f"Error querying url {url}, conversation_id: {str(conversation_id)}",
             str(e),
