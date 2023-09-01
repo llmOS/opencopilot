@@ -56,14 +56,6 @@ OpenCopilot solves this problem so building your own Copilot becomes intuitive, 
 See more [use cases in docs](https://docs.opencopilot.dev/welcome/overview#use-cases).
 
 
-
-## 🔍 Stack Overview
-OpenCopilot provides one coherent end-to-end stack which is purposely designed for building a variety of copilots. From LLM selection (OSS LLMs upcoming), knowledge base, monitoring, evaluation, etc - it covers all the needs to build a useful copilot.
-
-![opencopilot_stack](https://github.com/opencopilotdev/opencopilot/assets/5147210/140ca313-cf8a-4635-913e-8dbb5e33e8d4)
-
-See our docs on [Stack Overview](https://docs.opencopilot.dev/welcome/overview#stack-overview) to learn more about each part of the OpenCopilot stack.
-
 ## ⚡ Quickstart
 
 As prerequisites, you need to have **Python 3.8+** and **pip** installed.
@@ -77,7 +69,7 @@ pip install opencopilot-ai
 ### 2. Create a new python file to set up a minimal Copilot
 For example, `copilot.py`, where you add the code from below. Also, add your own `openai_api_key`, which you can get [from here](https://platform.openai.com/account/api-keys).
 
-If you have access to GPT-4, change `llm_model_name` to `gpt-4`.
+If you have access to GPT-4, we recommend changing `llm_model_name` to `gpt-4`.
 
 ```python
 from opencopilot import OpenCopilot
@@ -104,41 +96,28 @@ copilot = OpenCopilot(
 copilot()
 ```
 
-In the prompt, the template variables will be filled at runtime; see our docs on [Prompting](https://docs.opencopilot.dev/improve/prompting) if you'd like to learn more.
-
-See our docs on [Configuration](https://docs.opencopilot.dev/integrate/configuration) if you'd like to learn more about other configuration options.
-
 ### 3. Run the Copilot
 
 ```bash
 python copilot.py
 ```
 
-Your minimal copilot is now running as an API service, at `localhost:3000` by default. To see the full API documentation, go to [interactive Swagger docs](http://localhost:3000/docs#/Chat/handle_conversation_v0_conversation__conversation_id__post).
-
 ### 4. Chat with the Copilot
-You can quickly test out and chat with your copilot using the command-line interface by running:
-
+Your minimal copilot is now running as an API service, chat with the copilot at [localhost:3000/ui](http://localhost:3000/ui) or using CLI command below:
 ```bash
 opencopilot chat "Hello, who are you?"
 ```
 
-## 📖 Customizing, improving, testing and deploying your Copilot
+### 5. Create your own copilot
 
-While setting up the minimal copilot is quick, easy and fun, adding knowledge base to your copilot unlocks a whole new experience. Read how to customize your Copilot from the [documentation](https://docs.opencopilot.dev/improve/customize-your-copilot), which covers:
+After seeing how easy it is to make a minimum viable copilot, you can now create your own and level it up step by step. For this, see [docs.opencopilot.dev](https://docs.opencopilot.dev/improve/customize-your-copilot)
 
-* Customizing your copilot with prompting
-* Adding knowledge base
-* Automatic evaluation
-* Debugging LLM generation, retrieval, etc.
-* Read more about the core features and stack choices of OpenCopilot in [Overview](https://docs.opencopilot.dev/welcome/overview).
+## 🔍 Stack Overview
+OpenCopilot provides one coherent end-to-end stack which is purposely designed for building a variety of copilots. From LLM selection (OSS LLMs upcoming), knowledge base, monitoring, evaluation, etc - it covers all the needs to build a useful copilot.
 
-## Optional: front-end
+![opencopilot_stack](https://github.com/opencopilotdev/opencopilot/assets/5147210/140ca313-cf8a-4635-913e-8dbb5e33e8d4)
 
-If you'd like to set up an out of the box front-end for your Copilot, follow the instructions in the [opencopilotdev/opencopilot-frontend](https://github.com/opencopilotdev/opencopilot-frontend) repository.
-
-<img width="666" alt="Screenshot 2023-08-28 at 14 23 39" src="https://github.com/opencopilotdev/opencopilot/assets/22053381/6eab1f6a-a3ad-4649-a5e9-9abeb2ffcee9">
-
+See our docs on [Stack Overview](https://docs.opencopilot.dev/welcome/overview#stack-overview) to learn more about each part of the OpenCopilot stack.
 
 
 ## Getting help
