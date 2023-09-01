@@ -33,9 +33,6 @@ def _scrape_html(url) -> Optional[Document]:
         extracted_metadata = trafilatura.extract_metadata(downloaded)
         if extracted_metadata and extracted_metadata.title:
             metadata["title"] = extracted_metadata.title
-        return Document(
-            page_content=text,
-            metadata=metadata
-        )
+        return Document(page_content=text, metadata=metadata)
     except Exception as e:
         logger.warning(f"Failed to scrape the contents from {url}")

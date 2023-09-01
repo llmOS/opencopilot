@@ -20,30 +20,30 @@ from .settings import Settings
 
 class OpenCopilot:
     def __init__(
-            self,
-            prompt: Optional[str] = None,
-            prompt_file: Optional[str] = None,
-            openai_api_key: Optional[str] = None,
-            copilot_name: str = "default",
-            host: str = "127.0.0.1",
-            api_base_url: str = "http://127.0.0.1/",
-            api_port: int = 3000,
-            environment: str = "local",
-            allowed_origins: str = "*",
-            application_name: str = "my-copilot",
-            log_file_path="./logs/logs.log",
-            weaviate_url: str = "http://localhost:8080/",
-            weaviate_read_timeout: int = 120,
-            llm_model_name: Literal["gpt-3.5-turbo-16k", "gpt-4"] = "gpt-4",
-            max_document_size_mb: int = 50,
-            slack_webhook: str = "",
-            auth_type: Optional[str] = None,
-            api_key: str = "",
-            jwt_client_id: str = "",
-            jwt_client_secret: str = "",
-            jwt_token_expiration_seconds: int = timedelta(days=1).total_seconds(),
-            helicone_api_key: str = "",
-            helicone_rate_limit_policy: str = "3;w=60;s=user",
+        self,
+        prompt: Optional[str] = None,
+        prompt_file: Optional[str] = None,
+        openai_api_key: Optional[str] = None,
+        copilot_name: str = "default",
+        host: str = "127.0.0.1",
+        api_base_url: str = "http://127.0.0.1/",
+        api_port: int = 3000,
+        environment: str = "local",
+        allowed_origins: str = "*",
+        application_name: str = "my-copilot",
+        log_file_path="./logs/logs.log",
+        weaviate_url: str = "http://localhost:8080/",
+        weaviate_read_timeout: int = 120,
+        llm_model_name: Literal["gpt-3.5-turbo-16k", "gpt-4"] = "gpt-4",
+        max_document_size_mb: int = 50,
+        slack_webhook: str = "",
+        auth_type: Optional[str] = None,
+        api_key: str = "",
+        jwt_client_id: str = "",
+        jwt_client_secret: str = "",
+        jwt_token_expiration_seconds: int = timedelta(days=1).total_seconds(),
+        helicone_api_key: str = "",
+        helicone_rate_limit_policy: str = "3;w=60;s=user",
     ):
         if not openai_api_key:
             openai_api_key = os.getenv("OPENAI_API_KEY")
@@ -98,10 +98,12 @@ class OpenCopilot:
         from opencopilot.repository.documents.document_store import EmptyDocumentStore
         from .src.utils.loaders import urls_loader
 
-        if (self.data_loaders
-                or self.local_files_dirs
-                or self.local_file_paths
-                or self.data_urls):
+        if (
+            self.data_loaders
+            or self.local_files_dirs
+            or self.local_file_paths
+            or self.data_urls
+        ):
             self.document_store = WeaviateDocumentStore()
         else:
             self.document_store = EmptyDocumentStore()
@@ -110,8 +112,7 @@ class OpenCopilot:
         text_splitter = self.document_store.get_text_splitter()
         for data_loader in self.data_loaders:
             documents = data_loader()
-            document_chunks = split_documents_use_case.execute(
-                text_splitter, documents)
+            document_chunks = split_documents_use_case.execute(text_splitter, documents)
             self.documents.extend(document_chunks)
 
         for data_dir in self.local_files_dirs:
@@ -120,9 +121,7 @@ class OpenCopilot:
             )
 
         if len(self.data_urls):
-            self.documents.extend(
-                urls_loader.execute(self.data_urls, text_splitter)
-            )
+            self.documents.extend(urls_loader.execute(self.data_urls, text_splitter))
 
         if self.documents:
             self.document_store.ingest_data(self.documents)

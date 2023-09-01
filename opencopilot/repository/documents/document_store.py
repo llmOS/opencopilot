@@ -72,9 +72,9 @@ class WeaviateDocumentStore(DocumentStore):
         self.weaviate_client.schema.delete_all()
 
         for i in tqdm.tqdm(
-                range(0, int(len(documents) / batch_size) + 1), desc="Embedding.."
+            range(0, int(len(documents) / batch_size) + 1), desc="Embedding.."
         ):
-            batch = documents[i * batch_size: (i + 1) * batch_size]
+            batch = documents[i * batch_size : (i + 1) * batch_size]
             self.vector_store.add_documents(batch)
 
         self.embeddings.save_local_cache()

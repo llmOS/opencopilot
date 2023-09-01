@@ -4,10 +4,7 @@ from langchain.schema import Document
 from langchain.text_splitter import TextSplitter
 
 
-def execute(
-        text_splitter: TextSplitter,
-        documents: List[Document]
-) -> List[Document]:
+def execute(text_splitter: TextSplitter, documents: List[Document]) -> List[Document]:
     document_chunks = []
     for document in documents:
         for chunk in text_splitter.split_text(document.page_content):
