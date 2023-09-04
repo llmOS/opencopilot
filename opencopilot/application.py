@@ -30,8 +30,6 @@ class OpenCopilot:
         api_port: int = 3000,
         environment: str = "local",
         allowed_origins: str = "*",
-        application_name: str = "my-copilot",
-        log_file_path="./logs/logs.log",
         weaviate_url: str = "http://localhost:8080/",
         weaviate_read_timeout: int = 120,
         llm_model_name: Literal["gpt-3.5-turbo-16k", "gpt-4"] = "gpt-4",
@@ -56,6 +54,7 @@ class OpenCopilot:
 
         settings.set(
             Settings(
+                PROMPT=prompt,
                 OPENAI_API_KEY=openai_api_key,
                 COPILOT_NAME=copilot_name,
                 HOST=host,
@@ -63,8 +62,6 @@ class OpenCopilot:
                 API_BASE_URL=api_base_url,
                 ENVIRONMENT=environment,
                 ALLOWED_ORIGINS=allowed_origins,
-                APPLICATION_NAME=application_name,
-                LOG_FILE_PATH=log_file_path,
                 WEAVIATE_URL=weaviate_url,
                 WEAVIATE_READ_TIMEOUT=weaviate_read_timeout,
                 MODEL=llm_model_name,
@@ -80,7 +77,6 @@ class OpenCopilot:
             )
         )
 
-        self.add_prompt(prompt)
         self.host = host
         self.api_port = api_port
         self.data_loaders = []
@@ -129,10 +125,6 @@ class OpenCopilot:
         from .app import app
 
         uvicorn.run(app, host=self.host, port=self.api_port)
-
-    @staticmethod
-    def add_prompt(prompt: str):
-        settings.init_prompt(prompt)
 
     def data_loader(self, function: Callable[[], Document]):
         self.data_loaders.append(function)
