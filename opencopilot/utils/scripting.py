@@ -12,7 +12,6 @@ def set_default_settings(name: str = "script"):
             API_BASE_URL="http://localhost:3000/",
             ENVIRONMENT=name,
             ALLOWED_ORIGINS="*",
-            APPLICATION_NAME=name,
             LOG_FILE_PATH=f"./logs/{name}.log",
             WEAVIATE_URL="http://localhost:8080/",
             WEAVIATE_READ_TIMEOUT=120,

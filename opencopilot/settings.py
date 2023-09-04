@@ -15,8 +15,6 @@ class Settings:
     API_BASE_URL: str
     ENVIRONMENT: str
     ALLOWED_ORIGINS: str
-    APPLICATION_NAME: str
-    LOG_FILE_PATH: str
 
     WEAVIATE_URL: str
     WEAVIATE_READ_TIMEOUT: int
