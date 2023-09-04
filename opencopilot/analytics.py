@@ -43,11 +43,21 @@ def track_copilot_start():
 
     pprint(event)
 
+def track_copilot_start_error():
+    """Should be fired when the copilot fails to start."""
+    pass # TODO
+
 def track_cli_command():
+    """Should be fired when a CLI command is run."""
+    pass # TODO
+
+def track_cli_error():
+    """Should be fired when a CLI command fails."""
     pass # TODO
 
 
 def track_chat_message(user_agent, is_streaming):
+    """Should be fired when a chat message is sent to the API."""
     event = {
         "event_type": "chat_message",
         "user_agent": user_agent,
@@ -55,6 +65,11 @@ def track_chat_message(user_agent, is_streaming):
     }
 
     pprint(event)
+
+
+def track_api_error():
+    """Should be fired when an API error occurs."""
+    pass # TODO
 
 
 #def track_error
