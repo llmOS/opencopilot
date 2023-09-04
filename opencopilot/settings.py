@@ -52,8 +52,6 @@ class Settings:
     DATA_DIR: str = ""
 
     def __post_init__(self):
-        os.environ["OPENAI_API_KEY"] = self.OPENAI_API_KEY
-
         if self.AUTH_TYPE is not None and (
             self.AUTH_TYPE == "none"
             or self.AUTH_TYPE == "None"

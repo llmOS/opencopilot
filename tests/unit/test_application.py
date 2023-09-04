@@ -1,8 +1,11 @@
+import os
+
 import pytest
 
+from opencopilot import settings
 from opencopilot.application import OpenCopilot
-from opencopilot.domain.errors import APIKeyError, ModelError, PromptError
-
+from opencopilot.domain.errors import APIKeyError
+from opencopilot.domain.errors import PromptError
 
 # API key
 MOCK_OPENAI_API_KEY = "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"
@@ -11,12 +14,25 @@ VALID_PROMPT_FILE = "tests/assets/prompts/valid_prompt.txt"
 NO_USER_QUESTION_PROMPT_FILE = "tests/assets/prompts/no_user_question.txt"
 
 
+def setup_function():
+    os.environ["OPENAI_API_KEY"] = ""
+    settings._settings = None
+
+
+def test_prompt_file_valid():
+    copilot = OpenCopilot(
+        prompt_file=VALID_PROMPT_FILE,
+        openai_api_key=MOCK_OPENAI_API_KEY,
+    )
+
+
 def test_openai_api_key_empty():
     with pytest.raises(APIKeyError):
         copilot = OpenCopilot(
             openai_api_key="",
             prompt_file=VALID_PROMPT_FILE,
         )
+
 
 def test_openai_api_key_bad_format():
     with pytest.raises(APIKeyError):
@@ -34,19 +50,13 @@ def test_prompt_file_missing():
         )
 
 
-def test_prompt_file_valid():
-    copilot = OpenCopilot(
-        prompt_file=VALID_PROMPT_FILE,
-        openai_api_key=MOCK_OPENAI_API_KEY,
-    )
-
-
 def test_prompt_file_invalid():
     with pytest.raises(PromptError):
         copilot = OpenCopilot(
             prompt_file=NO_USER_QUESTION_PROMPT_FILE,
             openai_api_key=MOCK_OPENAI_API_KEY,
         )
+
 
 def test_prompt_string_valid():
     copilot = OpenCopilot(
@@ -68,6 +78,7 @@ def test_no_prompt_string_or_file_present():
         copilot = OpenCopilot(
             openai_api_key=MOCK_OPENAI_API_KEY,
         )
+
 
 def test_both_prompt_string_and_file_present():
     with pytest.raises(PromptError):
