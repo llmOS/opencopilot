@@ -48,8 +48,6 @@ class Settings:
 
     HELICONE_BASE_URL = "https://oai.hconeai.com/v1"
 
-    DATA_DIR: str = ""
-
     def __post_init__(self):
         os.environ["OPENAI_API_KEY"] = self.OPENAI_API_KEY
 
