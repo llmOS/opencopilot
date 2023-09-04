@@ -88,7 +88,6 @@ class OpenCopilot:
         self.data_urls = []
         self.local_file_paths = []
         self.documents = []
-    
 
     def __call__(self, *args, **kwargs):
         from .repository.documents import document_loader
