@@ -140,7 +140,7 @@ class OpenCopilot:
     def add_local_files_dir(self, files_dir: str) -> None:
         self.local_files_dirs.append(files_dir)
 
-    def add_urls(self, urls: List[str]) -> None:
+    def add_data_urls(self, urls: List[str]) -> None:
         self.data_urls.extend(urls)
 
     # def add_local_file(self, file_path: str) -> None:
