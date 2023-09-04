@@ -17,7 +17,7 @@ def execute(
         openai.api_base = settings.get().HELICONE_BASE_URL
     llm = ChatOpenAI(
         temperature=0.0,
-        model_name=settings.get().MODEL,
+        model_name=settings.get().LLM,
         streaming=callback is not None,
         callbacks=[callback] if callback is not None else None,
         headers=_get_headers(user_id),

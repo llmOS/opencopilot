@@ -77,9 +77,9 @@ class Settings:
         return self.ENVIRONMENT == "production"
 
     def get_max_token_count(self) -> int:
-        if self.MODEL == "gpt-3.5-turbo-16k":
+        if self.LLM == "gpt-3.5-turbo-16k":
             return 16384
-        if self.MODEL == "gpt-4":
+        if self.LLM == "gpt-4":
             return 8192
         return 2048
 
