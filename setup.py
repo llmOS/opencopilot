@@ -49,6 +49,7 @@ setup(
         'openpyxl',
         'typer[all]',
         'trafilatura',
+        'filetype',
     ],
     entry_points={
         'console_scripts': [

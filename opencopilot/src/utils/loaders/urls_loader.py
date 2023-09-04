@@ -1,13 +1,15 @@
-from typing import Dict
+import urllib.request
 from typing import List
 from typing import Optional
 
-import trafilatura
+import filetype
 from langchain.schema import Document
 from langchain.text_splitter import TextSplitter
 
 from opencopilot.logger import api_logger
 from opencopilot.repository.documents import split_documents_use_case
+from opencopilot.src.utils.loaders.url_loaders import html_loader_use_case
+from opencopilot.src.utils.loaders.url_loaders import pdf_loader_use_case
 
 logger = api_logger.get()
 
@@ -15,26 +17,28 @@ logger = api_logger.get()
 def execute(urls: List[str], text_splitter: TextSplitter) -> List[Document]:
     documents: List[Document] = []
     for url in urls:
-        scraped_document = _scrape_html(url)
-        if scraped_document:
-            documents.append(scraped_document)
+        documents.extend(_scrape_html(url))
     return split_documents_use_case.execute(text_splitter, documents)
 
 
-def _scrape_html(url) -> Optional[Document]:
+def _scrape_html(url: str) -> List[Document]:
+    docs: List[Document] = []
     try:
-        downloaded = trafilatura.fetch_url(url)
-        if not downloaded:
-            raise Exception()
-        text = trafilatura.extract(downloaded)
-        if not text:
-            raise Exception("Failed to extract text")
-        metadata: Dict = {
-            "source": url,
-        }
-        extracted_metadata = trafilatura.extract_metadata(downloaded)
-        if extracted_metadata and extracted_metadata.title:
-            metadata["title"] = extracted_metadata.title
-        return Document(page_content=text, metadata=metadata)
-    except Exception as e:
+        file_name, headers = urllib.request.urlretrieve(url)
+        file_type = _get_file_type(file_name)
+        if file_type == "application/pdf":
+            docs.extend(pdf_loader_use_case.execute(file_name, url))
+        else:
+            docs.extend(html_loader_use_case.execute(file_name, url))
+    except:
         logger.warning(f"Failed to scrape the contents from {url}")
+    return docs
+
+
+def _get_file_type(file_name: str) -> Optional[str]:
+    kind = None
+    try:
+        kind = filetype.guess(file_name)
+    except:
+        pass
+    return kind.mime if kind else None
