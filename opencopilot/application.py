@@ -18,7 +18,6 @@ from . import settings
 from .settings import Settings
 
 
-
 class OpenCopilot:
     def __init__(
         self,
