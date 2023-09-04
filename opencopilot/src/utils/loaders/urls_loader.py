@@ -27,6 +27,8 @@ def _scrape_html(url) -> Optional[Document]:
         if not downloaded:
             raise Exception()
         text = trafilatura.extract(downloaded)
+        if not text:
+            raise Exception("Failed to extract text")
         metadata: Dict = {
             "source": url,
         }
