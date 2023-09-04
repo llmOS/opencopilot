@@ -43,7 +43,6 @@ class Settings:
     # Configure based on model?
     PROMPT_HISTORY_INCLUDED_COUNT: int = 4
     MAX_CONTEXT_DOCUMENTS_COUNT: int = 4
-    MAX_TOKEN_COUNT: int = 2048
 
     PROMPT: Optional[str] = None
 
