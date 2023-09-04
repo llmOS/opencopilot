@@ -105,12 +105,6 @@ def init_custom_loaders(config_file: str) -> None:
             pass
 
 
-def init_prompt(prompt: str):
-    settings = get()
-    if settings:
-        settings.PROMPT = prompt
-
-
 _settings: Optional[Settings] = None
 
 

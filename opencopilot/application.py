@@ -56,6 +56,7 @@ class OpenCopilot:
 
         settings.set(
             Settings(
+                PROMPT=prompt,
                 OPENAI_API_KEY=openai_api_key,
                 COPILOT_NAME=copilot_name,
                 HOST=host,
@@ -87,7 +88,7 @@ class OpenCopilot:
         self.data_urls = []
         self.local_file_paths = []
         self.documents = []
-        settings.init_prompt(prompt)
+    
 
     def __call__(self, *args, **kwargs):
         from .repository.documents import document_loader
