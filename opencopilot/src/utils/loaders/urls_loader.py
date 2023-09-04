@@ -17,11 +17,11 @@ logger = api_logger.get()
 def execute(urls: List[str], text_splitter: TextSplitter) -> List[Document]:
     documents: List[Document] = []
     for url in urls:
-        documents.extend(_scrape_html(url))
+        documents.extend(_load_url(url))
     return split_documents_use_case.execute(text_splitter, documents)
 
 
-def _scrape_html(url: str) -> List[Document]:
+def _load_url(url: str) -> List[Document]:
     docs: List[Document] = []
     try:
         file_name, headers = urllib.request.urlretrieve(url)
