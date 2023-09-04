@@ -3,7 +3,10 @@ from datetime import timedelta
 from typing import Callable
 from typing import Literal
 from typing import Optional
+from typing import Union
 
+from langchain.llms.base import BaseLLM
+from langchain.embeddings.base import Embeddings
 import uvicorn
 from langchain.schema import Document
 
@@ -32,7 +35,8 @@ class OpenCopilot:
         log_file_path="./logs/logs.log",
         weaviate_url: str = "http://localhost:8080/",
         weaviate_read_timeout: int = 120,
-        llm_model_name: Literal["gpt-3.5-turbo-16k", "gpt-4"] = "gpt-4",
+        llm: Optional[Union[str, BaseLLM]] = "gpt-4",
+        embedding_model: Optional[Union[str, Embeddings]] = "text-embedding-ada-002",
         max_document_size_mb: int = 50,
         slack_webhook: str = "",
         auth_type: Optional[str] = None,
@@ -65,7 +69,8 @@ class OpenCopilot:
                 LOG_FILE_PATH=log_file_path,
                 WEAVIATE_URL=weaviate_url,
                 WEAVIATE_READ_TIMEOUT=weaviate_read_timeout,
-                MODEL=llm_model_name,
+                LLM=llm,
+                EMBEDDING_MODEL=embedding_model,
                 MAX_DOCUMENT_SIZE_MB=max_document_size_mb,
                 SLACK_WEBHOOK=slack_webhook,
                 AUTH_TYPE=auth_type,
@@ -79,6 +84,8 @@ class OpenCopilot:
         )
 
         self.add_prompt(prompt)
+        self.llm = llm
+        self.embedding_model = embedding_model
         self.host = host
         self.api_port = api_port
         self.data_loaders = []

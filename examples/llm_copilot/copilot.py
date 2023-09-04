@@ -2,7 +2,6 @@ import os
 from typing import List
 from dotenv import load_dotenv
 from langchain.schema import Document
-from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.document_loaders.sitemap import SitemapLoader
 
 from opencopilot import OpenCopilot
@@ -22,33 +21,17 @@ copilot = OpenCopilot(
 )
 copilot.add_local_files_dir("data")
 
-
-def _chunk_documents(documents: List[Document]) -> List[Document]:
-    text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
-        chunk_size=2000,
-        model_name="gpt-4",
-        disallowed_special=(),
-    )
-
-    document_chunks = []
-    for document in documents:
-        for chunk in text_splitter.split_text(document.page_content):
-            document_chunks.append(Document(page_content=chunk, metadata=document.metadata))
-    return document_chunks
-
-
 @copilot.data_loader
 def load_opencopilot_docs() -> List[Document]:
     loader = SitemapLoader("https://docs.opencopilot.dev/sitemap.xml")
     documents = loader.load()
-    return _chunk_documents(documents)
-
+    return documents
 
 @copilot.data_loader
 def load_helicone_docs() -> List[Document]:
     loader = SitemapLoader("https://docs.helicone.ai/sitemap.xml")
     documents = loader.load()
-    return _chunk_documents(documents)
+    return documents
 
 
 @copilot.data_loader
@@ -60,6 +43,6 @@ def load_weaviate_docs() -> List[Document]:
         ]
     )
     documents = loader.load()
-    return _chunk_documents(documents)
+    return documents
 
 copilot()

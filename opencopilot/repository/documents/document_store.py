@@ -3,7 +3,7 @@ from typing import List, Optional
 import tqdm
 import weaviate
 from langchain.schema import Document
-from langchain.text_splitter import CharacterTextSplitter
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.text_splitter import TextSplitter
 from langchain.vectorstores import Weaviate
 
@@ -23,10 +23,9 @@ class DocumentStore:
         return get_embedding_model_use_case.execute(use_local_cache=True)
 
     def get_text_splitter(self) -> TextSplitter:
-        return CharacterTextSplitter.from_tiktoken_encoder(
+        return RecursiveCharacterTextSplitter.from_tiktoken_encoder(
             chunk_size=self.document_chunk_size,
             model_name=self.document_embed_model,
-            separator=" ",
             disallowed_special=(),
         )
 

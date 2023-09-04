@@ -3,6 +3,10 @@ import os
 from dataclasses import dataclass
 from typing import Literal
 from typing import Optional
+from typing import Union
+
+from langchain.llms.base import BaseLLM
+from langchain.embeddings.base import Embeddings
 from omegaconf import OmegaConf
 
 
@@ -21,7 +25,8 @@ class Settings:
     WEAVIATE_URL: str
     WEAVIATE_READ_TIMEOUT: int
 
-    MODEL: Literal["gpt-3.5-turbo-16k", "gpt-4"]
+    LLM: Union[str, BaseLLM]
+    EMBEDDING_MODEL: Union[str, Embeddings]
 
     OPENAI_API_KEY: str
 
