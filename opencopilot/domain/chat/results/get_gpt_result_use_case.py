@@ -34,7 +34,7 @@ async def execute(
     history_repository: ConversationHistoryRepositoryLocal,
     callback: CustomAsyncIteratorCallbackHandler = None,
 ) -> str:
-    llm = get_llm.execute(domain_input.user_id, callback)
+    llm = get_llm.execute(domain_input.user_id)
 
     history = utils.add_history(
         system_message,
@@ -75,7 +75,11 @@ async def execute(
     )
 
     messages = [HumanMessage(content=prompt_text)]
-    result_message = await llm.agenerate([messages])
+    result_message = await llm.agenerate(
+        [messages],
+        callbacks=[callback] if callback is not None else None,
+        stream=callback is not None,
+    )
     result = result_message.generations[0][0].text
     return result
 

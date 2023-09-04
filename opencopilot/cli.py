@@ -1,17 +1,14 @@
-import os
 import uuid
-from typing import Optional
 from contextlib import nullcontext
+from typing import Optional
 
 import typer
-from typing_extensions import Annotated
 from rich.console import Console
 from rich.table import Table
+from typing_extensions import Annotated
 
-from opencopilot import settings
-from opencopilot.utils.scripting import set_default_settings
-from opencopilot.settings import Settings
 from opencopilot.scripts import chat as chat_script
+from opencopilot.utils.scripting import set_default_settings
 
 console = Console()
 

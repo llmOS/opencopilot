@@ -76,10 +76,6 @@ def execute(
                 document_dicts = json.load(f)
             for document in document_dicts:
                 metadata = document["metadata"]
-                if settings.get().copilot_config and metadata.get(
-                    "source"
-                ) in settings.get().copilot_config.data.get("ignore", []):
-                    continue
                 if "deprecated" in metadata.get("source", ""):
                     if not is_loading_deprecated:
                         # skip deprecated information

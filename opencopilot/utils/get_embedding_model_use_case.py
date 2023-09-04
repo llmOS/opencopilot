@@ -69,17 +69,20 @@ class CachedOpenAIEmbeddings(OpenAIEmbeddings):
 
 
 def execute(use_local_cache: bool = False):
-    openai_api_base = None
-    headers = None
-    if settings.get().HELICONE_API_KEY:
-        openai_api_base = settings.get().HELICONE_BASE_URL
-        headers = {
-            "Helicone-Auth": "Bearer " + settings.get().HELICONE_API_KEY,
-            "Helicone-Cache-Enabled": "true",
-        }
-    return CachedOpenAIEmbeddings(
-        disallowed_special=(),
-        use_local_cache=use_local_cache,
-        openai_api_base=openai_api_base,
-        headers=headers,
-    )
+    embeddings = settings.get().EMBEDDING_MODEL
+    if isinstance(embeddings, str):
+        openai_api_base = None
+        headers = None
+        if settings.get().HELICONE_API_KEY:
+            openai_api_base = settings.get().HELICONE_BASE_URL
+            headers = {
+                "Helicone-Auth": "Bearer " + settings.get().HELICONE_API_KEY,
+                "Helicone-Cache-Enabled": "true",
+            }
+        return CachedOpenAIEmbeddings(
+            disallowed_special=(),
+            use_local_cache=use_local_cache,
+            openai_api_base=openai_api_base,
+            headers=headers,
+        )
+    return embeddings
