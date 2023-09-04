@@ -26,20 +26,20 @@ loaders: List[Callable[[str, str], List[Document]]] = [
 ]
 
 
-def execute(urls: List[str], text_splitter: TextSplitter) -> List[Document]:
+def execute(
+    urls: List[str], text_splitter: TextSplitter, max_document_size_mb: int
+) -> List[Document]:
     documents: List[Document] = []
     for url in urls:
-        documents.extend(_load_url(url))
+        documents.extend(_load_url(url, max_document_size_mb))
     return split_documents_use_case.execute(text_splitter, documents)
 
 
-def _load_url(url: str) -> List[Document]:
+def _load_url(url: str, max_document_size_mb: int) -> List[Document]:
     docs: List[Document] = []
     try:
         file_name, headers = urllib.request.urlretrieve(url)
-        if (
-            file_size := _get_file_size(file_name)
-        ) > settings.get().MAX_DOCUMENT_SIZE_MB:
+        if (file_size := _get_file_size(file_name)) > max_document_size_mb:
             logger.warning(
                 f"Document {url} too big ({file_size} > {settings.get().MAX_DOCUMENT_SIZE_MB}), skipping."
             )
