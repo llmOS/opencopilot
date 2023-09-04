@@ -80,7 +80,6 @@ class OpenCopilot:
             )
         )
 
-        self.add_prompt(prompt)
         self.host = host
         self.api_port = api_port
         self.data_loaders = []
@@ -88,6 +87,7 @@ class OpenCopilot:
         self.data_urls = []
         self.local_file_paths = []
         self.documents = []
+        settings.init_prompt(prompt)
 
     def __call__(self, *args, **kwargs):
         from .repository.documents import document_loader
@@ -129,10 +129,6 @@ class OpenCopilot:
         from .app import app
 
         uvicorn.run(app, host=self.host, port=self.api_port)
-
-    @staticmethod
-    def add_prompt(prompt: str):
-        settings.init_prompt(prompt)
 
     def data_loader(self, function: Callable[[], Document]):
         self.data_loaders.append(function)
