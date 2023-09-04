@@ -1,10 +1,17 @@
 from typing import List
 
+from filetype import filetype
 from langchain.document_loaders import PyPDFLoader
 from langchain.schema import Document
 
+from opencopilot.src.utils.loaders.url_loaders.entities import (
+    UnsupportedFileTypeException,
+)
+
 
 def execute(file_name: str, url: str) -> List[Document]:
+    if not _is_file_type_pdf(file_name):
+        raise UnsupportedFileTypeException()
     formatted_docs = []
     loader = PyPDFLoader(file_name)
     docs = loader.load()
@@ -16,3 +23,13 @@ def execute(file_name: str, url: str) -> List[Document]:
             )
         )
     return formatted_docs
+
+
+def _is_file_type_pdf(file_name: str) -> bool:
+    mime_type: str = ""
+    try:
+        kind = filetype.guess(file_name)
+        mime_type = kind.mime
+    except:
+        pass
+    return mime_type == "application/pdf"
