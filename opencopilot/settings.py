@@ -96,15 +96,6 @@ def init_data_dir(data_dir: str) -> None:
         settings.DATA_DIR = data_dir if os.path.exists(data_dir) else None
 
 
-def init_custom_loaders(config_file: str) -> None:
-    settings = get()
-    if settings:
-        try:
-            settings.copilot_config = OmegaConf.load(config_file)
-        except:
-            pass
-
-
 _settings: Optional[Settings] = None
 
 
