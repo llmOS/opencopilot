@@ -20,7 +20,9 @@ def execute(
         model_name=settings.get().MODEL,
         streaming=callback is not None,
         callbacks=[callback] if callback is not None else None,
-        headers=_get_headers(user_id),
+        model_kwargs={
+            "headers": _get_headers(user_id)
+        },
     )
     return llm
 
