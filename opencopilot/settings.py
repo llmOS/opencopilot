@@ -90,12 +90,6 @@ class Settings:
         return None
 
 
-def init_data_dir(data_dir: str) -> None:
-    settings = get()
-    if settings:
-        settings.DATA_DIR = data_dir if os.path.exists(data_dir) else None
-
-
 _settings: Optional[Settings] = None
 
 
