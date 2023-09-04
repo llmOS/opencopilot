@@ -26,7 +26,6 @@ openai==0.27.8
 wandb==0.15.4
 streamlit==1.24.0
 playwright==1.35.0
-unstructured==0.7.2
 dataclasses-json==0.5.9
 omegaconf==2.3.0
 GitPython==3.1.32
@@ -35,3 +34,4 @@ aiohttp==3.8.5
 xxhash==3.3.0
 openpyxl==3.1.2
 typer[all]==0.7.0
+trafilatura==1.6.1

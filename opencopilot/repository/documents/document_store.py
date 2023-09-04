@@ -8,11 +8,8 @@ from langchain.text_splitter import TextSplitter
 from langchain.vectorstores import Weaviate
 
 from opencopilot import settings
-from opencopilot.logger import api_logger
 from opencopilot.utils import get_embedding_model_use_case
 from opencopilot.utils.get_embedding_model_use_case import CachedOpenAIEmbeddings
-
-logger = api_logger.get()
 
 
 class DocumentStore:
