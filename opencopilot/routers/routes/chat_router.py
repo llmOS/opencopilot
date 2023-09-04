@@ -1,13 +1,16 @@
 from typing import Optional
 
 from fastapi import APIRouter
+from fastapi import BackgroundTasks
 from fastapi import Body
 from fastapi import Depends
+from fastapi import Request
 from fastapi import Path
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from pydantic import Field
 
+from opencopilot.analytics import track_chat_message
 from opencopilot.authorization import validate_api_key_use_case
 from opencopilot.logger import api_logger
 from opencopilot.repository.conversation_history_repository import (
@@ -104,6 +107,8 @@ async def handle_get_conversations(
     response_model=ChatResponse,
 )
 async def handle_conversation(
+    background_tasks: BackgroundTasks,
+    api_request: Request,
     conversation_id: str = Path(
         ...,
         description=CONVERSATION_ID_DESCRIPTION,
@@ -111,7 +116,7 @@ async def handle_conversation(
     payload: ConversationInput = Body(
         ..., description="Input and parameters for the conversation."
     ),
-    user_id: str = Depends(validate_api_key_use_case.execute),
+    user_id: str = Depends(validate_api_key_use_case.execute)
 ):
     request = ChatRequest(
         conversation_id=conversation_id,
@@ -131,6 +136,8 @@ async def handle_conversation(
         logs_repository,
         users_repository,
     )
+
+    background_tasks.add_task(track_chat_message, api_request.headers.get("user-agent"), False)
     return routing_utils.to_json_response(
         {"copilot_message": response.message, "sources": response.sources}
     )
@@ -143,6 +150,8 @@ async def handle_conversation(
     tags=[TAG],
 )
 async def handle_conversation_streaming(
+    background_tasks: BackgroundTasks,
+    api_request: Request,
     conversation_id: str = Path(..., description=CONVERSATION_ID_DESCRIPTION),
     payload: ConversationInput = Body(
         ..., description="Input and parameters for the conversation."
@@ -164,6 +173,8 @@ async def handle_conversation_streaming(
         "X-Content-Type-Options": "nosniff",
         "Connection": "keep-alive",
     }
+
+    background_tasks.add_task(track_chat_message, api_request.headers.get("user-agent"), True)
     return StreamingResponse(
         chat_streaming_service.execute(
             request,

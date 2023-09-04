@@ -11,6 +11,9 @@ from pprint import pprint
 def hashed(s: str):
     return hashlib.sha256(s.encode()).hexdigest()
 
+def identify():
+    pass # TODO
+
 def track_copilot_start():
     
     s: Settings = settings.get()
@@ -39,3 +42,19 @@ def track_copilot_start():
     }
 
     pprint(event)
+
+def track_cli_command():
+    pass # TODO
+
+
+def track_chat_message(user_agent, is_streaming):
+    event = {
+        "event_type": "chat_message",
+        "user_agent": user_agent,
+        "is_streaming": is_streaming
+    }
+
+    pprint(event)
+
+
+#def track_error
