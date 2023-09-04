@@ -63,8 +63,8 @@ class Settings:
 
         self.COPILOT_DIRECTORY = f"copilots/{self.COPILOT_NAME}"
 
-        self.PROMPT_QUESTION_KEY = self._get_prompt_key("question_key") or "User"
-        self.PROMPT_ANSWER_KEY = self._get_prompt_key("response_key") or "Copilot"
+        self.PROMPT_QUESTION_KEY = "User"
+        self.PROMPT_ANSWER_KEY = "Copilot"
 
         self.copilot_config = None
 
@@ -77,17 +77,6 @@ class Settings:
         if self.MODEL == "gpt-4":
             return 8192
         return 2048
-
-    def _get_prompt_key(self, key: str) -> Optional[str]:
-        try:
-            with open(
-                f"{self.COPILOT_DIRECTORY}/prompts/prompt_configuration.json", "r"
-            ) as f:
-                prompt_configuration = json.load(f)
-            return prompt_configuration.get(key) or None
-        except:
-            pass
-        return None
 
 
 _settings: Optional[Settings] = None
