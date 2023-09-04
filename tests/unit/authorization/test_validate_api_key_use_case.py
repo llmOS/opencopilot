@@ -43,8 +43,6 @@ async def test_validate_jwt_success(mock_jwt, mock_settings):
         API_BASE_URL="http://localhost:3000/",
         ENVIRONMENT="test",
         ALLOWED_ORIGINS="*",
-        APPLICATION_NAME="unit_tests_app",
-        LOG_FILE_PATH="mock",
 
         WEAVIATE_URL="mock_url",
         WEAVIATE_READ_TIMEOUT=120,

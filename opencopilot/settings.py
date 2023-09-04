@@ -13,8 +13,6 @@ class Settings:
     API_BASE_URL: str
     ENVIRONMENT: str
     ALLOWED_ORIGINS: str
-    APPLICATION_NAME: str
-    LOG_FILE_PATH: str
 
     WEAVIATE_URL: str
     WEAVIATE_READ_TIMEOUT: int
@@ -47,8 +45,6 @@ class Settings:
     HELICONE_BASE_URL = "https://oai.hconeai.com/v1"
 
     def __post_init__(self):
-        os.environ["OPENAI_API_KEY"] = self.OPENAI_API_KEY
-
         if self.AUTH_TYPE is not None and (
             self.AUTH_TYPE == "none"
             or self.AUTH_TYPE == "None"
