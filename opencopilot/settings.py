@@ -61,8 +61,6 @@ class Settings:
         ):
             self.AUTH_TYPE = None
 
-        self.COPILOT_DIRECTORY = f"copilots/{self.COPILOT_NAME}"
-
         self.PROMPT_QUESTION_KEY = "User"
         self.PROMPT_ANSWER_KEY = "Copilot"
 
