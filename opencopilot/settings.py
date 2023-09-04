@@ -1,9 +1,7 @@
-import json
 import os
 from dataclasses import dataclass
 from typing import Literal
 from typing import Optional
-from omegaconf import OmegaConf
 
 
 @dataclass(frozen=False)
@@ -43,13 +41,10 @@ class Settings:
     # Configure based on model?
     PROMPT_HISTORY_INCLUDED_COUNT: int = 4
     MAX_CONTEXT_DOCUMENTS_COUNT: int = 4
-    MAX_TOKEN_COUNT: int = 2048
 
     PROMPT: Optional[str] = None
 
     HELICONE_BASE_URL = "https://oai.hconeai.com/v1"
-
-    DATA_DIR: str = ""
 
     def __post_init__(self):
         os.environ["OPENAI_API_KEY"] = self.OPENAI_API_KEY
@@ -61,12 +56,8 @@ class Settings:
         ):
             self.AUTH_TYPE = None
 
-        self.COPILOT_DIRECTORY = f"copilots/{self.COPILOT_NAME}"
-
-        self.PROMPT_QUESTION_KEY = self._get_prompt_key("question_key") or "User"
-        self.PROMPT_ANSWER_KEY = self._get_prompt_key("response_key") or "Copilot"
-
-        self.copilot_config = None
+        self.PROMPT_QUESTION_KEY = "User"
+        self.PROMPT_ANSWER_KEY = "Copilot"
 
     def is_production(self):
         return self.ENVIRONMENT == "production"
@@ -77,38 +68,6 @@ class Settings:
         if self.MODEL == "gpt-4":
             return 8192
         return 2048
-
-    def _get_prompt_key(self, key: str) -> Optional[str]:
-        try:
-            with open(
-                f"{self.COPILOT_DIRECTORY}/prompts/prompt_configuration.json", "r"
-            ) as f:
-                prompt_configuration = json.load(f)
-            return prompt_configuration.get(key) or None
-        except:
-            pass
-        return None
-
-
-def init_data_dir(data_dir: str) -> None:
-    settings = get()
-    if settings:
-        settings.DATA_DIR = data_dir if os.path.exists(data_dir) else None
-
-
-def init_custom_loaders(config_file: str) -> None:
-    settings = get()
-    if settings:
-        try:
-            settings.copilot_config = OmegaConf.load(config_file)
-        except:
-            pass
-
-
-def init_prompt(prompt: str):
-    settings = get()
-    if settings:
-        settings.PROMPT = prompt
 
 
 _settings: Optional[Settings] = None
