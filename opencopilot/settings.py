@@ -61,8 +61,6 @@ class Settings:
         self.PROMPT_QUESTION_KEY = "User"
         self.PROMPT_ANSWER_KEY = "Copilot"
 
-        self.copilot_config = None
-
     def is_production(self):
         return self.ENVIRONMENT == "production"
 
