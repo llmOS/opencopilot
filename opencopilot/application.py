@@ -17,6 +17,8 @@ from .utils.validators import (
 from . import settings
 from .settings import Settings
 
+from .analytics import track_copilot_start
+
 
 class OpenCopilot:
     def __init__(
@@ -128,6 +130,7 @@ class OpenCopilot:
 
         from .app import app
 
+        track_copilot_start()
         uvicorn.run(app, host=self.host, port=self.api_port)
 
     def data_loader(self, function: Callable[[], Document]):
