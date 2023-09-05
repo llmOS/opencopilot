@@ -21,6 +21,7 @@ def execute(
         streaming=callback is not None,
         callbacks=[callback] if callback is not None else None,
         model_kwargs={"headers": _get_headers(user_id)},
+        openai_api_key=settings.get().OPENAI_API_KEY,
     )
     return llm
 
