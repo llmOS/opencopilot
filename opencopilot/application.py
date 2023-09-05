@@ -50,7 +50,7 @@ class OpenCopilot:
         if not openai_api_key:
             openai_api_key = os.getenv("OPENAI_API_KEY")
 
-        validate_openai_api_key(openai_api_key)
+        #validate_openai_api_key(openai_api_key)
         validate_prompt_and_prompt_file_config(prompt, prompt_file)
 
         prompt = prompt or open(prompt_file, "r").read()

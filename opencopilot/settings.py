@@ -67,7 +67,10 @@ class Settings:
         elif self.LLM == "gpt-4":
             return 8192
         else:
-            return self.LLM.max_tokens
+            try:
+                return self.LLM.max_tokens
+            except:
+                return 2048
 
 
 _settings: Optional[Settings] = None
