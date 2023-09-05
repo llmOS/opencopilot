@@ -16,7 +16,7 @@ class Settings:
     ENVIRONMENT: str
     ALLOWED_ORIGINS: str
 
-    WEAVIATE_URL: str
+    WEAVIATE_URL: Optional[str]
     WEAVIATE_READ_TIMEOUT: int
 
     LLM: Union[str, BaseLLM]

@@ -32,7 +32,7 @@ class OpenCopilot:
         api_port: int = 3000,
         environment: str = "local",
         allowed_origins: str = "*",
-        weaviate_url: str = "http://localhost:8080/",
+        weaviate_url: Optional[str] = None,
         weaviate_read_timeout: int = 120,
         llm: Optional[Union[str, BaseLLM]] = "gpt-4",
         embedding_model: Optional[Union[str, Embeddings]] = "text-embedding-ada-002",
