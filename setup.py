@@ -50,6 +50,7 @@ setup(
         'typer[all]',
         'trafilatura',
         'filetype',
+        'psutil'
     ],
     entry_points={
         'console_scripts': [

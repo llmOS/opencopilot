@@ -2,6 +2,7 @@ import os
 import typer
 import psutil
 import requests
+import platform
 from tqdm import tqdm
 from rich import print
 from rich.console import Console
@@ -16,7 +17,7 @@ oss_app = typer.Typer(
     no_args_is_help=True,
 )
 
-MODEL_PATH = ".models/"
+MODEL_PATH = "models/"
 
 
 @dataclass
@@ -81,6 +82,10 @@ MODELS = {
 }
 
 
+def _is_macos() -> bool:
+    return platform.system() == "Darwin"
+
+
 def _can_use_model(model_size: float) -> bool:
     total_memory = psutil.virtual_memory().total / (1024**3)
     return model_size < total_memory / 2
@@ -90,15 +95,26 @@ def _is_model_installed(model_filename: str) -> bool:
     return os.path.exists(os.path.join(MODEL_PATH, model_filename))
 
 
-def _download_model(url: str, filename: str) -> bool:
-    response = requests.get(url, stream=True)
-    response.raise_for_status()
+def _download_model(url: str, filename: str):
+    model_file_path = os.path.join(MODEL_PATH, filename)
+    if os.path.exists(model_file_path):
+        resume_byte = os.path.getsize(model_file_path)
+    else:
+        resume_byte = 0
 
-    total_size = int(response.headers.get("content-length", 0))
-    progress_bar = tqdm(total=total_size, unit="B", unit_scale=True)
+    headers = {}
+    if resume_byte:
+        headers["Range"] = f"bytes={resume_byte}-"
+
+    response = requests.get(url, headers=headers, stream=True)
+
+    total_size = resume_byte + int(response.headers.get("content-length", 0))
+    progress_bar = tqdm(
+        total=total_size, unit="B", unit_scale=True, initial=resume_byte
+    )
 
     os.makedirs(MODEL_PATH, exist_ok=True)
-    with open(os.path.join(MODEL_PATH, filename), "wb") as f:
+    with open(model_file_path, "ab" if resume_byte else "wb") as f:
         for chunk in response.iter_content(chunk_size=8192):
             f.write(chunk)
             progress_bar.update(len(chunk))
@@ -123,7 +139,9 @@ def list_models():
         )
     console.print(table)
     print("\n* Recommended for your system")
-    print("\nTo see more details about a model: [code]opencopilot oss info <model_name>[/code]")
+    print(
+        "\nTo see more details about a model: [code]opencopilot oss info <model_name>[/code]"
+    )
 
 
 @oss_app.command("info")
@@ -147,9 +165,8 @@ def run_model(model_name: str = "Llama-2-7b-chat"):
     """Run a specific model."""
     try:
         model = MODELS.get(model_name)
-        if not _is_model_installed(model.filename):
-            typer.echo(f"Downloading {model_name}...")
-            _download_model(model.url, model.filename)
+        typer.echo(f"Downloading {model_name}...")
+        _download_model(model.url, model.filename)
         typer.echo(f"Running {model.name}...")
     except:
         typer.echo(f"Could not run {model_name}!")
@@ -157,9 +174,19 @@ def run_model(model_name: str = "Llama-2-7b-chat"):
         import uvicorn
         from llama_cpp.server.app import create_app, Settings
     except:
-        print("Coud not run llama-cpp, make sure you've installed [code]llama-cpp-python package![/code]"
+        print(
+            "Coud not run LLM, make sure you've installed [code]llama-cpp-python[/code] package and dependencies!"
         )
-        print("Instructions how to install: [link]https://llama-cpp-python.readthedocs.io/en/latest/#installation[/link]")
+        if _is_macos():
+            print(
+                'To install: [code]CMAKE_ARGS="-DLLAMA_METAL=on" pip install llama-cpp-python[server] pydantic_settings sse_starlette[/code]'
+            )
+        else:
+            print("To install: [code]pip install llama-cpp-python[server] pydantic_settings sse_starlette[/code]")
+        print(
+            "More information on how to install: [link]https://llama-cpp-python.readthedocs.io/en/latest/#installation[/link]"
+        )
+        print("Re-run this command after installation is done!")
         return
     settings = Settings(
         model=os.path.join(MODEL_PATH, model.filename),
