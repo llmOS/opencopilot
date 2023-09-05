@@ -116,7 +116,7 @@ async def handle_conversation(
     payload: ConversationInput = Body(
         ..., description="Input and parameters for the conversation."
     ),
-    user_id: str = Depends(validate_api_key_use_case.execute)
+    user_id: str = Depends(validate_api_key_use_case.execute),
 ):
     request = ChatRequest(
         conversation_id=conversation_id,
@@ -137,7 +137,9 @@ async def handle_conversation(
         users_repository,
     )
 
-    background_tasks.add_task(track, "chat_message", api_request.headers.get("user-agent"), False)
+    background_tasks.add_task(
+        track, "chat_message", api_request.headers.get("user-agent"), False
+    )
     return routing_utils.to_json_response(
         {"copilot_message": response.message, "sources": response.sources}
     )
@@ -174,7 +176,9 @@ async def handle_conversation_streaming(
         "Connection": "keep-alive",
     }
 
-    background_tasks.add_task(track, "chat_message", api_request.headers.get("user-agent"), True)
+    background_tasks.add_task(
+        track, "chat_message", api_request.headers.get("user-agent"), True
+    )
     return StreamingResponse(
         chat_streaming_service.execute(
             request,

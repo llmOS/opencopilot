@@ -12,12 +12,15 @@ from pprint import pprint
 def hashed(s: str):
     return xxhash.xxh64(s.encode("utf-8")).hexdigest()
 
+
 def get_user_id():
     """Returns a unique identifier for the user."""
-    return uuid.getnode() # mac address
+    return uuid.getnode()  # mac address
+
 
 def identify():
-    pass # TODO
+    pass  # TODO
+
 
 def track(event_name: str, *args, **kwargs):
     """Should be the entry point to all tracking."""
@@ -25,7 +28,7 @@ def track(event_name: str, *args, **kwargs):
 
     if not tracking_enabled:
         return
-    
+
     if event_name == "copilot_start":
         _track_copilot_start(*args, **kwargs)
     elif event_name == "copilot_start_error":
@@ -45,15 +48,12 @@ def track(event_name: str, *args, **kwargs):
 def _track_copilot_start():
     """Should be fired when the copilot starts."""
     s: Settings = settings.get()
-    
+
     event = {
         "event_type": "copilot_start",
         "model_name": s.MODEL,
         "copilot_name_hash": hashed(s.COPILOT_NAME),
-        "prompt": {
-            "hash": hashed(s.PROMPT),
-            "length": len(s.PROMPT)
-        },
+        "prompt": {"hash": hashed(s.PROMPT), "length": len(s.PROMPT)},
         "retriever": {
             # TODO name of retriever; num ingested docs & chunks
         },
@@ -62,26 +62,31 @@ def _track_copilot_start():
         },
         "system_information": {
             "python_version": platform.python_version(),
-            "opencopilot_version": pkg_resources.get_distribution('opencopilot-ai').version,
+            "opencopilot_version": pkg_resources.get_distribution(
+                "opencopilot-ai"
+            ).version,
             "platform.platform": platform.platform(),
             "platform.system": platform.system(),
             # TODO track env type - conda, venv, docker, etc
-        }
+        },
     }
 
     pprint(event)
 
+
 def _track_copilot_start_error():
     """Should be fired when the copilot fails to start."""
-    pass # TODO
+    pass  # TODO
+
 
 def _track_cli_command():
     """Should be fired when a CLI command is run."""
-    pass # TODO
+    pass  # TODO
+
 
 def _track_cli_error():
     """Should be fired when a CLI command fails."""
-    pass # TODO
+    pass  # TODO
 
 
 def _track_chat_message(user_agent, is_streaming):
@@ -89,7 +94,7 @@ def _track_chat_message(user_agent, is_streaming):
     event = {
         "event_type": "chat_message",
         "user_agent": user_agent,
-        "is_streaming": is_streaming
+        "is_streaming": is_streaming,
     }
 
     pprint(event)
@@ -97,4 +102,4 @@ def _track_chat_message(user_agent, is_streaming):
 
 def _track_api_error():
     """Should be fired when an API error occurs."""
-    pass # TODO
+    pass  # TODO
