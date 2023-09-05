@@ -1,5 +1,5 @@
 import uuid
-import hashlib
+import xxhash
 import platform
 import pkg_resources
 
@@ -10,7 +10,7 @@ from pprint import pprint
 
 
 def hashed(s: str):
-    return hashlib.sha256(s.encode()).hexdigest()
+    return xxhash.xxh64(s.encode("utf-8")).hexdigest()
 
 def get_user_id():
     """Returns a unique identifier for the user."""
