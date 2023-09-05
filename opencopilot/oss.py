@@ -178,8 +178,9 @@ def model_remove(model_name: str):
         print(f"[bold]{model.name}[/bold] not downloaded - nothing to remove.")
 
 
+# pylint: disable=no-value-for-parameter
 @oss_app.command("run")
-def run_model(model_name: Annotated[str, typer.Argument(default="Llama-2-7b-chat")]):
+def run_model(model_name: Annotated[str, typer.Argument()] = "Llama-2-7b-chat"):
     """Run a specific model."""
     try:
         model = MODELS.get(model_name)
