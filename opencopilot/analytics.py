@@ -2,6 +2,7 @@ import uuid
 import xxhash
 import platform
 import subprocess
+from subprocess import CalledProcessError
 import importlib.metadata as importlib_metadata
 
 import segment.analytics as segment_analytics
@@ -22,7 +23,9 @@ def get_opencopilot_version():
     # Run `pip freeze` to detect local install and get commit hash
     try:
         pip_freeze_output = subprocess.check_output(["pip", "freeze"]).decode("utf-8")
-        matching_lines = [l for l in pip_freeze_output.split("\n") if "opencopilot" in l]
+        matching_lines = [
+            l for l in pip_freeze_output.split("\n") if "opencopilot" in l
+        ]
 
         for line in matching_lines:
             if line.startswith(package_name):
@@ -36,7 +39,7 @@ def get_opencopilot_version():
             elif "opencopilot-ai" in line or "opencopilot_ai" in line:
                 # Local install from non-version-controlled directory
                 declared_version = line
-    except subprocess.CalledProcessError:
+    except CalledProcessError:
         pass
 
     return declared_version
