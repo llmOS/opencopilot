@@ -9,15 +9,15 @@ from langchain.vectorstores import Weaviate
 
 from opencopilot import settings
 from opencopilot.utils import get_embedding_model_use_case
-from opencopilot.utils.get_embedding_model_use_case import CachedOpenAIEmbeddings
+from opencopilot.utils.get_embedding_model_use_case import CachedEmbeddings
 
 
 class DocumentStore:
     document_embed_model = "text-embedding-ada-002"
     document_chunk_size = 2000
 
-    def get_embeddings_model(self) -> CachedOpenAIEmbeddings:
-        return get_embedding_model_use_case.execute(use_local_cache=True)
+    def get_embeddings_model(self) -> CachedEmbeddings:
+        return get_embedding_model_use_case.execute()
 
     def get_text_splitter(self) -> TextSplitter:
         return RecursiveCharacterTextSplitter.from_tiktoken_encoder(
