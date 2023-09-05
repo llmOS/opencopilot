@@ -8,6 +8,9 @@ from .settings import Settings
 
 from pprint import pprint
 
+from opencopilot.repository.documents.document_store import DocumentStore
+from opencopilot.repository.documents.document_store import WeaviateDocumentStore
+
 
 def hashed(s: str):
     return xxhash.xxh64(s.encode("utf-8")).hexdigest()
@@ -45,20 +48,27 @@ def track(event_name: str, *args, **kwargs):
         raise Exception(f"Unknown tracking event name: {event_name}")
 
 
-def _track_copilot_start():
+def _track_copilot_start(
+    n_documents: int,
+    n_data_loaders: int,
+    n_local_files_dirs: int,
+    n_local_file_paths: int,
+    n_data_urls: int,
+):
     """Should be fired when the copilot starts."""
     s: Settings = settings.get()
 
     event = {
         "event_type": "copilot_start",
-        "model_name": s.MODEL,
+        "llm_name": s.MODEL,
         "copilot_name_hash": hashed(s.COPILOT_NAME),
         "prompt": {"hash": hashed(s.PROMPT), "length": len(s.PROMPT)},
-        "retriever": {
-            # TODO name of retriever; num ingested docs & chunks
-        },
-        "features": {
-            # TODO track how many URLs added, how many local data files/dirs, how many data loader functions
+        "retrieval": {
+            "n_documents": n_documents,
+            "n_data_loaders": n_data_loaders,
+            "n_local_files_dirs": n_local_files_dirs,
+            "n_data_urls": n_data_urls,
+            "n_local_file_paths": n_local_file_paths,
         },
         "system_information": {
             "python_version": platform.python_version(),
@@ -76,7 +86,8 @@ def _track_copilot_start():
 
 def _track_copilot_start_error():
     """Should be fired when the copilot fails to start."""
-    pass  # TODO
+    # TODO add this when CLI error handling is implemented in a separate
+    pass
 
 
 def _track_cli_command(subcommand: str):
@@ -91,9 +102,9 @@ def _track_cli_command(subcommand: str):
 
 def _track_cli_error():
     """Should be fired when a CLI command fails."""
-    pass
-    # TODO add this when CLI error handling is implemented in a separate PR
+    # TODO add this when error handling is implemented in a separate PR
     # TODO - should we actually add this as a field under _track_cli_command?
+    pass
 
 
 def _track_chat_message(user_agent, is_streaming):
@@ -109,4 +120,5 @@ def _track_chat_message(user_agent, is_streaming):
 
 def _track_api_error():
     """Should be fired when an API error occurs."""
-    pass  # TODO
+    # TODO add this when error handling is implemented in a separate
+    pass

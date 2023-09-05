@@ -133,7 +133,15 @@ class OpenCopilot:
 
         from .app import app
 
-        track("copilot_start")
+        track(
+            "copilot_start",
+            len(self.documents),
+            len(self.data_loaders),
+            len(self.local_files_dirs),
+            len(self.local_file_paths),
+            len(self.data_urls),
+        )
+
         uvicorn.run(app, host=self.host, port=self.api_port)
 
     def data_loader(self, function: Callable[[], Document]):
