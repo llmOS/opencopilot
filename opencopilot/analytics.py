@@ -12,8 +12,6 @@ from .settings import Settings
 
 SEGMENT_WRITE_KEY = "wZRhqA6Rt6sDtro2TayQM6mw7vuxXOtR"
 segment_analytics.write_key = SEGMENT_WRITE_KEY
-segment_analytics.debug = True
-# segment_analytics.send = False
 
 
 def get_opencopilot_version():
