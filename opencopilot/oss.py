@@ -175,7 +175,7 @@ def run_model(model_name: str = "Llama-2-7b-chat"):
         from llama_cpp.server.app import create_app, Settings
     except:
         print(
-            "Coud not run LLM, make sure you've installed [code]llama-cpp-python[/code] package and dependencies!"
+            "Could not run LLM, make sure you've installed [code]llama-cpp-python[/code] package and dependencies!"
         )
         if _is_macos():
             print(
