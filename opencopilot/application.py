@@ -48,7 +48,7 @@ class OpenCopilot:
         if not openai_api_key:
             openai_api_key = os.getenv("OPENAI_API_KEY")
 
-        tracking_enabled = not os.getenv("OPENCOPILOT_DO_NOT_TRACK") == "True"
+        tracking_enabled = not os.getenv("OPENCOPILOT_DO_NOT_TRACK").lower() == "true"
 
         validate_openai_api_key(openai_api_key)
         validate_prompt_and_prompt_file_config(prompt, prompt_file)
