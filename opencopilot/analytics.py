@@ -12,7 +12,7 @@ from . import settings
 from .settings import Settings
 
 
-SEGMENT_WRITE_KEY = "wZRhqA6Rt6sDtro2TayQM6mw7vuxXOtR"
+SEGMENT_WRITE_KEY = "iEkciV19ocu9abTCzjbvjPsCKzOJF30S"
 segment_analytics.write_key = SEGMENT_WRITE_KEY
 
 
