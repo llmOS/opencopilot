@@ -79,14 +79,21 @@ def _track_copilot_start_error():
     pass  # TODO
 
 
-def _track_cli_command():
+def _track_cli_command(subcommand: str):
     """Should be fired when a CLI command is run."""
-    pass  # TODO
+    event = {
+        "event_type": "cli_command",
+        "subcommand": subcommand,
+    }
+
+    pprint(event)
 
 
 def _track_cli_error():
     """Should be fired when a CLI command fails."""
-    pass  # TODO
+    pass
+    # TODO add this when CLI error handling is implemented in a separate PR
+    # TODO - should we actually add this as a field under _track_cli_command?
 
 
 def _track_chat_message(user_agent, is_streaming):

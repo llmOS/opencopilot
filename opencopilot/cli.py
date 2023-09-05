@@ -7,12 +7,23 @@ from rich.console import Console
 from rich.table import Table
 from typing_extensions import Annotated
 
+from opencopilot.analytics import track
 from opencopilot.scripts import chat as chat_script
 from opencopilot.utils.scripting import set_default_settings
 
 console = Console()
 
 app = typer.Typer(add_completion=False, no_args_is_help=True)
+
+
+@app.callback()
+def main(ctx: typer.Context):
+    # Initialize settings
+    set_default_settings("cli")
+
+    # Track command used
+    subcommand = ctx.invoked_subcommand
+    track("cli_command", subcommand=subcommand)
 
 
 @app.command(help="Print info")
@@ -56,7 +67,6 @@ def retrieve(
         Optional[bool], typer.Option("--all", "-a", help="Gets all documents ingested")
     ] = False,
 ):
-    set_default_settings("cli")
     from opencopilot.repository.documents.document_store import WeaviateDocumentStore
 
     document_store = WeaviateDocumentStore()
