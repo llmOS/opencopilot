@@ -180,7 +180,7 @@ def model_remove(model_name: str):
 
 # pylint: disable=no-value-for-parameter
 @oss_app.command("run")
-def run_model(model_name: Annotated[str, typer.Argument()] = "Llama-2-7b-chat"):
+def run_model(model_name: Annotated[str, typer.Argument(...)] = "Llama-2-7b-chat"):
     """Run a specific model."""
     try:
         model = MODELS.get(model_name)
@@ -218,7 +218,9 @@ def run_model(model_name: Annotated[str, typer.Argument()] = "Llama-2-7b-chat"):
     )
     app = create_app(settings=settings)
     uvicorn.run(
-        app, host=os.getenv("HOST", "localhost"), port=int(os.getenv("PORT", 8000))
+        app,
+        host=os.getenv("OSS_LLM_HOST", "localhost"),
+        port=int(os.getenv("OSS_LLM_PORT", 8000)),
     )
 
 

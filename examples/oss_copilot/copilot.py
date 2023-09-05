@@ -2,11 +2,11 @@ import os
 from dotenv import load_dotenv
 from typing import List
 from langchain.schema import Document
-from langchain.chat_models import ChatOpenAI
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.document_loaders.sitemap import SitemapLoader
 
 from opencopilot import OpenCopilot
+from opencopilot.chat_models import LocalLLM
 
 load_dotenv()
 
@@ -44,9 +44,9 @@ Here is the latest conversation between Assistant and User:
 User: {question}
 """
 
-llm = ChatOpenAI(
+llm = LocalLLM(
     temperature=0.0,
-    openai_api_base="http://127.0.0.1:8000/v1",
+    llm_url="http://127.0.0.1:8000/v1",
     max_tokens=1024
 )
 
