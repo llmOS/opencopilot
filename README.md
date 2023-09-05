@@ -122,7 +122,7 @@ See our docs on [Stack Overview](https://docs.opencopilot.dev/welcome/overview#s
 
 ## Analytics
 
-OpenCopilot collects library usage data to improve the product and your experience. We collect events regarding your usage of copilot features, and never collect your code, prompts, or LLM outputs. To understand what is tracked, check out the code TODO.
+OpenCopilot collects library usage data to improve the product and your experience. We collect events regarding errors and your usage of copilot features, and never collect your code, prompts, knowledge base documents, or LLM outputs. To understand what is tracked, check out the [tracking code](/opencopilot/analytics.py).
 
 You can opt out of tracking by setting the environment variable `OPENCOPILOT_DO_NOT_TRACK=True`:
 
