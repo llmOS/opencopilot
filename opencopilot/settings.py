@@ -1,4 +1,3 @@
-import os
 from dataclasses import dataclass
 from typing import Literal
 from typing import Optional
@@ -14,7 +13,7 @@ class Settings:
     ENVIRONMENT: str
     ALLOWED_ORIGINS: str
 
-    WEAVIATE_URL: str
+    WEAVIATE_URL: Optional[str]
     WEAVIATE_READ_TIMEOUT: int
 
     MODEL: Literal["gpt-3.5-turbo-16k", "gpt-4"]
