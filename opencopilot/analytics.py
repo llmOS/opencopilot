@@ -1,3 +1,4 @@
+import uuid
 import hashlib
 import platform
 import pkg_resources
@@ -10,6 +11,10 @@ from pprint import pprint
 
 def hashed(s: str):
     return hashlib.sha256(s.encode()).hexdigest()
+
+def get_user_id():
+    """Returns a unique identifier for the user."""
+    return uuid.getnode() # mac address
 
 def identify():
     pass # TODO
