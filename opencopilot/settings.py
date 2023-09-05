@@ -44,6 +44,8 @@ class Settings:
 
     HELICONE_BASE_URL = "https://oai.hconeai.com/v1"
 
+    TRACKING_ENABLED: bool
+
     def __post_init__(self):
         if self.AUTH_TYPE is not None and (
             self.AUTH_TYPE == "none"

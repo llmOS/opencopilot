@@ -48,6 +48,8 @@ class OpenCopilot:
         if not openai_api_key:
             openai_api_key = os.getenv("OPENAI_API_KEY")
 
+        tracking_enabled = not os.getenv("OPENCOPILOT_DO_NOT_TRACK") == "True"
+
         validate_openai_api_key(openai_api_key)
         validate_prompt_and_prompt_file_config(prompt, prompt_file)
 
@@ -76,6 +78,7 @@ class OpenCopilot:
                 JWT_TOKEN_EXPIRATION_SECONDS=jwt_token_expiration_seconds,
                 HELICONE_API_KEY=helicone_api_key,
                 HELICONE_RATE_LIMIT_POLICY=helicone_rate_limit_policy,
+                TRACKING_ENABLED=tracking_enabled,
             )
         )
 

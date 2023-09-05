@@ -7,6 +7,9 @@ from .settings import Settings
 
 from pprint import pprint
 
+def is_tracking_enabled():
+    s: Settings = settings.get()
+    return s.TRACKING_ENABLED
 
 def hashed(s: str):
     return hashlib.sha256(s.encode()).hexdigest()
@@ -15,6 +18,8 @@ def identify():
     pass # TODO
 
 def track_copilot_start():
+    if not is_tracking_enabled():
+        return
     
     s: Settings = settings.get()
     
@@ -45,19 +50,31 @@ def track_copilot_start():
 
 def track_copilot_start_error():
     """Should be fired when the copilot fails to start."""
+    if not is_tracking_enabled():
+        return
+    
     pass # TODO
 
 def track_cli_command():
     """Should be fired when a CLI command is run."""
+    if not is_tracking_enabled():
+        return
+    
     pass # TODO
 
 def track_cli_error():
     """Should be fired when a CLI command fails."""
+    if not is_tracking_enabled():
+        return
+    
     pass # TODO
 
 
 def track_chat_message(user_agent, is_streaming):
     """Should be fired when a chat message is sent to the API."""
+    if not is_tracking_enabled():
+        return
+    
     event = {
         "event_type": "chat_message",
         "user_agent": user_agent,
@@ -69,6 +86,9 @@ def track_chat_message(user_agent, is_streaming):
 
 def track_api_error():
     """Should be fired when an API error occurs."""
+    if not is_tracking_enabled():
+        return
+    
     pass # TODO
 
 
