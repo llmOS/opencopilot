@@ -82,4 +82,5 @@ def execute(use_local_cache: bool = False):
         use_local_cache=use_local_cache,
         openai_api_base=openai_api_base,
         headers=headers,
+        openai_api_key=settings.get().OPENAI_API_KEY,
     )
