@@ -177,8 +177,9 @@ def model_remove(model_name: str):
     else:
         print(f"[bold]{model.name}[/bold] not downloaded - nothing to remove.")
 
+
 @oss_app.command("run")
-def run_model(model_name: Annotated[str, typer.Argument()] = "Llama-2-7b-chat"):
+def run_model(model_name: Annotated[str, typer.Argument(default="Llama-2-7b-chat")]):
     """Run a specific model."""
     try:
         model = MODELS.get(model_name)
@@ -187,6 +188,7 @@ def run_model(model_name: Annotated[str, typer.Argument()] = "Llama-2-7b-chat"):
         typer.echo(f"Running {model.name}...")
     except:
         typer.echo(f"Could not run {model_name}!")
+    # pylint: disable=import-error
     try:
         import uvicorn
         from llama_cpp.server.app import create_app, Settings

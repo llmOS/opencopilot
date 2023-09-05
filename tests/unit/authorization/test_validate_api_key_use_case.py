@@ -47,7 +47,8 @@ async def test_validate_jwt_success(mock_jwt, mock_settings):
         WEAVIATE_URL="mock_url",
         WEAVIATE_READ_TIMEOUT=120,
 
-        MODEL="gpt-4",
+        LLM="gpt-4",
+        EMBEDDING_MODEL="text-embedding-ada-002",
 
         OPENAI_API_KEY="None",
 
