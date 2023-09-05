@@ -10,7 +10,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from pydantic import Field
 
-from opencopilot.analytics import track_chat_message
+from opencopilot.analytics import track
 from opencopilot.authorization import validate_api_key_use_case
 from opencopilot.logger import api_logger
 from opencopilot.repository.conversation_history_repository import (
@@ -137,7 +137,7 @@ async def handle_conversation(
         users_repository,
     )
 
-    background_tasks.add_task(track_chat_message, api_request.headers.get("user-agent"), False)
+    background_tasks.add_task(track, "chat_message", api_request.headers.get("user-agent"), False)
     return routing_utils.to_json_response(
         {"copilot_message": response.message, "sources": response.sources}
     )
@@ -174,7 +174,7 @@ async def handle_conversation_streaming(
         "Connection": "keep-alive",
     }
 
-    background_tasks.add_task(track_chat_message, api_request.headers.get("user-agent"), True)
+    background_tasks.add_task(track, "chat_message", api_request.headers.get("user-agent"), True)
     return StreamingResponse(
         chat_streaming_service.execute(
             request,

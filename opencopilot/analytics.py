@@ -7,9 +7,6 @@ from .settings import Settings
 
 from pprint import pprint
 
-def is_tracking_enabled():
-    s: Settings = settings.get()
-    return s.TRACKING_ENABLED
 
 def hashed(s: str):
     return hashlib.sha256(s.encode()).hexdigest()
@@ -17,10 +14,31 @@ def hashed(s: str):
 def identify():
     pass # TODO
 
-def track_copilot_start():
-    if not is_tracking_enabled():
+def track(event_name: str, *args, **kwargs):
+    """Should be the entry point to all tracking."""
+    tracking_enabled = settings.get().TRACKING_ENABLED
+
+    if not tracking_enabled:
         return
     
+    if event_name == "copilot_start":
+        _track_copilot_start(*args, **kwargs)
+    elif event_name == "copilot_start_error":
+        _track_copilot_start_error(*args, **kwargs)
+    elif event_name == "cli_command":
+        _track_cli_command(*args, **kwargs)
+    elif event_name == "cli_error":
+        _track_cli_error(*args, **kwargs)
+    elif event_name == "chat_message":
+        _track_chat_message(*args, **kwargs)
+    elif event_name == "api_error":
+        _track_api_error(*args, **kwargs)
+    else:
+        raise Exception(f"Unknown tracking event name: {event_name}")
+
+
+def _track_copilot_start():
+    """Should be fired when the copilot starts."""
     s: Settings = settings.get()
     
     event = {
@@ -48,33 +66,21 @@ def track_copilot_start():
 
     pprint(event)
 
-def track_copilot_start_error():
+def _track_copilot_start_error():
     """Should be fired when the copilot fails to start."""
-    if not is_tracking_enabled():
-        return
-    
     pass # TODO
 
-def track_cli_command():
+def _track_cli_command():
     """Should be fired when a CLI command is run."""
-    if not is_tracking_enabled():
-        return
-    
     pass # TODO
 
-def track_cli_error():
+def _track_cli_error():
     """Should be fired when a CLI command fails."""
-    if not is_tracking_enabled():
-        return
-    
     pass # TODO
 
 
-def track_chat_message(user_agent, is_streaming):
+def _track_chat_message(user_agent, is_streaming):
     """Should be fired when a chat message is sent to the API."""
-    if not is_tracking_enabled():
-        return
-    
     event = {
         "event_type": "chat_message",
         "user_agent": user_agent,
@@ -84,12 +90,6 @@ def track_chat_message(user_agent, is_streaming):
     pprint(event)
 
 
-def track_api_error():
+def _track_api_error():
     """Should be fired when an API error occurs."""
-    if not is_tracking_enabled():
-        return
-    
     pass # TODO
-
-
-#def track_error
