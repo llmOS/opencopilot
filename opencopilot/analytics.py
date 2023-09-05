@@ -2,7 +2,9 @@ import uuid
 import xxhash
 import platform
 import importlib_metadata
-    
+
+import segment.analytics as segment_analytics
+
 
 from . import settings
 from .settings import Settings
@@ -10,17 +12,10 @@ from .settings import Settings
 from pprint import pprint
 
 
-def hashed(s: str):
-    return xxhash.xxh64(s.encode("utf-8")).hexdigest()
-
-
-def get_user_id():
-    """Returns a unique identifier for the user."""
-    return uuid.getnode()  # mac address
-
-
-def identify():
-    pass  # TODO
+SEGMENT_WRITE_KEY = "wZRhqA6Rt6sDtro2TayQM6mw7vuxXOtR"
+segment_analytics.write_key = SEGMENT_WRITE_KEY
+segment_analytics.debug = True
+#segment_analytics.send = False
 
 
 def get_opencopilot_version():
@@ -29,6 +24,16 @@ def get_opencopilot_version():
 
     # TODO currently will not show correctly if installed locally with `pip install -e .`
     return declared_version
+
+
+def hashed(s: str):
+    return xxhash.xxh64(s.encode("utf-8")).hexdigest()
+
+
+def get_hashed_user_id():
+    """Returns a hashed unique identifier for the user."""
+    mac_address: int = uuid.getnode()
+    return hashed(str(mac_address))
 
 
 def track(event_name: str, *args, **kwargs):
@@ -65,7 +70,6 @@ def _track_copilot_start(
     s: Settings = settings.get()
 
     event = {
-        "event_type": "copilot_start",
         "llm_name": s.MODEL,
         "copilot_name_hash": hashed(s.COPILOT_NAME),
         "prompt": {"hash": hashed(s.PROMPT), "length": len(s.PROMPT)},
@@ -76,16 +80,14 @@ def _track_copilot_start(
             "n_data_urls": n_data_urls,
             "n_local_file_paths": n_local_file_paths,
         },
-        "system": {
+        "environment": {
             "python_version": platform.python_version(),
-            "opencopilot_version": get_opencopilot_version(),
-            "platform.platform": platform.platform(),
-            "platform.system": platform.system(),
+            "opencopilot_version": get_opencopilot_version()
             # TODO track env type - conda, venv, docker, etc
         },
     }
 
-    pprint(event)
+    segment_analytics.track(anonymous_id=get_hashed_user_id(), event="Started Copilot", properties=event)
 
 
 def _track_copilot_start_error():
@@ -97,11 +99,11 @@ def _track_copilot_start_error():
 def _track_cli_command(subcommand: str):
     """Should be fired when a CLI command is run."""
     event = {
-        "event_type": "cli_command",
         "subcommand": subcommand,
     }
 
-    pprint(event)
+    segment_analytics.track(anonymous_id=get_hashed_user_id(), event="Used CLI", properties=event)
+
 
 
 def _track_cli_error():
@@ -114,12 +116,12 @@ def _track_cli_error():
 def _track_chat_message(user_agent, is_streaming):
     """Should be fired when a chat message is sent to the API."""
     event = {
-        "event_type": "chat_message",
         "user_agent": user_agent,
         "is_streaming": is_streaming,
     }
 
-    pprint(event)
+    segment_analytics.track(anonymous_id=get_hashed_user_id(), event="Messaged Copilot", properties=event)
+
 
 
 def _track_api_error():
