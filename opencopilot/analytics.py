@@ -1,7 +1,7 @@
 import uuid
 import xxhash
 import platform
-import importlib_metadata
+import importlib.metadata as importlib_metadata
 
 import segment.analytics as segment_analytics
 
