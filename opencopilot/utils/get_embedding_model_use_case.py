@@ -13,16 +13,18 @@ from opencopilot.logger import api_logger
 logger = api_logger.get()
 
 
-class CachedEmbeddings():
+class CachedEmbeddings:
     embeddings: Embeddings = PrivateAttr()
     _cache: Dict = PrivateAttr()
-    _embeddings_cache_filename: str = PrivateAttr() 
+    _embeddings_cache_filename: str = PrivateAttr()
 
     def __init__(self, embeddings: Embeddings, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._embeddings =embeddings
+        self._embeddings = embeddings
         self._cache = {}
-        self._embeddings_cache_filename = settings.get().COPILOT_NAME + "_embeddings_cache.pkl"
+        self._embeddings_cache_filename = (
+            settings.get().COPILOT_NAME + "_embeddings_cache.pkl"
+        )
         self._load_local_cache()
 
     def embed_documents(self, texts: List[str], **kwargs) -> List[List[float]]:

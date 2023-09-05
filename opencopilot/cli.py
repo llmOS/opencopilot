@@ -10,9 +10,12 @@ from typing_extensions import Annotated
 from opencopilot.scripts import chat as chat_script
 from opencopilot.utils.scripting import set_default_settings
 
+from opencopilot.oss import oss_app
+
 console = Console()
 
 app = typer.Typer(add_completion=False, no_args_is_help=True)
+app.add_typer(oss_app, name="oss")
 
 
 @app.command(help="Print info")
