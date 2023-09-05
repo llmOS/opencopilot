@@ -9,8 +9,6 @@ import segment.analytics as segment_analytics
 from . import settings
 from .settings import Settings
 
-from pprint import pprint
-
 
 SEGMENT_WRITE_KEY = "wZRhqA6Rt6sDtro2TayQM6mw7vuxXOtR"
 segment_analytics.write_key = SEGMENT_WRITE_KEY
