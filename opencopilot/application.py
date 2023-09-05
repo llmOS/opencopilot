@@ -117,7 +117,11 @@ class OpenCopilot:
             )
 
         if len(self.data_urls):
-            self.documents.extend(urls_loader.execute(self.data_urls, text_splitter))
+            self.documents.extend(
+                urls_loader.execute(
+                    self.data_urls, text_splitter, settings.get().MAX_DOCUMENT_SIZE_MB
+                )
+            )
 
         if self.documents:
             self.document_store.ingest_data(self.documents)
