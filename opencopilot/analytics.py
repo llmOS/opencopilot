@@ -1,6 +1,7 @@
 import uuid
 import xxhash
 import platform
+import subprocess
 import importlib.metadata as importlib_metadata
 
 import segment.analytics as segment_analytics
@@ -18,7 +19,26 @@ def get_opencopilot_version():
     package_name = "opencopilot-ai"
     declared_version = importlib_metadata.version(package_name)
 
-    # TODO currently will not show correctly if installed locally with `pip install -e .`
+    # Run `pip freeze` to detect local install and get commit hash
+    try:
+        pip_freeze_output = subprocess.check_output(["pip", "freeze"]).decode("utf-8")
+        matching_lines = [l for l in pip_freeze_output.split("\n") if "opencopilot" in l]
+
+        for line in matching_lines:
+            if line.startswith(package_name):
+                # Normal PyPI install
+                declared_version = line.split("==")[1]
+                break
+            elif line.startswith(f"-e git+") and "egg=opencopilot_ai" in line:
+                # Local install from version-controlled repo
+                declared_version = line.split("-e ")[1]
+                break
+            elif "opencopilot-ai" in line or "opencopilot_ai" in line:
+                # Local install from non-version-controlled directory
+                declared_version = line
+    except subprocess.CalledProcessError:
+        pass
+
     return declared_version
 
 
