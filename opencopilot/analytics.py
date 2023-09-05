@@ -80,7 +80,9 @@ def _track_copilot_start(
         },
         "environment": {
             "python_version": platform.python_version(),
-            "opencopilot_version": get_opencopilot_version()
+            "opencopilot_version": get_opencopilot_version(),
+            "platform.platform": platform.platform(),
+            "platform.system": platform.system(),
             # TODO track env type - conda, venv, docker, etc
         },
     }
