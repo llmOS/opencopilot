@@ -9,7 +9,6 @@ from .settings import Settings
 from pprint import pprint
 
 
-
 def hashed(s: str):
     return xxhash.xxh64(s.encode("utf-8")).hexdigest()
 
