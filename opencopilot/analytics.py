@@ -15,7 +15,7 @@ from pprint import pprint
 SEGMENT_WRITE_KEY = "wZRhqA6Rt6sDtro2TayQM6mw7vuxXOtR"
 segment_analytics.write_key = SEGMENT_WRITE_KEY
 segment_analytics.debug = True
-#segment_analytics.send = False
+# segment_analytics.send = False
 
 
 def get_opencopilot_version():
@@ -87,7 +87,9 @@ def _track_copilot_start(
         },
     }
 
-    segment_analytics.track(anonymous_id=get_hashed_user_id(), event="Started Copilot", properties=event)
+    segment_analytics.track(
+        anonymous_id=get_hashed_user_id(), event="Started Copilot", properties=event
+    )
 
 
 def _track_copilot_start_error():
@@ -102,8 +104,9 @@ def _track_cli_command(subcommand: str):
         "subcommand": subcommand,
     }
 
-    segment_analytics.track(anonymous_id=get_hashed_user_id(), event="Used CLI", properties=event)
-
+    segment_analytics.track(
+        anonymous_id=get_hashed_user_id(), event="Used CLI", properties=event
+    )
 
 
 def _track_cli_error():
@@ -120,8 +123,9 @@ def _track_chat_message(user_agent, is_streaming):
         "is_streaming": is_streaming,
     }
 
-    segment_analytics.track(anonymous_id=get_hashed_user_id(), event="Messaged Copilot", properties=event)
-
+    segment_analytics.track(
+        anonymous_id=get_hashed_user_id(), event="Messaged Copilot", properties=event
+    )
 
 
 def _track_api_error():
