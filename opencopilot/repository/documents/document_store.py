@@ -46,10 +46,19 @@ class WeaviateDocumentStore(DocumentStore):
         self.vector_store = self._get_vector_store()
 
     def _get_weaviate_client(self):
-        return weaviate.Client(
-            url=settings.get().WEAVIATE_URL,
-            timeout_config=(10, settings.get().WEAVIATE_READ_TIMEOUT),
-        )
+        if url := settings.get().WEAVIATE_URL:
+            return weaviate.Client(
+                url=url,
+                timeout_config=(10, settings.get().WEAVIATE_READ_TIMEOUT),
+            )
+        else:
+            return weaviate.Client(
+                timeout_config=(10, settings.get().WEAVIATE_READ_TIMEOUT),
+                embedded_options=weaviate.embedded.EmbeddedOptions(
+                    port=8080,
+                    hostname="localhost",
+                ),
+            )
 
     def _get_vector_store(self):
         metadatas = [d.metadata for d in self.documents]

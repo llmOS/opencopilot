@@ -30,7 +30,7 @@ class OpenCopilot:
         api_port: int = 3000,
         environment: str = "local",
         allowed_origins: str = "*",
-        weaviate_url: str = "http://localhost:8080/",
+        weaviate_url: Optional[str] = None,
         weaviate_read_timeout: int = 120,
         llm_model_name: Literal["gpt-3.5-turbo-16k", "gpt-4"] = "gpt-4",
         max_document_size_mb: int = 50,

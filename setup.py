@@ -38,7 +38,7 @@ setup(
         'Jinja2',
         'tiktoken',
         'text-generation',
-        'weaviate-client',
+        'weaviate-client>=3.23.2',
         'pypdf',
         'unstructured',
         'pdf2image',
