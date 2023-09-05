@@ -8,8 +8,6 @@ from .settings import Settings
 
 from pprint import pprint
 
-from opencopilot.repository.documents.document_store import DocumentStore
-from opencopilot.repository.documents.document_store import WeaviateDocumentStore
 
 
 def hashed(s: str):
