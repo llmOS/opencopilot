@@ -3,6 +3,11 @@ import typer
 import psutil
 import requests
 import platform
+from typing import List
+from typing import Union
+from typing_extensions import TypedDict
+from pydantic import BaseModel
+from pydantic import Field
 from tqdm import tqdm
 from rich import print
 from rich.console import Console
@@ -29,6 +34,16 @@ class ModelInfo:
     prompt_template: str
     filename: str
     url: str
+
+
+class Tokens(TypedDict):
+    prompt_tokens: Union[List[int], List[List[int]]]
+
+
+class TokenizeRequest(BaseModel):
+    prompt: Union[str, List[str]] = Field(
+        default="", description="The prompt to generate completions for."
+    )
 
 
 MODELS = {
@@ -178,7 +193,6 @@ def model_remove(model_name: str):
         print(f"[bold]{model.name}[/bold] not downloaded - nothing to remove.")
 
 
-# pylint: disable=no-value-for-parameter
 @oss_app.command("run")
 def run_model(model_name: Annotated[str, typer.Argument(...)] = "Llama-2-7b-chat"):
     """Run a specific model."""
@@ -192,7 +206,9 @@ def run_model(model_name: Annotated[str, typer.Argument(...)] = "Llama-2-7b-chat
     # pylint: disable=import-error
     try:
         import uvicorn
-        from llama_cpp.server.app import create_app, Settings
+        import llama_cpp
+        from llama_cpp.server.app import create_app, Settings, get_llama, router
+        from fastapi import Depends
     except:
         print(
             "Could not run LLM, make sure you've installed [code]llama-cpp-python[/code] package and dependencies!"
@@ -216,6 +232,28 @@ def run_model(model_name: Annotated[str, typer.Argument(...)] = "Llama-2-7b-chat
         n_gpu_layers=1,
         use_mlock=True,
     )
+
+    @router.post("/v1/tokenize")
+    async def tokenize(
+        body: TokenizeRequest,
+        llama: llama_cpp.Llama = Depends(get_llama),
+    ) -> Tokens:
+        if type(body.prompt) == list:
+            try:
+                tokens_list = [
+                    llama.tokenize(text=text.encode("utf-8"), add_bos=True)
+                    for text in body.prompt
+                ]
+            except Exception as e:
+                print(f'Error while tokenizing "{body.prompt}": {e}')
+            return {"prompt_tokens": tokens_list}
+        elif type(body.prompt) == str:
+            try:
+                tokens = llama.tokenize(text=body.prompt.encode("utf-8"), add_bos=True)
+            except Exception as e:
+                print(f'Error while tokenizing "{body.prompt}": {e}')
+            return {"prompt_tokens": tokens}
+
     app = create_app(settings=settings)
     uvicorn.run(
         app,
