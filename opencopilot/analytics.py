@@ -1,7 +1,8 @@
 import uuid
 import xxhash
 import platform
-import pkg_resources
+import importlib_metadata
+    
 
 from . import settings
 from .settings import Settings
@@ -20,6 +21,14 @@ def get_user_id():
 
 def identify():
     pass  # TODO
+
+
+def get_opencopilot_version():
+    package_name = "opencopilot-ai"
+    declared_version = importlib_metadata.version(package_name)
+
+    # TODO currently will not show correctly if installed locally with `pip install -e .`
+    return declared_version
 
 
 def track(event_name: str, *args, **kwargs):
@@ -67,11 +76,9 @@ def _track_copilot_start(
             "n_data_urls": n_data_urls,
             "n_local_file_paths": n_local_file_paths,
         },
-        "system_information": {
+        "system": {
             "python_version": platform.python_version(),
-            "opencopilot_version": pkg_resources.get_distribution(
-                "opencopilot-ai"
-            ).version,
+            "opencopilot_version": get_opencopilot_version(),
             "platform.platform": platform.platform(),
             "platform.system": platform.system(),
             # TODO track env type - conda, venv, docker, etc
