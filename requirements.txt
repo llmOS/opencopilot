@@ -36,3 +36,4 @@ openpyxl==3.1.2
 typer[all]==0.7.0
 trafilatura==1.6.1
 rich==12.6.0
+filetype==1.2.0

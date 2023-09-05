@@ -84,5 +84,6 @@ def execute():
             disallowed_special=(),
             openai_api_base=openai_api_base,
             headers=headers,
-        )
+            openai_api_key=settings.get().OPENAI_API_KEY,
+    )
     return CachedEmbeddings(embeddings)
