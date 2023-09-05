@@ -8,6 +8,7 @@ from rich import print
 from rich.console import Console
 from rich.table import Table
 from dataclasses import dataclass
+from typing_extensions import Annotated
 
 console = Console()
 
@@ -172,10 +173,12 @@ def model_remove(model_name: str):
         typer.echo(f"Model {model_name} not found!")
     if _is_model_installed(model):
         _remove_model(model)
-
+        print(f"LLM [bold]{model.name}[/bold] removed successfully.")
+    else:
+        print(f"[bold]{model.name}[/bold] not downloaded - nothing to remove.")
 
 @oss_app.command("run")
-def run_model(model_name: str = "Llama-2-7b-chat"):
+def run_model(model_name: Annotated[str, typer.Argument()] = "Llama-2-7b-chat"):
     """Run a specific model."""
     try:
         model = MODELS.get(model_name)
