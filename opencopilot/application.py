@@ -52,8 +52,11 @@ class OpenCopilot:
 
         validate_openai_api_key(openai_api_key)
         validate_prompt_and_prompt_file_config(prompt, prompt_file)
+        
+        if not prompt:
+            with open(prompt_file, "r") as f:
+                prompt = f.read()
 
-        prompt = prompt or open(prompt_file, "r").read()
         validate_system_prompt(prompt)
 
         settings.set(
