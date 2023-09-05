@@ -2,7 +2,7 @@ from typing import List
 from typing import Tuple
 
 from langchain import PromptTemplate
-from langchain.chat_models import ChatOpenAI
+from langchain.chat_models.base import BaseChatModel
 from langchain.schema import Document
 from langchain.schema import HumanMessage
 
@@ -86,7 +86,7 @@ async def execute(
 
 def _get_context(
     documents: List[Document],
-    llm: ChatOpenAI,
+    llm: BaseChatModel,
 ) -> Tuple[str, int]:
     while len(documents):
         context = format_context_documents_use_case.execute(documents)
@@ -102,7 +102,7 @@ def _get_prompt_text(
     domain_input: UserMessageInput,
     template_with_history: str,
     context_documents: List[Document],
-    llm: ChatOpenAI,
+    llm: BaseChatModel,
     logs_repository: ConversationLogsRepositoryLocal,
 ) -> str:
     # Almost duplicated with get_local_llm_result_use_case._get_prompt_text

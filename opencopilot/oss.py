@@ -4,7 +4,6 @@ import psutil
 import requests
 import platform
 from typing import List
-from typing import Union
 from typing_extensions import TypedDict
 from pydantic import BaseModel
 from pydantic import Field
@@ -37,11 +36,11 @@ class ModelInfo:
 
 
 class Tokens(TypedDict):
-    prompt_tokens: Union[List[int], List[List[int]]]
+    prompt_tokens: List[int]
 
 
 class TokenizeRequest(BaseModel):
-    prompt: Union[str, List[str]] = Field(
+    prompt: str = Field(
         default="", description="The prompt to generate completions for."
     )
 
@@ -238,21 +237,11 @@ def run_model(model_name: Annotated[str, typer.Argument(...)] = "Llama-2-7b-chat
         body: TokenizeRequest,
         llama: llama_cpp.Llama = Depends(get_llama),
     ) -> Tokens:
-        if type(body.prompt) == list:
-            try:
-                tokens_list = [
-                    llama.tokenize(text=text.encode("utf-8"), add_bos=True)
-                    for text in body.prompt
-                ]
-            except Exception as e:
-                print(f'Error while tokenizing "{body.prompt}": {e}')
-            return {"prompt_tokens": tokens_list}
-        elif type(body.prompt) == str:
-            try:
-                tokens = llama.tokenize(text=body.prompt.encode("utf-8"), add_bos=True)
-            except Exception as e:
-                print(f'Error while tokenizing "{body.prompt}": {e}')
-            return {"prompt_tokens": tokens}
+        try:
+            tokens = llama.tokenize(text=body.prompt.encode("utf-8"), add_bos=True)
+        except Exception as e:
+            print(f'Error while tokenizing "{body.prompt}": {e}')
+        return {"prompt_tokens": tokens}
 
     app = create_app(settings=settings)
     uvicorn.run(

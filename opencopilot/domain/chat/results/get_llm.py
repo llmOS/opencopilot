@@ -2,14 +2,12 @@ from typing import Dict, Optional
 
 import openai
 from langchain.chat_models import ChatOpenAI
+from langchain.chat_models.base import BaseChatModel
 
 from opencopilot import settings
-from opencopilot.utils.callbacks.callback_handler import (
-    CustomAsyncIteratorCallbackHandler,
-)
 
 
-def execute(user_id: str = None) -> ChatOpenAI:
+def execute(user_id: str = None) -> BaseChatModel:
     llm = settings.get().LLM
     if isinstance(llm, str):
         if settings.get().HELICONE_API_KEY:
