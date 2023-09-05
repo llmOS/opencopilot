@@ -86,13 +86,17 @@ def _is_macos() -> bool:
     return platform.system() == "Darwin"
 
 
-def _can_use_model(model_size: float) -> bool:
+def _can_use_model(model: ModelInfo) -> bool:
     total_memory = psutil.virtual_memory().total / (1024**3)
-    return model_size < total_memory / 2
+    return model.size < total_memory / 2
 
 
-def _is_model_installed(model_filename: str) -> bool:
-    return os.path.exists(os.path.join(MODEL_PATH, model_filename))
+def _is_model_installed(model: ModelInfo) -> bool:
+    return os.path.exists(os.path.join(MODEL_PATH, model.filename))
+
+
+def _remove_model(model: ModelInfo) -> bool:
+    return os.remove(os.path.join(MODEL_PATH, model.filename))
 
 
 def _download_model(url: str, filename: str):
@@ -132,10 +136,10 @@ def list_models():
     )
     for model_name, model in MODELS.items():
         table.add_row(
-            "*" if _can_use_model(model.size) else "",
+            "*" if _can_use_model(model) else "",
             model_name,
             f"{model.size}GB",
-            "Yes" if _is_model_installed(model.filename) else "No",
+            "Yes" if _is_model_installed(model) else "No",
         )
     console.print(table)
     print("\n* Recommended for your system")
@@ -160,6 +164,16 @@ def model_info(model_name: str):
         typer.echo(f"Model {model_name} not found!")
 
 
+@oss_app.command("remove")
+def model_remove(model_name: str):
+    try:
+        model = MODELS.get(model_name)
+    except:
+        typer.echo(f"Model {model_name} not found!")
+    if _is_model_installed(model):
+        _remove_model(model)
+
+
 @oss_app.command("run")
 def run_model(model_name: str = "Llama-2-7b-chat"):
     """Run a specific model."""
@@ -182,7 +196,9 @@ def run_model(model_name: str = "Llama-2-7b-chat"):
                 'To install: [code]CMAKE_ARGS="-DLLAMA_METAL=on" pip install llama-cpp-python[server] pydantic_settings sse_starlette[/code]'
             )
         else:
-            print("To install: [code]pip install llama-cpp-python[server] pydantic_settings sse_starlette[/code]")
+            print(
+                "To install: [code]pip install llama-cpp-python[server] pydantic_settings sse_starlette[/code]"
+            )
         print(
             "More information on how to install: [link]https://llama-cpp-python.readthedocs.io/en/latest/#installation[/link]"
         )
