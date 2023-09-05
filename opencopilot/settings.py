@@ -35,7 +35,7 @@ class Settings:
     HELICONE_API_KEY: str
     HELICONE_RATE_LIMIT_POLICY: str
 
-    TRACKING_ENABLED: bool
+    TRACKING_ENABLED: bool = False
 
     CONVERSATIONS_DIR: str = "logs/conversations"
     # Configure based on model?
