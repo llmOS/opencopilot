@@ -50,6 +50,7 @@ setup(
         'typer[all]',
         'trafilatura',
         'filetype',
+        'segment-analytics-python',
     ],
     entry_points={
         'console_scripts': [

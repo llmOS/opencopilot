@@ -15,6 +15,12 @@ console = Console()
 app = typer.Typer(add_completion=False, no_args_is_help=True)
 
 
+@app.callback()
+def main(ctx: typer.Context):
+    # Initialize settings
+    set_default_settings("cli")
+
+
 @app.command(help="Print info")
 def info():
     print(
@@ -56,7 +62,6 @@ def retrieve(
         Optional[bool], typer.Option("--all", "-a", help="Gets all documents ingested")
     ] = False,
 ):
-    set_default_settings("cli")
     from opencopilot.repository.documents.document_store import WeaviateDocumentStore
 
     document_store = WeaviateDocumentStore()

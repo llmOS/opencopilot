@@ -25,5 +25,7 @@ def set_default_settings(name: str = "script"):
             JWT_TOKEN_EXPIRATION_SECONDS=1,
             HELICONE_API_KEY="",
             HELICONE_RATE_LIMIT_POLICY="",
+            TRACKING_ENABLED=os.environ.get("OPENCOPILOT_DO_NOT_TRACK", "").lower()
+            != "True",
         )
     )
