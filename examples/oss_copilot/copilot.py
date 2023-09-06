@@ -32,16 +32,16 @@ If the user question includes a request for code, provide a code block directly 
 If you don't know the answer, please ask the user to be more precise with their question in a polite manner. Don't try to make up an answer if you do not know it or have no information about it in the context.
 If the question is not about LLMs and copilots, politely inform the user that you are tuned to only answer questions about LLMs and copilots.
 REMEMBER to always provide 3 example follow up questions that would be helpful for the user to continue the conversation.
-</SYS>
-<INST>
 =========
 {context}
 =========
 
 Here is the latest conversation between Assistant and User:
 {history}
+</SYS>
+<INST>
+{question}
 </INST>
-User: {question}
 """
 
 llm = LocalLLM(

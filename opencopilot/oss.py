@@ -248,9 +248,10 @@ def model_remove(model_name: str):
 def run_model(
     model_name: Annotated[str, typer.Argument(...)] = "Llama-2-7b-chat",
     host: Optional[str] = typer.Option(
-        None, "--host", help="Hostname to run the LLM on"
+        None, "--host", help="Hostname to run the LLM on."
     ),
-    port: Optional[int] = typer.Option(None, "--port", help="Port to run the LLM on"),
+    port: Optional[int] = typer.Option(None, "--port", help="Port to run the LLM on."),
+    verbose: Annotated[bool, typer.Option("--verbose", help="Enables verbose logging.")] = False,
 ):
     """Run a specific model."""
     model = MODELS.get(model_name.lower())
@@ -276,7 +277,7 @@ def run_model(
         n_ctx=model.context_size,
         n_gpu_layers=1,
         use_mlock=True,
-        verbose=False,
+        verbose=verbose,
     )
 
     app = create_app(settings=settings)
