@@ -31,7 +31,7 @@ API_TITLE = "OpenCopilot API"
 API_DESCRIPTION = (
     "OpenCopilot API, for more information visit https://docs.opencopilot.dev/"
 )
-API_VERSION = "0.3.4"
+API_VERSION = "0.1"
 
 base_url = settings.get().API_BASE_URL
 if base_url.endswith("/"):
