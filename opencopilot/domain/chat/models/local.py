@@ -21,4 +21,4 @@ class LocalLLM(ChatOpenAI):
             )
             return result.json()["prompt_tokens"]
         except Exception as e:
-            logger.error("Failed to get token count", e)
+            logger.error("Failed to get token count: %s", e)

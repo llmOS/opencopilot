@@ -153,6 +153,7 @@ def _download_model(url: str, filename: str):
 
 
 def _try_llama_cpp_imports() -> Optional[Tuple[Any, ...]]:
+    # pylint: disable=import-error
     try:
         import uvicorn
         import llama_cpp
