@@ -28,7 +28,9 @@ html_template_path = os.path.join(os.path.dirname(opencopilot.__file__), "html")
 templates = Jinja2Templates(directory=html_template_path)
 
 API_TITLE = "OpenCopilot API"
-API_DESCRIPTION = "OpenCopilot API, for more information visit https://docs.opencopilot.dev/"
+API_DESCRIPTION = (
+    "OpenCopilot API, for more information visit https://docs.opencopilot.dev/"
+)
 API_VERSION = "0.3.4"
 
 base_url = settings.get().API_BASE_URL
