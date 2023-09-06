@@ -32,7 +32,7 @@ setup(
         'uvicorn',
         'pandas',
         'pexpect',
-        'langchain>=0.0.217',
+        'langchain>0.0.245',
         'passlib',
         'pyjwt[crypto]',
         'Jinja2',
