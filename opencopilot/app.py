@@ -50,11 +50,13 @@ async def startup_event():
 async def _open_browser():
     await asyncio.sleep(1)
     print(f"Started chat UI on {base_url}:{settings.get().API_PORT}/ui")
-    cache_file: str = "cache.txt"
-    if os.path.exists(cache_file):
+    cache_dir: str = "~/.opencopilot"
+    if os.path.exists(cache_dir):
         return
-    webbrowser.open(f"{base_url}:{settings.get().API_PORT}/ui")
-    with open(cache_file, "w"):
+    try:
+        webbrowser.open(f"{base_url}:{settings.get().API_PORT}/ui", new=2)
+        os.makedirs(cache_dir, exist_ok=True)
+    except:
         pass
 
 
