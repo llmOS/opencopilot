@@ -31,7 +31,7 @@ LOG_LEVELS: Dict[str, int] = {
     "error": logging.ERROR,
     "warning": logging.WARNING,
     "info": logging.INFO,
-    "debug": logging.DEBUG
+    "debug": logging.DEBUG,
 }
 
 exception_utils.add_copilot_exception_catching()

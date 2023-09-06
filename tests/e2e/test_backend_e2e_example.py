@@ -1,7 +1,6 @@
 import uuid
 
 from opencopilot.domain.cli import cli_chat_use_case
-from opencopilot.scripts import chat
 
 conversation_id = uuid.uuid4()
 base_url = f"http://0.0.0.0:3000"
