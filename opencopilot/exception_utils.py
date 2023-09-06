@@ -1,3 +1,4 @@
+import logging
 import sys
 
 from colorama import Fore
@@ -5,16 +6,17 @@ from colorama import Style
 
 from opencopilot.domain.errors import CopilotConfigurationError
 from opencopilot.domain.errors import CopilotRuntimeError
+from opencopilot.logger import api_logger
 
-DEV_MODE_ENABLED = False
 
-
-def add_copilot_exception_catching(logger):
+def add_copilot_exception_catching():
     def on_crash(exctype, value, traceback):
         # "exctype" is the class of the exception raised
         # "value" is the instance
         # "traceback" is the object containing what python needs to print
-        if not DEV_MODE_ENABLED:
+        # logger = logging.getLogger("OpenCopilot")
+        logger = api_logger.get()
+        if logger.level >= logging.WARNING:
             if issubclass(exctype, CopilotConfigurationError) or issubclass(
                 exctype, CopilotRuntimeError
             ):

@@ -14,7 +14,6 @@ from langchain.schema import Document
 from opencopilot import exception_utils
 from opencopilot import settings
 from opencopilot.domain.errors import ModelError
-from opencopilot.logger import api_logger
 from opencopilot.repository.documents import split_documents_use_case
 from opencopilot.settings import Settings
 from opencopilot.utils.validators import validate_openai_api_key
@@ -35,7 +34,7 @@ LOG_LEVELS: Dict[str, int] = {
     "debug": logging.DEBUG
 }
 
-exception_utils.add_copilot_exception_catching(api_logger.get())
+exception_utils.add_copilot_exception_catching()
 
 
 class OpenCopilot:
@@ -62,7 +61,7 @@ class OpenCopilot:
         jwt_token_expiration_seconds: int = timedelta(days=1).total_seconds(),
         helicone_api_key: str = "",
         helicone_rate_limit_policy: str = "3;w=60;s=user",
-        log_level: Optional[Union[str, int]] = None,
+        log_level: Optional[Union[str, int]] = "warning",
     ):
         if log_level is not None:
             if isinstance(log_level, str):

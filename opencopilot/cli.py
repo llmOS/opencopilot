@@ -25,7 +25,7 @@ app = typer.Typer(
     pretty_exceptions_short=False,
 )
 
-exception_utils.add_copilot_exception_catching(cli_logger.get())
+exception_utils.add_copilot_exception_catching()
 
 
 @app.callback()
