@@ -27,6 +27,7 @@ app = typer.Typer(
 
 exception_utils.add_copilot_exception_catching(cli_logger.get())
 
+
 @app.callback()
 def main(ctx: typer.Context):
     # Initialize settings

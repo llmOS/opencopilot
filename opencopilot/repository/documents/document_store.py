@@ -85,14 +85,16 @@ class WeaviateDocumentStore(DocumentStore):
         try:
             self.documents = documents
             batch_size = self.ingest_batch_size
-            print(f"Got {len(documents)} documents, embedding with batch "
-                  f"size: {batch_size}")
+            print(
+                f"Got {len(documents)} documents, embedding with batch "
+                f"size: {batch_size}"
+            )
             self.weaviate_client.schema.delete_all()
 
             for i in tqdm.tqdm(
                 range(0, int(len(documents) / batch_size) + 1), desc="Embedding.."
             ):
-                batch = documents[i * batch_size: (i + 1) * batch_size]
+                batch = documents[i * batch_size : (i + 1) * batch_size]
                 self.vector_store.add_documents(batch)
 
             self.embeddings.save_local_cache()
@@ -116,14 +118,17 @@ class WeaviateDocumentStore(DocumentStore):
         try:
             query = (
                 self._get_weaviate_client()
-                    .query.get(self.weaviate_index_name, ["text", "source"])
-                    .with_additional(["id"])
-                    .with_where(
-                    {"path": ["source"], "operator": "Like", "valueString": source})
+                .query.get(self.weaviate_index_name, ["text", "source"])
+                .with_additional(["id"])
+                .with_where(
+                    {"path": ["source"], "operator": "Like", "valueString": source}
+                )
             )
             result = (
-                query.do().get("data", {}).get("Get", {}).get(self.weaviate_index_name,
-                                                              [])
+                query.do()
+                .get("data", {})
+                .get("Get", {})
+                .get(self.weaviate_index_name, [])
             )
             docs = []
             for res in result:
@@ -144,22 +149,23 @@ class WeaviateDocumentStore(DocumentStore):
 
             query = (
                 client.query.get(self.weaviate_index_name, ["text", "source"])
-                    .with_additional(["id"])
-                    .with_limit(batch_size)
+                .with_additional(["id"])
+                .with_limit(batch_size)
             )
 
             while True:
                 results = query.with_after(cursor).do() if cursor else query.do()
-                current_results = results["data"]["Get"].get(self.weaviate_index_name,
-                                                             [])
+                current_results = results["data"]["Get"].get(
+                    self.weaviate_index_name, []
+                )
                 if not current_results:
                     break
                 all_results.extend(current_results)
                 cursor = current_results[-1]["_additional"]["id"]
 
             docs = [
-                Document(page_content=res.pop("text"), metadata=res) for res in
-                all_results
+                Document(page_content=res.pop("text"), metadata=res)
+                for res in all_results
             ]
             return docs
         except ConnectionError:

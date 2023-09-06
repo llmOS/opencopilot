@@ -89,7 +89,6 @@ class BadGatewayAPIError(APIErrorResponse):
 
 
 class OpenAIUnavailableError(APIErrorResponse):
-
     def __init__(self, message):
         self.message = message
 
@@ -104,7 +103,6 @@ class OpenAIUnavailableError(APIErrorResponse):
 
 
 class WeaviateConnectionError(APIErrorResponse):
-
     def __init__(self, message):
         self.message = message
 
@@ -119,7 +117,6 @@ class WeaviateConnectionError(APIErrorResponse):
 
 
 class GenericCopilotRuntimeError(APIErrorResponse):
-
     def __init__(self, message):
         self.message = message
 

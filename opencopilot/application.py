@@ -68,8 +68,10 @@ class OpenCopilot:
         validate_system_prompt(prompt)
 
         if llm_model_name not in ALLOWED_LLM_MODEL_NAMES:
-            raise ModelError(f"Invalid llm_model_name='{llm_model_name}'.\n"
-                             f"Allowed model names are: {ALLOWED_LLM_MODEL_NAMES}")
+            raise ModelError(
+                f"Invalid llm_model_name='{llm_model_name}'.\n"
+                f"Allowed model names are: {ALLOWED_LLM_MODEL_NAMES}"
+            )
 
         settings.set(
             Settings(
@@ -167,4 +169,3 @@ class OpenCopilot:
 
     def add_data_urls(self, urls: List[str]) -> None:
         self.data_urls.extend(urls)
-
