@@ -7,7 +7,7 @@ from opencopilot import OpenCopilot
 
 copilot = OpenCopilot(
     prompt_file="prompt_template.txt",
-    copilot_name="AWS",
+    copilot_name="AWS CLI",
 )
 
 copilot.add_data_urls([
