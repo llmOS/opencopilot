@@ -11,6 +11,7 @@ from pydantic import BaseModel
 from pydantic import Field
 
 from opencopilot.analytics import track
+from opencopilot.analytics import TrackingEventType
 from opencopilot.authorization import validate_api_key_use_case
 from opencopilot.logger import api_logger
 from opencopilot.repository.conversation_history_repository import (
@@ -138,7 +139,7 @@ async def handle_conversation(
     )
 
     background_tasks.add_task(
-        track, "chat_message", api_request.headers.get("user-agent"), False
+        track, TrackingEventType.CHAT_MESSAGE, api_request.headers.get("user-agent"), False
     )
     return routing_utils.to_json_response(
         {"copilot_message": response.message, "sources": response.sources}
@@ -177,7 +178,7 @@ async def handle_conversation_streaming(
     }
 
     background_tasks.add_task(
-        track, "chat_message", api_request.headers.get("user-agent"), True
+        track, TrackingEventType.CHAT_MESSAGE, api_request.headers.get("user-agent"), True
     )
     return StreamingResponse(
         chat_streaming_service.execute(

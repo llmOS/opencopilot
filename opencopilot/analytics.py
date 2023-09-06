@@ -1,4 +1,5 @@
 import uuid
+import enum
 import xxhash
 import platform
 import subprocess
@@ -14,6 +15,11 @@ from .settings import Settings
 
 SEGMENT_WRITE_KEY = "iEkciV19ocu9abTCzjbvjPsCKzOJF30S"
 segment_analytics.write_key = SEGMENT_WRITE_KEY
+
+
+class TrackingEventType(enum.Enum):
+    COPILOT_START = 1
+    CHAT_MESSAGE = 2
 
 
 def get_opencopilot_version():
@@ -55,21 +61,29 @@ def get_hashed_user_id():
     return hashed(str(mac_address))
 
 
-def track(event_name: str, *args, **kwargs):
+def track(event_type: TrackingEventType, *args, **kwargs):
     """Should be the entry point to all tracking."""
     tracking_enabled = settings.get().TRACKING_ENABLED
 
     if not tracking_enabled:
         return
 
-    if event_name == "copilot_start":
-        _track_copilot_start(*args, **kwargs)
-    elif event_name == "cli_command":
-        _track_cli_command(*args, **kwargs)
-    elif event_name == "chat_message":
-        _track_chat_message(*args, **kwargs)
-    else:
-        raise Exception(f"Unknown tracking event name: {event_name}")
+    switcher = {
+        TrackingEventType.COPILOT_START: _track_copilot_start,
+        TrackingEventType.CHAT_MESSAGE: _track_chat_message,
+    }
+
+    func = switcher.get(event_type)
+    if func is None:
+        # We cannot raise an exception (to not break the app), and probably warning would be too much spam here too? So currently failing silently.
+        # Alternatively, we could say in warning that your tracking is broken and just turn it off with OPENCOPILOT_DO_NOT_TRACK
+        return
+    
+    try:
+        func(*args, **kwargs)
+    except Exception as e:
+        # Same reason to hide exception as above
+        pass
 
 
 def _track_copilot_start(
@@ -104,17 +118,6 @@ def _track_copilot_start(
 
     segment_analytics.track(
         anonymous_id=get_hashed_user_id(), event="Started Copilot", properties=event
-    )
-
-
-def _track_cli_command(subcommand: str):
-    """Should be fired when a CLI command is run."""
-    event = {
-        "subcommand": subcommand,
-    }
-
-    segment_analytics.track(
-        anonymous_id=get_hashed_user_id(), event="Used CLI", properties=event
     )
 
 

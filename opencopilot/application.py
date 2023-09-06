@@ -18,6 +18,7 @@ from . import settings
 from .settings import Settings
 
 from .analytics import track
+from .analytics import TrackingEventType
 
 
 class OpenCopilot:
@@ -139,7 +140,7 @@ class OpenCopilot:
         from .app import app
 
         track(
-            "copilot_start",
+            TrackingEventType.COPILOT_START,
             len(self.documents),
             len(self.data_loaders),
             len(self.local_files_dirs),
