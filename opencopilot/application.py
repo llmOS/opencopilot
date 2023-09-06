@@ -1,9 +1,12 @@
+import logging
 import os
 from datetime import timedelta
 from typing import Callable
+from typing import Dict
 from typing import List
 from typing import Literal
 from typing import Optional
+from typing import Union
 
 import uvicorn
 from langchain.schema import Document
@@ -17,13 +20,22 @@ from opencopilot.settings import Settings
 from opencopilot.utils.validators import validate_openai_api_key
 from opencopilot.utils.validators import validate_prompt_and_prompt_file_config
 from opencopilot.utils.validators import validate_system_prompt
-
-exception_utils.add_copilot_exception_catching(api_logger.get())
+from .domain import error_messages
 
 ALLOWED_LLM_MODEL_NAMES = ["gpt-3.5-turbo-16k", "gpt-4"]
 
 from .analytics import track
 from .analytics import TrackingEventType
+
+LOG_LEVELS: Dict[str, int] = {
+    "critical": logging.CRITICAL,
+    "error": logging.ERROR,
+    "warning": logging.WARNING,
+    "info": logging.INFO,
+    "debug": logging.DEBUG
+}
+
+exception_utils.add_copilot_exception_catching(api_logger.get())
 
 
 class OpenCopilot:
@@ -50,7 +62,16 @@ class OpenCopilot:
         jwt_token_expiration_seconds: int = timedelta(days=1).total_seconds(),
         helicone_api_key: str = "",
         helicone_rate_limit_policy: str = "3;w=60;s=user",
+        log_level: Optional[Union[str, int]] = None,
     ):
+        if log_level is not None:
+            if isinstance(log_level, str):
+                log_level = LOG_LEVELS[log_level]
+            else:
+                log_level = log_level
+            logger = logging.getLogger("OpenCopilot")
+            logger.setLevel(log_level)
+
         if not openai_api_key:
             openai_api_key = os.getenv("OPENAI_API_KEY")
 
@@ -69,8 +90,10 @@ class OpenCopilot:
 
         if llm_model_name not in ALLOWED_LLM_MODEL_NAMES:
             raise ModelError(
-                f"Invalid llm_model_name='{llm_model_name}'.\n"
-                f"Allowed model names are: {ALLOWED_LLM_MODEL_NAMES}"
+                error_messages.INVALID_MODEL_ERROR.format(
+                    llm_model_name=llm_model_name,
+                    allowed_model_names=ALLOWED_LLM_MODEL_NAMES,
+                )
             )
 
         settings.set(

@@ -4,7 +4,6 @@ from typing import Dict
 import requests
 
 from opencopilot.domain.cli import cli_chat_use_case
-from opencopilot.scripts import chat
 from opencopilot.scripts import get_jwt_token
 
 conversation_id = uuid.uuid4()

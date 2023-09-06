@@ -17,3 +17,8 @@ WEAVIATE_QUERY_ERROR = (
 COPILOT_IS_NOT_RUNNING_ERROR = (
     "Could not connect to Copilot." "\nPlease make sure that Copilot is running."
 )
+
+INVALID_MODEL_ERROR = (
+    "Invalid llm_model_name='{llm_model_name}'.\n"
+    "Allowed model names are: {allowed_model_names}"
+)
