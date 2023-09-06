@@ -251,7 +251,9 @@ def run_model(
         None, "--host", help="Hostname to run the LLM on."
     ),
     port: Optional[int] = typer.Option(None, "--port", help="Port to run the LLM on."),
-    verbose: Annotated[bool, typer.Option("--verbose", help="Enables verbose logging.")] = False,
+    verbose: Annotated[
+        bool, typer.Option("--verbose", help="Enables verbose logging.")
+    ] = False,
 ):
     """Run a specific model."""
     model = MODELS.get(model_name.lower())
