@@ -1,4 +1,6 @@
+import asyncio
 import os
+import webbrowser
 
 from fastapi import FastAPI
 from fastapi import Request
@@ -37,7 +39,23 @@ base_url = settings.get().API_BASE_URL
 if base_url.endswith("/"):
     base_url = base_url[:-1]
 
-print(f"Started chat UI on {base_url}:{settings.get().API_PORT}/ui")
+
+@app.on_event("startup")
+async def startup_event():
+    # TODO: once we support multiple workers move this to application.py
+    loop = asyncio.get_event_loop()
+    loop.create_task(_open_browser())
+
+
+async def _open_browser():
+    await asyncio.sleep(1)
+    print(f"Started chat UI on {base_url}:{settings.get().API_PORT}/ui")
+    cache_file: str = "cache.txt"
+    if os.path.exists(cache_file):
+        return
+    webbrowser.open(f"{base_url}:{settings.get().API_PORT}/ui")
+    with open(cache_file, "w"):
+        pass
 
 
 class ApiInfo(BaseModel):
