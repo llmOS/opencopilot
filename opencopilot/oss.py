@@ -14,6 +14,7 @@ from pydantic import BaseModel, Field
 from tqdm import tqdm
 from rich.console import Console
 from rich.table import Table
+from rich import print
 from fastapi import APIRouter
 from fastapi import Depends
 
@@ -166,11 +167,11 @@ def _try_llama_cpp_imports() -> Optional[Tuple[Any, ...]]:
         )
         if _is_macos():
             print(
-                'To install: [code]CMAKE_ARGS="-DLLAMA_METAL=on" pip install llama-cpp-python[server] pydantic_settings sse_starlette[/code]'
+                'To install: [code]CMAKE_ARGS="-DLLAMA_METAL=on" pip install \"llama-cpp-python[server]\" pydantic_settings sse_starlette[/code]'
             )
         else:
             print(
-                "To install: [code]pip install llama-cpp-python[server] pydantic_settings sse_starlette[/code]"
+                "To install: [code]pip install \"llama-cpp-python[server]\" pydantic_settings sse_starlette[/code]"
             )
         print(
             "More information on how to install: [link]https://llama-cpp-python.readthedocs.io/en/latest/#installation[/link]"

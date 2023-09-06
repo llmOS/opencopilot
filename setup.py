@@ -37,7 +37,6 @@ setup(
         'pyjwt[crypto]',
         'Jinja2',
         'tiktoken',
-        'text-generation',
         'weaviate-client>=3.23.2',
         'pypdf',
         'unstructured',
