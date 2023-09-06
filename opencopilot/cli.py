@@ -1,3 +1,4 @@
+import logging
 import os
 import uuid
 from contextlib import nullcontext
@@ -10,11 +11,12 @@ from typing_extensions import Annotated
 
 from opencopilot import exception_utils
 from opencopilot.domain.cli import cli_chat_use_case
-from opencopilot.logger import cli_logger
+from opencopilot.logger import api_logger
 from opencopilot.utils.scripting import set_default_settings
 from opencopilot.utils.validators import validate_openai_api_key
 
-logger = cli_logger.get()
+logger = api_logger.get()
+logger.setLevel(logging.WARNING)
 console = Console()
 
 app = typer.Typer(

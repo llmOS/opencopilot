@@ -5,10 +5,7 @@ import requests
 
 from opencopilot.domain import error_messages
 from opencopilot.domain.errors import CopilotIsNotRunningError
-from opencopilot.logger import cli_logger
 from opencopilot.scripts import get_jwt_token
-
-logger = cli_logger.get()
 
 headers = {"accept": "application/json", "Content-Type": "application/json"}
 DEFAULT_MESSAGE = "Hi"
