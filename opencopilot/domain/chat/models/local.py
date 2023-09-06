@@ -10,6 +10,7 @@ logger = api_logger.get()
 class LocalLLM(ChatOpenAI):
     openai_api_key: str = "LOCAL_LLM"
     llm_url: str = None
+    context_size: int = 4096
 
     def __init__(self, *args, **kwargs):
         kwargs.pop("openai_api_base", None)

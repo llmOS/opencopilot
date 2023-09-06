@@ -4,6 +4,7 @@ from typing import Union
 
 from langchain.chat_models.base import BaseChatModel
 from langchain.embeddings.base import Embeddings
+from opencopilot.domain.chat.models import LocalLLM
 
 
 @dataclass(frozen=False)
@@ -68,11 +69,9 @@ class Settings:
             return 16384
         elif self.LLM == "gpt-4":
             return 8192
-        else:
-            try:
-                return self.LLM.max_tokens
-            except:
-                return 2048
+        elif isinstance(self.LLM, LocalLLM):
+            return self.LLM.context_size
+        return 2048
 
 
 _settings: Optional[Settings] = None
