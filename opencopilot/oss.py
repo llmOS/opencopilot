@@ -1,18 +1,21 @@
 import os
+import platform
+from dataclasses import dataclass
+from typing import Any
+from typing import List
+from typing import Tuple
+from typing import Optional
+from typing_extensions import Annotated, TypedDict
+
 import typer
 import psutil
 import requests
-import platform
-from typing import List
-from typing_extensions import TypedDict
-from pydantic import BaseModel
-from pydantic import Field
+from pydantic import BaseModel, Field
 from tqdm import tqdm
-from rich import print
 from rich.console import Console
 from rich.table import Table
-from dataclasses import dataclass
-from typing_extensions import Annotated
+from fastapi import APIRouter
+from fastapi import Depends
 
 console = Console()
 
@@ -24,6 +27,8 @@ oss_app = typer.Typer(
 
 MODEL_PATH = "models/"
 
+LLAMA_PROMPT_TEMPLATE = "[INST] <<SYS>>\nYou are a helpful ... {prompt}[/INST]"
+
 
 @dataclass
 class ModelInfo:
@@ -33,6 +38,7 @@ class ModelInfo:
     prompt_template: str
     filename: str
     url: str
+    context_size: int
 
 
 class Tokens(TypedDict):
@@ -50,24 +56,27 @@ MODELS = {
         name="llama-2-7b-chat",
         size=3.83,
         description="Meta developed and publicly released the Llama 2 family of large language models (LLMs), a collection of pretrained and fine-tuned generative text models ranging in scale from 7 billion to 70 billion parameters. Fine-tuned LLMs, called Llama-2-Chat, are optimized for dialogue use cases.",
-        prompt_template="[INST] <<SYS>>\nYou are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe.  Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature. If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information.\n<</SYS>>\n{prompt}[/INST]",
+        prompt_template=LLAMA_PROMPT_TEMPLATE,
         filename="llama-2-7b-chat.Q4_0.gguf",
+        context_size=4096,
         url="https://huggingface.co/TheBloke/Llama-2-7b-Chat-GGUF/resolve/main/llama-2-7b-chat.Q4_0.gguf",
     ),
     "Llama-2-13b-chat": ModelInfo(
         name="Llama-2-13b-chat",
         size=7.37,
         description="Meta developed and publicly released the Llama 2 family of large language models (LLMs), a collection of pretrained and fine-tuned generative text models ranging in scale from 7 billion to 70 billion parameters. Fine-tuned LLMs, called Llama-2-Chat, are optimized for dialogue use cases.",
-        prompt_template="[INST] <<SYS>>\nYou are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe.  Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature. If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information.\n<</SYS>>\n{prompt}[/INST]",
+        prompt_template=LLAMA_PROMPT_TEMPLATE,
         filename="llama-2-13b-chat.Q4_0.gguf",
+        context_size=4096,
         url="https://huggingface.co/TheBloke/Llama-2-13B-chat-GGUF/resolve/main/llama-2-13b-chat.Q4_0.gguf",
     ),
     "Llama-2-70b-chat": ModelInfo(
         name="Llama-2-70b-chat",
         size=38.9,
         description="Meta developed and publicly released the Llama 2 family of large language models (LLMs), a collection of pretrained and fine-tuned generative text models ranging in scale from 7 billion to 70 billion parameters. Fine-tuned LLMs, called Llama-2-Chat, are optimized for dialogue use cases.",
-        prompt_template="[INST] <<SYS>>\nYou are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe.  Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature. If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information.\n<</SYS>>\n{prompt}[/INST]",
+        prompt_template=LLAMA_PROMPT_TEMPLATE,
         filename="llama-2-70b-chat.Q4_0.gguf",
+        context_size=4096,
         url="https://huggingface.co/TheBloke/Llama-2-70B-chat-GGUF/resolve/main/llama-2-70b-chat.Q4_0.gguf",
     ),
     "CodeLlama-7b": ModelInfo(
@@ -76,6 +85,7 @@ MODELS = {
         description="Code Llama is a collection of pretrained and fine-tuned generative text models ranging in scale from 7 billion to 34 billion parameters. This model is designed for general code synthesis and understanding.",
         prompt_template="None",
         filename="codellama-7b.Q4_0.gguf",
+        context_size=4096,
         url="https://huggingface.co/TheBloke/CodeLlama-7B-GGUF/resolve/main/codellama-7b.Q4_0.gguf",
     ),
     "CodeLlama-13b": ModelInfo(
@@ -84,6 +94,7 @@ MODELS = {
         description="Code Llama is a collection of pretrained and fine-tuned generative text models ranging in scale from 7 billion to 34 billion parameters. This model is designed for general code synthesis and understanding.",
         prompt_template="None",
         filename="codellama-13b.Q4_0.gguf",
+        context_size=4096,
         url="https://huggingface.co/TheBloke/CodeLlama-7B-GGUF/resolve/main/codellama-13b.Q4_0.gguf",
     ),
     "CodeLlama-34b": ModelInfo(
@@ -92,6 +103,7 @@ MODELS = {
         description="Code Llama is a collection of pretrained and fine-tuned generative text models ranging in scale from 7 billion to 34 billion parameters. This model is designed for general code synthesis and understanding.",
         prompt_template="None",
         filename="codellama-34b.Q4_0.gguf",
+        context_size=4096,
         url="https://huggingface.co/TheBloke/CodeLlama-34B-GGUF/resolve/main/codellama-34b.Q4_0.gguf",
     ),
 }
@@ -140,6 +152,45 @@ def _download_model(url: str, filename: str):
     progress_bar.close()
 
 
+def _try_llama_cpp_imports() -> Optional[Tuple[Any, ...]]:
+    try:
+        import uvicorn
+        import llama_cpp
+        from llama_cpp.server.app import create_app, Settings, get_llama, router
+
+        return uvicorn, llama_cpp, create_app, Settings, get_llama, router
+    except:
+        print(
+            "Could not run LLM, make sure you've installed [code]llama-cpp-python[/code] package and dependencies!"
+        )
+        if _is_macos():
+            print(
+                'To install: [code]CMAKE_ARGS="-DLLAMA_METAL=on" pip install llama-cpp-python[server] pydantic_settings sse_starlette[/code]'
+            )
+        else:
+            print(
+                "To install: [code]pip install llama-cpp-python[server] pydantic_settings sse_starlette[/code]"
+            )
+        print(
+            "More information on how to install: [link]https://llama-cpp-python.readthedocs.io/en/latest/#installation[/link]"
+        )
+        print("Re-run this command after installation is done!")
+        return None
+
+
+def _define_tokenize_route(router: APIRouter, llama_cpp: Any, get_llama: Any):
+    @router.post("/v1/tokenize")
+    async def tokenize(
+        body: TokenizeRequest,
+        llama: llama_cpp.Llama = Depends(get_llama),
+    ) -> Tokens:
+        try:
+            tokens = llama.tokenize(text=body.prompt.encode("utf-8"), add_bos=True)
+        except Exception as e:
+            print(f'Error while tokenizing "{body.prompt}": {e}')
+        return {"prompt_tokens": tokens}
+
+
 @oss_app.command("list")
 def list_models():
     """List available open source large language models"""
@@ -173,7 +224,6 @@ def model_info(model_name: str):
         table.add_row("Model Name:", model.name)
         table.add_row("Size:", f"{model.size} GB")
         table.add_row("Description:", model.description)
-        table.add_row("Requirements:", "16 GB RAM")
         console.print(table)
     except:
         typer.echo(f"Model {model_name} not found!")
@@ -181,10 +231,10 @@ def model_info(model_name: str):
 
 @oss_app.command("remove")
 def model_remove(model_name: str):
-    try:
-        model = MODELS.get(model_name)
-    except:
+    model = MODELS.get(model_name)
+    if not model:
         typer.echo(f"Model {model_name} not found!")
+        return
     if _is_model_installed(model):
         _remove_model(model)
         print(f"LLM [bold]{model.name}[/bold] removed successfully.")
@@ -195,53 +245,30 @@ def model_remove(model_name: str):
 @oss_app.command("run")
 def run_model(model_name: Annotated[str, typer.Argument(...)] = "Llama-2-7b-chat"):
     """Run a specific model."""
+    model = MODELS.get(model_name)
+    if not model:
+        typer.echo(f"Model {model_name} not found!")
+        return
     try:
-        model = MODELS.get(model_name)
         typer.echo(f"Downloading {model_name}...")
         _download_model(model.url, model.filename)
         typer.echo(f"Running {model.name}...")
     except:
         typer.echo(f"Could not run {model_name}!")
-    # pylint: disable=import-error
-    try:
-        import uvicorn
-        import llama_cpp
-        from llama_cpp.server.app import create_app, Settings, get_llama, router
-        from fastapi import Depends
-    except:
-        print(
-            "Could not run LLM, make sure you've installed [code]llama-cpp-python[/code] package and dependencies!"
-        )
-        if _is_macos():
-            print(
-                'To install: [code]CMAKE_ARGS="-DLLAMA_METAL=on" pip install llama-cpp-python[server] pydantic_settings sse_starlette[/code]'
-            )
-        else:
-            print(
-                "To install: [code]pip install llama-cpp-python[server] pydantic_settings sse_starlette[/code]"
-            )
-        print(
-            "More information on how to install: [link]https://llama-cpp-python.readthedocs.io/en/latest/#installation[/link]"
-        )
-        print("Re-run this command after installation is done!")
+
+    modules = _try_llama_cpp_imports()
+    if not modules:
         return
+
+    uvicorn, llama_cpp, create_app, Settings, get_llama, router = modules
+    _define_tokenize_route(router, llama_cpp, get_llama)
+
     settings = Settings(
         model=os.path.join(MODEL_PATH, model.filename),
-        n_ctx=4096,
+        n_ctx=model.context_size,
         n_gpu_layers=1,
         use_mlock=True,
     )
-
-    @router.post("/v1/tokenize")
-    async def tokenize(
-        body: TokenizeRequest,
-        llama: llama_cpp.Llama = Depends(get_llama),
-    ) -> Tokens:
-        try:
-            tokens = llama.tokenize(text=body.prompt.encode("utf-8"), add_bos=True)
-        except Exception as e:
-            print(f'Error while tokenizing "{body.prompt}": {e}')
-        return {"prompt_tokens": tokens}
 
     app = create_app(settings=settings)
     uvicorn.run(
