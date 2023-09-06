@@ -49,7 +49,9 @@ class OpenCopilot:
         if not openai_api_key:
             openai_api_key = os.getenv("OPENAI_API_KEY")
 
-        if not isinstance(llm, BaseChatModel) and not isinstance(embedding_model, Embeddings):
+        if not isinstance(llm, BaseChatModel) and not isinstance(
+            embedding_model, Embeddings
+        ):
             validate_openai_api_key(openai_api_key)
         validate_prompt_and_prompt_file_config(prompt, prompt_file)
 
