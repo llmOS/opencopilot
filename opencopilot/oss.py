@@ -26,7 +26,7 @@ oss_app = typer.Typer(
     no_args_is_help=True,
 )
 
-MODEL_PATH = "models/"
+MODEL_PATH = os.path.expanduser("~/.opencopilot/models/")
 
 LLAMA_PROMPT_TEMPLATE = "<s><SYS>\nYour are a Parrot Copilot. Your purpose is to repeat what the user says, but in a different wording.\n</SYS>\n<INST>\n{context}\nHere is the latest conversation between Assistant and User:\n{history}\n</INST\nUser: {question}"
 
