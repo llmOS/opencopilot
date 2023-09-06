@@ -139,7 +139,10 @@ async def handle_conversation(
     )
 
     background_tasks.add_task(
-        track, TrackingEventType.CHAT_MESSAGE, api_request.headers.get("user-agent"), False
+        track,
+        TrackingEventType.CHAT_MESSAGE,
+        api_request.headers.get("user-agent"),
+        False,
     )
     return routing_utils.to_json_response(
         {"copilot_message": response.message, "sources": response.sources}
@@ -178,7 +181,10 @@ async def handle_conversation_streaming(
     }
 
     background_tasks.add_task(
-        track, TrackingEventType.CHAT_MESSAGE, api_request.headers.get("user-agent"), True
+        track,
+        TrackingEventType.CHAT_MESSAGE,
+        api_request.headers.get("user-agent"),
+        True,
     )
     return StreamingResponse(
         chat_streaming_service.execute(

@@ -29,7 +29,7 @@ def get_opencopilot_version():
     try:
         declared_version = importlib_metadata.version(package_name)
     except importlib_metadata.PackageNotFoundError:
-        pass # Not installed
+        pass  # Not installed
 
     # Run `pip freeze` to detect local install and get commit hash
     try:
@@ -83,7 +83,7 @@ def track(event_type: TrackingEventType, *args, **kwargs):
         # We cannot raise an exception (to not break the app), and probably warning would be too much spam here too? So currently failing silently.
         # Alternatively, we could say in warning that your tracking is broken and just turn it off with OPENCOPILOT_DO_NOT_TRACK
         return
-    
+
     try:
         func(*args, **kwargs)
     except Exception as e:
@@ -136,5 +136,8 @@ def _track_chat_message(user_agent, is_streaming):
     }
 
     segment_analytics.track(
-        anonymous_id=get_hashed_user_id(), event="Messaged Copilot", properties=event, context=context
+        anonymous_id=get_hashed_user_id(),
+        event="Messaged Copilot",
+        properties=event,
+        context=context,
     )
