@@ -24,7 +24,12 @@ class TrackingEventType(enum.Enum):
 
 def get_opencopilot_version():
     package_name = "opencopilot-ai"
-    declared_version = importlib_metadata.version(package_name)
+    declared_version = None
+
+    try:
+        declared_version = importlib_metadata.version(package_name)
+    except importlib_metadata.PackageNotFoundError:
+        pass # Not installed
 
     # Run `pip freeze` to detect local install and get commit hash
     try:
