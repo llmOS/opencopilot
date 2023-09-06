@@ -34,7 +34,7 @@
 
 ## 🕊️ OpenCopilot Overview
 
-Copilots are becoming the new paradigm how to build successful LLM-based applications, as seen by [Github](https://github.com/features/copilot), [Shopify](https://www.shopify.com/magic), [Brex](https://www.brex.com/journal/press/brex-openai-ai-tools-for-finance-teams), [Hubspot](https://app.hubspot.com/chatspot/chat), etc Copilots. Yet, building a Copilot that goes beyond a Twitter demo is extremely complex as it's time-consuming, unreliable and feels like a massive undertaking. Moreover, existing solutions such as Microsoft Copilot Stack are closed-source. Building an LLM-app today feels like:
+Copilots are becoming the new paradigm how to build successful LLM-based applications, as seen by [Github](https://github.com/features/copilot), [Shopify](https://www.shopify.com/magic), [Brex](https://www.brex.com/journal/press/brex-openai-ai-tools-for-finance-teams), [Hubspot](https://app.hubspot.com/chatspot/chat), etc Copilots. Yet, building a Copilot that goes beyond a Twitter demo is time-consuming, unreliable and overly complex. Moreover, existing solutions such as Microsoft Copilot Stack are closed-source. Today, building an LLM-app feels like:
 
 ![Author: Soham Chatterjee](https://github.com/opencopilotdev/opencopilot/assets/3767980/f98def43-38b6-40ed-956b-8b5498c08318)
 
@@ -42,8 +42,8 @@ OpenCopilot solves this problem so building your own Copilot becomes intuitive, 
 
 **🛠️ Developer tooling Copilot**
 
-* End-to-end example: [Ready Player Me Copilot](https://github.com/opencopilotdev/opencopilot/tree/main/examples/ready_player_me_copilot)
-* Example: [Stripe Copilot](https://stripe.com/newsroom/news/stripe-and-openai)
+* Example: [Ready Player Me Copilot](https://venturebeat.com/games/ready-player-me-launches-ai-based-copilot-to-help-developers-streamline-avatars/)
+* Implementation: [Code](https://github.com/opencopilotdev/opencopilot/tree/main/examples/ready_player_me_copilot)
 
 **💾 SaaS Copilot**
 
