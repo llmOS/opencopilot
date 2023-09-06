@@ -167,11 +167,11 @@ def _try_llama_cpp_imports() -> Optional[Tuple[Any, ...]]:
         )
         if _is_macos():
             print(
-                'To install: [code]CMAKE_ARGS="-DLLAMA_METAL=on" pip install \"llama-cpp-python[server]\" pydantic_settings sse_starlette[/code]'
+                'To install: [code]CMAKE_ARGS="-DLLAMA_METAL=on" pip install "llama-cpp-python[server]" pydantic_settings sse_starlette[/code]'
             )
         else:
             print(
-                "To install: [code]pip install \"llama-cpp-python[server]\" pydantic_settings sse_starlette[/code]"
+                'To install: [code]pip install "llama-cpp-python[server]" pydantic_settings sse_starlette[/code]'
             )
         print(
             "More information on how to install: [link]https://llama-cpp-python.readthedocs.io/en/latest/#installation[/link]"
@@ -245,7 +245,13 @@ def model_remove(model_name: str):
 
 
 @oss_app.command("run")
-def run_model(model_name: Annotated[str, typer.Argument(...)] = "Llama-2-7b-chat"):
+def run_model(
+    model_name: Annotated[str, typer.Argument(...)] = "Llama-2-7b-chat",
+    host: Optional[str] = typer.Option(
+        None, "--host", help="Hostname to run the LLM on"
+    ),
+    port: Optional[int] = typer.Option(None, "--port", help="Port to run the LLM on"),
+):
     """Run a specific model."""
     model = MODELS.get(model_name)
     if not model:
@@ -275,8 +281,8 @@ def run_model(model_name: Annotated[str, typer.Argument(...)] = "Llama-2-7b-chat
     app = create_app(settings=settings)
     uvicorn.run(
         app,
-        host=os.getenv("OSS_LLM_HOST", "localhost"),
-        port=int(os.getenv("OSS_LLM_PORT", 8000)),
+        host=host if host else "localhost",
+        port=port if port else 8000,
     )
 
 
