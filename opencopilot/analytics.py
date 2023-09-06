@@ -129,10 +129,12 @@ def _track_copilot_start(
 def _track_chat_message(user_agent, is_streaming):
     """Should be fired when a chat message is sent to the API."""
     event = {
-        "user_agent": user_agent,
         "is_streaming": is_streaming,
+    }
+    context = {
+        "userAgent": user_agent,
     }
 
     segment_analytics.track(
-        anonymous_id=get_hashed_user_id(), event="Messaged Copilot", properties=event
+        anonymous_id=get_hashed_user_id(), event="Messaged Copilot", properties=event, context=context
     )
