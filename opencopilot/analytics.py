@@ -64,16 +64,10 @@ def track(event_name: str, *args, **kwargs):
 
     if event_name == "copilot_start":
         _track_copilot_start(*args, **kwargs)
-    elif event_name == "copilot_start_error":
-        _track_copilot_start_error(*args, **kwargs)
     elif event_name == "cli_command":
         _track_cli_command(*args, **kwargs)
-    elif event_name == "cli_error":
-        _track_cli_error(*args, **kwargs)
     elif event_name == "chat_message":
         _track_chat_message(*args, **kwargs)
-    elif event_name == "api_error":
-        _track_api_error(*args, **kwargs)
     else:
         raise Exception(f"Unknown tracking event name: {event_name}")
 
@@ -113,12 +107,6 @@ def _track_copilot_start(
     )
 
 
-def _track_copilot_start_error():
-    """Should be fired when the copilot fails to start."""
-    # TODO add this when CLI error handling is implemented in a separate
-    pass
-
-
 def _track_cli_command(subcommand: str):
     """Should be fired when a CLI command is run."""
     event = {
@@ -128,13 +116,6 @@ def _track_cli_command(subcommand: str):
     segment_analytics.track(
         anonymous_id=get_hashed_user_id(), event="Used CLI", properties=event
     )
-
-
-def _track_cli_error():
-    """Should be fired when a CLI command fails."""
-    # TODO add this when error handling is implemented in a separate PR
-    # TODO - should we actually add this as a field under _track_cli_command?
-    pass
 
 
 def _track_chat_message(user_agent, is_streaming):
@@ -147,9 +128,3 @@ def _track_chat_message(user_agent, is_streaming):
     segment_analytics.track(
         anonymous_id=get_hashed_user_id(), event="Messaged Copilot", properties=event
     )
-
-
-def _track_api_error():
-    """Should be fired when an API error occurs."""
-    # TODO add this when error handling is implemented in a separate
-    pass
