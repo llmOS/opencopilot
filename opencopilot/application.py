@@ -1,5 +1,4 @@
 import os
-import sys
 from datetime import timedelta
 from typing import Callable
 from typing import List
@@ -9,34 +8,17 @@ from typing import Optional
 import uvicorn
 from langchain.schema import Document
 
+from opencopilot import exception_utils
 from opencopilot import settings
-from opencopilot.domain.errors import CopilotConfigurationError
-from opencopilot.domain.errors import CopilotRuntimeError
 from opencopilot.domain.errors import ModelError
+from opencopilot.logger import api_logger
 from opencopilot.repository.documents import split_documents_use_case
 from opencopilot.settings import Settings
 from opencopilot.utils.validators import validate_openai_api_key
 from opencopilot.utils.validators import validate_prompt_and_prompt_file_config
 from opencopilot.utils.validators import validate_system_prompt
 
-
-def on_crash(exctype, value, traceback):
-    # "exctype" is the class of the exception raised
-    # "value" is the instance
-    # "traceback" is the object containing what python needs to print
-    if issubclass(exctype, CopilotConfigurationError):
-        # Instead of the stack trace, we print an error message to stderr
-        print(f"{exctype.__name__}: {value}", file=sys.stderr)
-    elif issubclass(exctype, CopilotRuntimeError):
-        print(f"{exctype.__name__}: {value}", file=sys.stderr)
-    else:
-        # sys.__excepthook__ is the default excepthook that prints the stack trace
-        # so we use it directly if we want to see it
-        sys.__excepthook__(exctype, value, traceback)
-
-
-# Now we replace the default excepthook by our own
-sys.excepthook = on_crash
+exception_utils.add_copilot_exception_catching(api_logger.get())
 
 ALLOWED_LLM_MODEL_NAMES = ["gpt-3.5-turbo-16k", "gpt-4"]
 
@@ -186,5 +168,3 @@ class OpenCopilot:
     def add_data_urls(self, urls: List[str]) -> None:
         self.data_urls.extend(urls)
 
-    # def add_local_file(self, file_path: str) -> None:
-    #    self.local_file_paths.append(file_path)

@@ -37,12 +37,13 @@ class CopilotRuntimeError(Exception, ABC):
         return self.message
 
 
+class CopilotIsNotRunningError(CopilotRuntimeError):
+    """Raised when cannot connect to Copilot"""
+
+
 class OpenAIRuntimeError(CopilotRuntimeError):
     """Raised when cannot get a result from OpenAI"""
 
 
 class WeaviateRuntimeError(CopilotRuntimeError):
     """Raised when cannot connect to Weaviate"""
-
-    def __init__(self, message: str):
-        self.message = message + "\nPlease make sure that weaviate client is running."

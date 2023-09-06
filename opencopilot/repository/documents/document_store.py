@@ -1,16 +1,18 @@
 from typing import List
 from typing import Optional
 
-from requests.exceptions import ConnectionError
 import tqdm
 import weaviate
 from langchain.schema import Document
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.text_splitter import TextSplitter
 from langchain.vectorstores import Weaviate
+from requests.exceptions import ConnectionError
+from weaviate import UnexpectedStatusCodeException
 from weaviate import WeaviateStartUpError
 
 from opencopilot import settings
+from opencopilot.domain import error_messages
 from opencopilot.domain.errors import WeaviateRuntimeError
 from opencopilot.utils import get_embedding_model_use_case
 from opencopilot.utils.get_embedding_model_use_case import CachedOpenAIEmbeddings
@@ -64,8 +66,8 @@ class WeaviateDocumentStore(DocumentStore):
                         hostname="localhost",
                     ),
                 )
-        except WeaviateStartUpError as exc:
-            raise WeaviateRuntimeError(exc.message)
+        except WeaviateStartUpError:
+            raise WeaviateRuntimeError(error_messages.WEAVIATE_DID_NOT_START)
 
     def _get_vector_store(self):
         metadatas = [d.metadata for d in self.documents]
@@ -83,9 +85,8 @@ class WeaviateDocumentStore(DocumentStore):
         try:
             self.documents = documents
             batch_size = self.ingest_batch_size
-            print(
-                f"Got {len(documents)} documents, embedding with batch size: {batch_size}"
-            )
+            print(f"Got {len(documents)} documents, embedding with batch "
+                  f"size: {batch_size}")
             self.weaviate_client.schema.delete_all()
 
             for i in tqdm.tqdm(
@@ -97,7 +98,9 @@ class WeaviateDocumentStore(DocumentStore):
             self.embeddings.save_local_cache()
             self.vector_store = self._get_vector_store()
         except ConnectionError:
-            raise WeaviateRuntimeError("Could not connect to Weaviate vector store.")
+            raise WeaviateRuntimeError(error_messages.WEAVIATE_CONNECTION_ERROR)
+        except UnexpectedStatusCodeException:
+            raise WeaviateRuntimeError(error_messages.WEAVIATE_QUERY_ERROR)
 
     def find(self, query: str, **kwargs) -> List[Document]:
         try:
@@ -105,7 +108,9 @@ class WeaviateDocumentStore(DocumentStore):
             documents = self.vector_store.similarity_search(query, **kwargs)
             return documents
         except ConnectionError:
-            raise WeaviateRuntimeError("Could not connect to Weaviate vector store.")
+            raise WeaviateRuntimeError(error_messages.WEAVIATE_CONNECTION_ERROR)
+        except UnexpectedStatusCodeException:
+            raise WeaviateRuntimeError(error_messages.WEAVIATE_QUERY_ERROR)
 
     def find_by_source(self, source: str, **kwargs) -> List[Document]:
         try:
@@ -117,7 +122,8 @@ class WeaviateDocumentStore(DocumentStore):
                     {"path": ["source"], "operator": "Like", "valueString": source})
             )
             result = (
-                query.do().get("data", {}).get("Get", {}).get(self.weaviate_index_name, [])
+                query.do().get("data", {}).get("Get", {}).get(self.weaviate_index_name,
+                                                              [])
             )
             docs = []
             for res in result:
@@ -125,7 +131,9 @@ class WeaviateDocumentStore(DocumentStore):
                 docs.append(Document(page_content=text, metadata=res))
             return docs
         except ConnectionError:
-            raise WeaviateRuntimeError("Could not connect to Weaviate vector store.")
+            raise WeaviateRuntimeError(error_messages.WEAVIATE_CONNECTION_ERROR)
+        except UnexpectedStatusCodeException:
+            raise WeaviateRuntimeError(error_messages.WEAVIATE_QUERY_ERROR)
 
     def get_all(self) -> List[Document]:
         try:
@@ -142,18 +150,22 @@ class WeaviateDocumentStore(DocumentStore):
 
             while True:
                 results = query.with_after(cursor).do() if cursor else query.do()
-                current_results = results["data"]["Get"].get(self.weaviate_index_name, [])
+                current_results = results["data"]["Get"].get(self.weaviate_index_name,
+                                                             [])
                 if not current_results:
                     break
                 all_results.extend(current_results)
                 cursor = current_results[-1]["_additional"]["id"]
 
             docs = [
-                Document(page_content=res.pop("text"), metadata=res) for res in all_results
+                Document(page_content=res.pop("text"), metadata=res) for res in
+                all_results
             ]
             return docs
         except ConnectionError:
-            raise WeaviateRuntimeError("Could not connect to Weaviate vector store.")
+            raise WeaviateRuntimeError(error_messages.WEAVIATE_CONNECTION_ERROR)
+        except UnexpectedStatusCodeException:
+            raise WeaviateRuntimeError(error_messages.WEAVIATE_QUERY_ERROR)
 
 
 class EmptyDocumentStore(DocumentStore):

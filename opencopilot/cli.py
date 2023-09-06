@@ -1,3 +1,4 @@
+import os
 import uuid
 from contextlib import nullcontext
 from typing import Optional
@@ -7,26 +8,29 @@ from rich.console import Console
 from rich.table import Table
 from typing_extensions import Annotated
 
-from opencopilot.scripts import chat as chat_script
+from opencopilot import exception_utils
+from opencopilot.domain.cli import cli_chat_use_case
+from opencopilot.logger import cli_logger
 from opencopilot.utils.scripting import set_default_settings
+from opencopilot.utils.validators import validate_openai_api_key
 
+logger = cli_logger.get()
 console = Console()
 
-app = typer.Typer(add_completion=False, no_args_is_help=True)
+app = typer.Typer(
+    add_completion=False,
+    no_args_is_help=True,
+    pretty_exceptions_enable=False,
+    pretty_exceptions_show_locals=False,
+    pretty_exceptions_short=False,
+)
 
+exception_utils.add_copilot_exception_catching(cli_logger.get())
 
 @app.callback()
 def main(ctx: typer.Context):
     # Initialize settings
     set_default_settings("cli")
-
-
-@app.command(help="Print info")
-def info():
-    print(
-        "OpenCopilot CLI. Currently just a convenience layer for chatting with the "
-        "copilot."
-    )
 
 
 @app.command(help="Chat with the Copilot. Example: chat 'Hello, who are you?'")
@@ -35,7 +39,7 @@ def chat(message: str):
     conversation_id = uuid.uuid4()
     while message:
         print("Response: ", end="", flush=True)
-        chat_script.conversation_stream(
+        cli_chat_use_case.conversation_stream(
             base_url="http://0.0.0.0:3000",
             conversation_id=conversation_id,
             message=message,
@@ -62,6 +66,9 @@ def retrieve(
         Optional[bool], typer.Option("--all", "-a", help="Gets all documents ingested")
     ] = False,
 ):
+    openai_api_key = os.getenv("OPENAI_API_KEY")
+    validate_openai_api_key(openai_api_key)
+
     from opencopilot.repository.documents.document_store import WeaviateDocumentStore
 
     document_store = WeaviateDocumentStore()

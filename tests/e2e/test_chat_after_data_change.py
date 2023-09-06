@@ -1,5 +1,6 @@
 import uuid
 
+from opencopilot.domain.cli import cli_chat_use_case
 from opencopilot.scripts import chat
 
 conversation_id = uuid.uuid4()
@@ -11,7 +12,7 @@ headers = {
 
 
 def _chat_conversation(message: str, expected: str):
-    result = chat.conversation(
+    result = cli_chat_use_case.conversation(
         base_url=base_url,
         conversation_id=conversation_id,
         message=message
