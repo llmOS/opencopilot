@@ -28,7 +28,7 @@ oss_app = typer.Typer(
 
 MODEL_PATH = "models/"
 
-LLAMA_PROMPT_TEMPLATE = "[INST] <<SYS>>\nYou are a helpful ... {prompt}[/INST]"
+LLAMA_PROMPT_TEMPLATE = "<s><SYS>\nYour are a Parrot Copilot. Your purpose is to repeat what the user says, but in a different wording.\n</SYS>\n<INST>\n{context}\nHere is the latest conversation between Assistant and User:\n{history}\n</INST\nUser: {question}"
 
 
 @dataclass
@@ -53,7 +53,7 @@ class TokenizeRequest(BaseModel):
 
 
 MODELS = {
-    "Llama-2-7b-chat": ModelInfo(
+    "llama-2-7b-chat": ModelInfo(
         name="llama-2-7b-chat",
         size=3.83,
         description="Meta developed and publicly released the Llama 2 family of large language models (LLMs), a collection of pretrained and fine-tuned generative text models ranging in scale from 7 billion to 70 billion parameters. Fine-tuned LLMs, called Llama-2-Chat, are optimized for dialogue use cases.",
@@ -62,7 +62,7 @@ MODELS = {
         context_size=4096,
         url="https://huggingface.co/TheBloke/Llama-2-7b-Chat-GGUF/resolve/main/llama-2-7b-chat.Q4_0.gguf",
     ),
-    "Llama-2-13b-chat": ModelInfo(
+    "llama-2-13b-chat": ModelInfo(
         name="Llama-2-13b-chat",
         size=7.37,
         description="Meta developed and publicly released the Llama 2 family of large language models (LLMs), a collection of pretrained and fine-tuned generative text models ranging in scale from 7 billion to 70 billion parameters. Fine-tuned LLMs, called Llama-2-Chat, are optimized for dialogue use cases.",
@@ -71,7 +71,7 @@ MODELS = {
         context_size=4096,
         url="https://huggingface.co/TheBloke/Llama-2-13B-chat-GGUF/resolve/main/llama-2-13b-chat.Q4_0.gguf",
     ),
-    "Llama-2-70b-chat": ModelInfo(
+    "llama-2-70b-chat": ModelInfo(
         name="Llama-2-70b-chat",
         size=38.9,
         description="Meta developed and publicly released the Llama 2 family of large language models (LLMs), a collection of pretrained and fine-tuned generative text models ranging in scale from 7 billion to 70 billion parameters. Fine-tuned LLMs, called Llama-2-Chat, are optimized for dialogue use cases.",
@@ -80,7 +80,7 @@ MODELS = {
         context_size=4096,
         url="https://huggingface.co/TheBloke/Llama-2-70B-chat-GGUF/resolve/main/llama-2-70b-chat.Q4_0.gguf",
     ),
-    "CodeLlama-7b": ModelInfo(
+    "codellama-7b": ModelInfo(
         name="CodeLlama-7b",
         size=3.83,
         description="Code Llama is a collection of pretrained and fine-tuned generative text models ranging in scale from 7 billion to 34 billion parameters. This model is designed for general code synthesis and understanding.",
@@ -89,7 +89,7 @@ MODELS = {
         context_size=4096,
         url="https://huggingface.co/TheBloke/CodeLlama-7B-GGUF/resolve/main/codellama-7b.Q4_0.gguf",
     ),
-    "CodeLlama-13b": ModelInfo(
+    "codellama-13b": ModelInfo(
         name="CodeLlama-13b",
         size=7.37,
         description="Code Llama is a collection of pretrained and fine-tuned generative text models ranging in scale from 7 billion to 34 billion parameters. This model is designed for general code synthesis and understanding.",
@@ -98,7 +98,7 @@ MODELS = {
         context_size=4096,
         url="https://huggingface.co/TheBloke/CodeLlama-7B-GGUF/resolve/main/codellama-13b.Q4_0.gguf",
     ),
-    "CodeLlama-34b": ModelInfo(
+    "codellama-34b": ModelInfo(
         name="CodeLlama-34b",
         size=19.1,
         description="Code Llama is a collection of pretrained and fine-tuned generative text models ranging in scale from 7 billion to 34 billion parameters. This model is designed for general code synthesis and understanding.",
@@ -219,7 +219,7 @@ def list_models():
 @oss_app.command("info")
 def model_info(model_name: str):
     try:
-        model = MODELS.get(model_name)
+        model = MODELS.get(model_name.lower())
         table = Table(show_header=False, box=None)
         table.add_column("Label", no_wrap=True, style="bold")
         table.add_column("Value")
@@ -233,7 +233,7 @@ def model_info(model_name: str):
 
 @oss_app.command("remove")
 def model_remove(model_name: str):
-    model = MODELS.get(model_name)
+    model = MODELS.get(model_name.lower())
     if not model:
         typer.echo(f"Model {model_name} not found!")
         return
@@ -253,14 +253,14 @@ def run_model(
     port: Optional[int] = typer.Option(None, "--port", help="Port to run the LLM on"),
 ):
     """Run a specific model."""
-    model = MODELS.get(model_name)
+    model = MODELS.get(model_name.lower())
     if not model:
         typer.echo(f"Model {model_name} not found!")
         return
     try:
         typer.echo(f"Downloading {model_name}...")
         _download_model(model.url, model.filename)
-        typer.echo(f"Running {model.name}...")
+        typer.echo(f"Loading {model.name}, please wait...")
     except:
         typer.echo(f"Could not run {model_name}!")
 
@@ -276,6 +276,7 @@ def run_model(
         n_ctx=model.context_size,
         n_gpu_layers=1,
         use_mlock=True,
+        verbose=False,
     )
 
     app = create_app(settings=settings)
@@ -289,7 +290,7 @@ def run_model(
 @oss_app.command("prompt")
 def generate_prompt(model_name: str):
     """Generate a model-specific prompt template."""
-    if model_name in MODELS:
+    if model_name.lower() in MODELS:
         typer.echo(MODELS[model_name].prompt_template)
     else:
         typer.echo(f"No prompt template available for {model_name}!")

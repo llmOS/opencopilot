@@ -12,7 +12,9 @@ class LocalLLM(ChatOpenAI):
     llm_url: str = None
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs, openai_api_base=kwargs["llm_url"])
+        kwargs.pop("openai_api_base", None)
+        max_tokens = kwargs.pop("max_tokens", None) or 1024
+        super().__init__(*args, **kwargs, openai_api_base=kwargs["llm_url"], max_tokens=max_tokens)
 
     def get_token_ids(self, text: str) -> List[int]:
         try:

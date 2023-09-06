@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Optional
 from typing import Union
 
-from langchain.llms.base import BaseLLM
+from langchain.chat_models.base import BaseChatModel
 from langchain.embeddings.base import Embeddings
 
 
@@ -19,7 +19,7 @@ class Settings:
     WEAVIATE_URL: Optional[str]
     WEAVIATE_READ_TIMEOUT: int
 
-    LLM: Union[str, BaseLLM]
+    LLM: Union[str, BaseChatModel]
     EMBEDDING_MODEL: Union[str, Embeddings]
 
     OPENAI_API_KEY: str

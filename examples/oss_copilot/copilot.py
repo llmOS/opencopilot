@@ -47,7 +47,6 @@ User: {question}
 llm = LocalLLM(
     temperature=0.0,
     llm_url="http://127.0.0.1:8000/v1",
-    max_tokens=1024
 )
 
 embeddings = HuggingFaceEmbeddings(model_name="thenlper/gte-base")

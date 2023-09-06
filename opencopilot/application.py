@@ -5,7 +5,7 @@ from typing import List
 from typing import Optional
 from typing import Union
 
-from langchain.llms.base import BaseLLM
+from langchain.chat_models.base import BaseChatModel
 from langchain.embeddings.base import Embeddings
 import uvicorn
 from langchain.schema import Document
@@ -34,7 +34,7 @@ class OpenCopilot:
         allowed_origins: str = "*",
         weaviate_url: Optional[str] = None,
         weaviate_read_timeout: int = 120,
-        llm: Optional[Union[str, BaseLLM]] = "gpt-4",
+        llm: Optional[Union[str, BaseChatModel]] = "gpt-4",
         embedding_model: Optional[Union[str, Embeddings]] = "text-embedding-ada-002",
         max_document_size_mb: int = 50,
         slack_webhook: str = "",
@@ -49,7 +49,7 @@ class OpenCopilot:
         if not openai_api_key:
             openai_api_key = os.getenv("OPENAI_API_KEY")
 
-        if not isinstance(llm, BaseLLM) and not isinstance(embedding_model, Embeddings):
+        if not isinstance(llm, BaseChatModel) and not isinstance(embedding_model, Embeddings):
             validate_openai_api_key(openai_api_key)
         validate_prompt_and_prompt_file_config(prompt, prompt_file)
 
