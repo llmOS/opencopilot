@@ -49,6 +49,7 @@ setup(
         'typer[all]',
         'trafilatura',
         'filetype',
+        'segment-analytics-python',
         'psutil'
     ],
     entry_points={

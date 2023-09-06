@@ -27,9 +27,17 @@ app.include_router(main_router.router, prefix="/v0")
 html_template_path = os.path.join(os.path.dirname(opencopilot.__file__), "html")
 templates = Jinja2Templates(directory=html_template_path)
 
-API_TITLE = "API"
-API_DESCRIPTION = "API"
+API_TITLE = "OpenCopilot API"
+API_DESCRIPTION = (
+    "OpenCopilot API, for more information visit https://docs.opencopilot.dev/"
+)
 API_VERSION = "0.1"
+
+base_url = settings.get().API_BASE_URL
+if base_url.endswith("/"):
+    base_url = base_url[:-1]
+
+print(f"Started chat UI on {base_url}:{settings.get().API_PORT}/ui")
 
 
 class ApiInfo(BaseModel):
@@ -52,9 +60,9 @@ def custom_openapi():
         return app.openapi_schema
 
     openapi_schema = get_openapi(
-        title="API",
-        version="1.0.0",
-        description="API version 1.0.0",
+        title=API_TITLE,
+        version=API_VERSION,
+        description=API_DESCRIPTION,
         routes=app.routes,
         servers=_get_servers(),
     )
@@ -72,9 +80,6 @@ def _get_servers():
     if settings.get().is_production():
         pass
     else:
-        base_url = settings.get().API_BASE_URL
-        if base_url.endswith("/"):
-            base_url = base_url[:-1]
         servers.append({"url": f"{base_url}:{settings.get().API_PORT}"})
     return servers
 
@@ -104,7 +109,7 @@ app.add_exception_handler(Exception, custom_exception_handler)
 
 
 def get_api_info() -> ApiInfo:
-    return ApiInfo(title=API_VERSION, description=API_DESCRIPTION, version=API_VERSION)
+    return ApiInfo(title=API_TITLE, description=API_DESCRIPTION, version=API_VERSION)
 
 
 @app.get(

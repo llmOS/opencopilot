@@ -19,6 +19,9 @@ from .utils.validators import (
 from . import settings
 from .settings import Settings
 
+from .analytics import track
+from .analytics import TrackingEventType
+
 
 class OpenCopilot:
     def __init__(
@@ -49,13 +52,20 @@ class OpenCopilot:
         if not openai_api_key:
             openai_api_key = os.getenv("OPENAI_API_KEY")
 
+        tracking_enabled = (
+            not os.environ.get("OPENCOPILOT_DO_NOT_TRACK", "").lower() == "true"
+        )
+
         if not isinstance(llm, BaseChatModel) and not isinstance(
             embedding_model, Embeddings
         ):
             validate_openai_api_key(openai_api_key)
         validate_prompt_and_prompt_file_config(prompt, prompt_file)
 
-        prompt = prompt or open(prompt_file, "r").read()
+        if not prompt:
+            with open(prompt_file, "r") as f:
+                prompt = f.read()
+
         validate_system_prompt(prompt)
 
         settings.set(
@@ -81,6 +91,7 @@ class OpenCopilot:
                 JWT_TOKEN_EXPIRATION_SECONDS=jwt_token_expiration_seconds,
                 HELICONE_API_KEY=helicone_api_key,
                 HELICONE_RATE_LIMIT_POLICY=helicone_rate_limit_policy,
+                TRACKING_ENABLED=tracking_enabled,
             )
         )
 
@@ -136,6 +147,15 @@ class OpenCopilot:
             self.document_store.ingest_data(self.documents)
 
         from .app import app
+
+        track(
+            TrackingEventType.COPILOT_START,
+            len(self.documents),
+            len(self.data_loaders),
+            len(self.local_files_dirs),
+            len(self.local_file_paths),
+            len(self.data_urls),
+        )
 
         uvicorn.run(app, host=self.host, port=self.api_port)
 

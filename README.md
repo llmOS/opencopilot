@@ -120,6 +120,15 @@ OpenCopilot provides one coherent end-to-end stack which is purposely designed f
 
 See our docs on [Stack Overview](https://docs.opencopilot.dev/welcome/overview#stack-overview) to learn more about each part of the OpenCopilot stack.
 
+## Analytics
+
+OpenCopilot collects library usage data to improve the product and your experience. We collect events regarding errors and your usage of copilot features, and never collect your code, prompts, knowledge base documents, or LLM outputs. To understand what is tracked, check out the [tracking code](/opencopilot/analytics.py).
+
+You can opt out of tracking by setting the environment variable `OPENCOPILOT_DO_NOT_TRACK=True`:
+
+```bash
+export OPENCOPILOT_DO_NOT_TRACK=True
+```
 
 ## Getting help
 
