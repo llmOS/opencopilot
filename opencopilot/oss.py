@@ -25,6 +25,8 @@ MODEL_PATH = os.path.expanduser("~/.opencopilot/models/")
 
 LLAMA_PROMPT_TEMPLATE = "<s><SYS>\nYour are a Parrot Copilot. Your purpose is to repeat what the user says, but in a different wording.\n</SYS>\n[INST]\n{context}\nHere is the latest conversation between Assistant and User:\n{history}\n[/INST]\nUser: {question}"
 
+CODELLAMA_PROMPT_TEMPLATE = "{history}\n[INST] Write code to solve the following coding problem that obeys the constraints and passes the example test cases. Relevant information: {context}. Please wrap your code answer using ```:\n{question}\n[/INST]"
+
 
 @dataclass
 class ModelInfo:
@@ -69,7 +71,7 @@ MODELS = {
         name="CodeLlama-7b",
         size=3.83,
         description="Code Llama is a collection of pretrained and fine-tuned generative text models ranging in scale from 7 billion to 34 billion parameters. This model is designed for general code synthesis and understanding.",
-        prompt_template="None",
+        prompt_template=CODELLAMA_PROMPT_TEMPLATE,
         filename="codellama-7b.Q4_0.gguf",
         context_size=4096,
         url="https://huggingface.co/TheBloke/CodeLlama-7B-GGUF/resolve/main/codellama-7b.Q4_0.gguf",
@@ -78,7 +80,7 @@ MODELS = {
         name="CodeLlama-13b",
         size=7.37,
         description="Code Llama is a collection of pretrained and fine-tuned generative text models ranging in scale from 7 billion to 34 billion parameters. This model is designed for general code synthesis and understanding.",
-        prompt_template="None",
+        prompt_template=CODELLAMA_PROMPT_TEMPLATE,
         filename="codellama-13b.Q4_0.gguf",
         context_size=4096,
         url="https://huggingface.co/TheBloke/CodeLlama-13B-GGUF/resolve/main/codellama-13b.Q4_0.gguf",
@@ -87,7 +89,7 @@ MODELS = {
         name="CodeLlama-34b",
         size=19.1,
         description="Code Llama is a collection of pretrained and fine-tuned generative text models ranging in scale from 7 billion to 34 billion parameters. This model is designed for general code synthesis and understanding.",
-        prompt_template="None",
+        prompt_template=CODELLAMA_PROMPT_TEMPLATE,
         filename="codellama-34b.Q4_0.gguf",
         context_size=4096,
         url="https://huggingface.co/TheBloke/CodeLlama-34B-GGUF/resolve/main/codellama-34b.Q4_0.gguf",
@@ -229,9 +231,13 @@ def run_model(
         typer.echo(f"Model {model_name} not found!")
         return
     try:
-        print(f"Preparing to download the {model_name} model from Huggingface. This might be a large file.")
+        print(
+            f"Preparing to download the {model_name} model from Huggingface. This might be a large file."
+        )
         print(f"The model will be saved to: {MODEL_PATH}.")
-        print(f"We appreciate your patience. If the download gets interrupted, don't worry, you can always resume it later.")
+        print(
+            f"We appreciate your patience. If the download gets interrupted, don't worry, you can always resume it later."
+        )
         _download_model(model.url, model.filename)
         print(f"Now loading {model.name}. Hang tight!")
     except:

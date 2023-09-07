@@ -1,4 +1,6 @@
-from fastapi import FastAPI, APIRouter
+from threading import Lock
+
+from fastapi import FastAPI, APIRouter, Depends
 from fastapi.responses import StreamingResponse
 from opencopilot.oss_llm.entities import GenerateStreamRequest
 from opencopilot.oss_llm.entities import TokenizeRequest
@@ -6,6 +8,18 @@ from opencopilot.oss_llm.entities import TokenizeResponse
 from opencopilot.oss_llm.llm import LLamaLLM
 
 router = APIRouter()
+
+llama_lock = Lock()
+
+
+def _get_llama():
+    try:
+        llama_lock.acquire()
+        yield llm
+    except:
+        return None
+    finally:
+        llama_lock.release()
 
 
 def create_app(model: str, context_size: int) -> FastAPI:
@@ -20,13 +34,15 @@ def create_app(model: str, context_size: int) -> FastAPI:
 
 
 @router.post("/generate_stream")
-async def generate_stream(request: GenerateStreamRequest):
+async def generate_stream(
+    request: GenerateStreamRequest, llama: LLamaLLM = Depends(_get_llama)
+):
     return StreamingResponse(
-        llm.generate(request.query, request.temperature, request.max_tokens),
+        llama.generate(request.query, request.temperature, request.max_tokens),
         media_type="text/event-stream",
     )
 
 
 @router.post("/tokenize", response_model=TokenizeResponse)
-async def tokenize(request: TokenizeRequest):
-    return TokenizeResponse(tokens=llm.tokenize(request.text))
+async def tokenize(request: TokenizeRequest, llama: LLamaLLM = Depends(_get_llama)):
+    return TokenizeResponse(tokens=llama.tokenize(request.text))
