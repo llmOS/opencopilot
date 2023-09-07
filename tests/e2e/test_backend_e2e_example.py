@@ -1,4 +1,5 @@
 import uuid
+from typing import List
 
 from opencopilot.domain.cli import cli_chat_use_case
 
@@ -10,7 +11,7 @@ headers = {
 }
 
 
-def _chat_conversation(message: str, expected: str):
+def _chat_conversation(message: str, expected: List[str]):
     result = cli_chat_use_case.conversation(
         base_url=base_url,
         conversation_id=conversation_id,
@@ -20,10 +21,14 @@ def _chat_conversation(message: str, expected: str):
     print(f"\nresult from {url}\n  {result}")
     print("  json:", result.json(), "\n")
     text = result.json()["copilot_message"]
-    assert expected in text
+    is_success = False
+    for e in expected:
+        if e in text:
+            is_success = True
+    assert is_success
 
 
-def _chat_conversation_stream(message: str, expected: str):
+def _chat_conversation_stream(message: str, expected: List[str]):
     result = cli_chat_use_case.conversation_stream(
         base_url=base_url,
         conversation_id=uuid.uuid4(),
@@ -31,12 +36,20 @@ def _chat_conversation_stream(message: str, expected: str):
     )
     url = f"{base_url}/v0/conversation_stream/{conversation_id}"
     print(f"\nresult from {url}\n  {result}")
-    assert expected in result
+    is_success = False
+    for e in expected:
+        if e in result:
+            is_success = True
+    assert is_success
 
 
 def test():
-    _chat_conversation_stream("Who is Estonian president?", "on Alar Karis")
-    _chat_conversation("Who was last Estonian president?", "oli Kersti Kaljulaid")
+    _chat_conversation_stream(
+        "Who is Estonian president?",
+        ["on Alar Karis", "Alar Karis on"])
+    _chat_conversation(
+        "Who was last Estonian president?",
+        ["oli Kersti Kaljulaid", "Kersti Kaljulaid oli"])
 
 
 if __name__ == '__main__':

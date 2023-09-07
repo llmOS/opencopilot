@@ -2,7 +2,7 @@ name: E2E Test Full
 
 on:
   push:
-    branches: [ main, error-handling ]
+    branches: [ main, fix-gpt-3.5-e2e-test ]
 
 jobs:
   e2e-test-full:
