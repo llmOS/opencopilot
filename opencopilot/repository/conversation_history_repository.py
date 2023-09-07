@@ -17,12 +17,12 @@ class ConversationHistoryRepositoryLocal:
     def __init__(
         self,
         conversations_dir: str = DEFAULT_CONVERSATIONS_DIR,
-        question_key: str = "",
-        response_key: str = "",
+        question_template: str = "",
+        response_template: str = "",
     ):
         self.conversations_dir = conversations_dir
-        self.question_key = question_key or settings.get().PROMPT_QUESTION_KEY
-        self.response_key = response_key or settings.get().PROMPT_ANSWER_KEY
+        self.question_template = question_template or settings.get().QUESTION_TEMPLATE
+        self.response_template = response_template or settings.get().RESPONSE_TEMPLATE
 
     def get_prompt_history(self, conversation_id: UUID, count: Optional[int]) -> str:
         try:
@@ -49,8 +49,12 @@ class ConversationHistoryRepositoryLocal:
     def _to_string(self, history: List[Dict]) -> str:
         formatted: str = ""
         for i in history:
-            formatted += f"{self.question_key}: {i.get('prompt', '')}\n"
-            formatted += f"{self.response_key}: {i.get('response', '')}\n"
+            formatted += (
+                f"{self.question_template.format(question=i.get('prompt', ''))}\n"
+            )
+            formatted += (
+                f"{self.response_template.format(response=i.get('response', ''))}\n"
+            )
         return formatted
 
     def save_history(

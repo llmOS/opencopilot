@@ -2,21 +2,16 @@ import os
 import platform
 from dataclasses import dataclass
 from typing import Any
-from typing import List
-from typing import Tuple
 from typing import Optional
 from typing_extensions import Annotated, TypedDict
 
 import typer
 import psutil
 import requests
-from pydantic import BaseModel, Field
 from tqdm import tqdm
 from rich.console import Console
 from rich.table import Table
 from rich import print
-from fastapi import APIRouter
-from fastapi import Depends
 
 console = Console()
 
@@ -28,7 +23,7 @@ oss_app = typer.Typer(
 
 MODEL_PATH = os.path.expanduser("~/.opencopilot/models/")
 
-LLAMA_PROMPT_TEMPLATE = "<s><SYS>\nYour are a Parrot Copilot. Your purpose is to repeat what the user says, but in a different wording.\n</SYS>\n<INST>\n{context}\nHere is the latest conversation between Assistant and User:\n{history}\n</INST\nUser: {question}"
+LLAMA_PROMPT_TEMPLATE = "<s><SYS>\nYour are a Parrot Copilot. Your purpose is to repeat what the user says, but in a different wording.\n</SYS>\n[INST]\n{context}\nHere is the latest conversation between Assistant and User:\n{history}\n[/INST]\nUser: {question}"
 
 
 @dataclass
@@ -40,16 +35,6 @@ class ModelInfo:
     filename: str
     url: str
     context_size: int
-
-
-class Tokens(TypedDict):
-    prompt_tokens: List[int]
-
-
-class TokenizeRequest(BaseModel):
-    prompt: str = Field(
-        default="", description="The prompt to generate completions for."
-    )
 
 
 MODELS = {
@@ -153,44 +138,29 @@ def _download_model(url: str, filename: str):
     progress_bar.close()
 
 
-def _try_llama_cpp_imports() -> Optional[Tuple[Any, ...]]:
+def _try_llama_cpp_import() -> Any:
     # pylint: disable=import-error
     try:
-        import uvicorn
         import llama_cpp
-        from llama_cpp.server.app import create_app, Settings, get_llama, router
 
-        return uvicorn, llama_cpp, create_app, Settings, get_llama, router
+        return llama_cpp
     except:
         print(
             "Could not run LLM, make sure you've installed [code]llama-cpp-python[/code] package and dependencies!"
         )
         if _is_macos():
             print(
-                'To install: [code]CMAKE_ARGS="-DLLAMA_METAL=on" pip install "llama-cpp-python[server]" pydantic_settings sse_starlette[/code]'
+                'To install: [code]CMAKE_ARGS="-DLLAMA_METAL=on" pip install llama-cpp-python[/code]'
             )
         else:
             print(
-                'To install: [code]pip install "llama-cpp-python[server]" pydantic_settings sse_starlette[/code]'
+                'To install: [code]pip install llama-cpp-python[/code]'
             )
         print(
             "More information on how to install: [link]https://llama-cpp-python.readthedocs.io/en/latest/#installation[/link]"
         )
         print("Re-run this command after installation is done!")
         return None
-
-
-def _define_tokenize_route(router: APIRouter, llama_cpp: Any, get_llama: Any):
-    @router.post("/v1/tokenize")
-    async def tokenize(
-        body: TokenizeRequest,
-        llama: llama_cpp.Llama = Depends(get_llama),
-    ) -> Tokens:
-        try:
-            tokens = llama.tokenize(text=body.prompt.encode("utf-8"), add_bos=True)
-        except Exception as e:
-            print(f'Error while tokenizing "{body.prompt}": {e}')
-        return {"prompt_tokens": tokens}
 
 
 @oss_app.command("list")
@@ -267,22 +237,17 @@ def run_model(
     except:
         typer.echo(f"Could not run {model_name}!")
 
-    modules = _try_llama_cpp_imports()
-    if not modules:
+    llama_cpp = _try_llama_cpp_import()
+    if not llama_cpp:
         return
 
-    uvicorn, llama_cpp, create_app, Settings, get_llama, router = modules
-    _define_tokenize_route(router, llama_cpp, get_llama)
+    import uvicorn
+    from opencopilot.oss_llm.app import create_app
 
-    settings = Settings(
+    app = create_app(
         model=os.path.join(MODEL_PATH, model.filename),
-        n_ctx=model.context_size,
-        n_gpu_layers=1,
-        use_mlock=True,
-        verbose=verbose,
+        context_size=model.context_size,
     )
-
-    app = create_app(settings=settings)
     uvicorn.run(
         app,
         host=host if host else "localhost",

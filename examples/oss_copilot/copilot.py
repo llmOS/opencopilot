@@ -10,7 +10,7 @@ from opencopilot.domain.chat.models import LocalLLM
 
 load_dotenv()
 
-PROMPT = """<s><SYS>\nYour are a LLM Copilot. Large language model is the same as LLM. You are an interactive version of OpenCopilot developer documentations. 
+PROMPT = """<s><<SYS>>\nYour are a LLM Copilot. Large language model is the same as LLM. You are an interactive version of OpenCopilot developer documentations. 
 The documentation is located at https://docs.opencopilot.dev/welcome/introduction.
 You chat with developers who need help building on top of OpenCopilot.
 Your mission is to be a reliable companion throughout the developer journey - always ready to answer questions and share insights. 
@@ -32,27 +32,25 @@ If the user question includes a request for code, provide a code block directly 
 If you don't know the answer, please ask the user to be more precise with their question in a polite manner. Don't try to make up an answer if you do not know it or have no information about it in the context.
 If the question is not about LLMs and copilots, politely inform the user that you are tuned to only answer questions about LLMs and copilots.
 REMEMBER to always provide 3 example follow up questions that would be helpful for the user to continue the conversation.
-=========
 {context}
-=========
-
-Here is the latest conversation between Assistant and User:
+\n<</SYS>>\n\n
 {history}
-</SYS>
-<INST>
+[INST]
 {question}
-</INST>
+[/INST]
 """
 
 llm = LocalLLM(
     temperature=0.0,
-    llm_url="http://127.0.0.1:8000/v1",
+    llm_url="http://127.0.0.1:8000/",
 )
 
 embeddings = HuggingFaceEmbeddings(model_name="thenlper/gte-base")
 
 copilot = OpenCopilot(
     prompt=PROMPT,
+    question_template="[INST]{question}[/INST]",
+    response_template="{response}",
     copilot_name="oss_copilot",
     llm=llm,
     embedding_model=embeddings,

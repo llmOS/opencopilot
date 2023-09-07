@@ -28,6 +28,8 @@ class OpenCopilot:
         self,
         prompt: Optional[str] = None,
         prompt_file: Optional[str] = None,
+        question_template: Optional[str] = "### Human: {question}",
+        response_template: Optional[str] = "### Assistant: {response}",
         openai_api_key: Optional[str] = None,
         copilot_name: str = "default",
         host: str = "127.0.0.1",
@@ -71,6 +73,8 @@ class OpenCopilot:
         settings.set(
             Settings(
                 PROMPT=prompt,
+                QUESTION_TEMPLATE=question_template,
+                RESPONSE_TEMPLATE=response_template,
                 OPENAI_API_KEY=openai_api_key,
                 COPILOT_NAME=copilot_name,
                 HOST=host,

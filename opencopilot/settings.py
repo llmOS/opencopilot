@@ -47,6 +47,8 @@ class Settings:
     MAX_CONTEXT_DOCUMENTS_COUNT: int = 4
 
     PROMPT: Optional[str] = None
+    QUESTION_TEMPLATE: Optional[str] = None
+    RESPONSE_TEMPLATE: Optional[str] = None
 
     HELICONE_BASE_URL = "https://oai.hconeai.com/v1"
 
@@ -57,9 +59,6 @@ class Settings:
             or self.AUTH_TYPE.strip() == ""
         ):
             self.AUTH_TYPE = None
-
-        self.PROMPT_QUESTION_KEY = "User"
-        self.PROMPT_ANSWER_KEY = "Copilot"
 
     def is_production(self):
         return self.ENVIRONMENT == "production"
