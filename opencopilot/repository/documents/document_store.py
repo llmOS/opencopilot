@@ -8,6 +8,8 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain.text_splitter import TextSplitter
 from langchain.vectorstores import Weaviate
 from requests.exceptions import ConnectionError
+from requests.exceptions import InvalidSchema
+from requests.exceptions import MissingSchema
 from weaviate import UnexpectedStatusCodeException
 from weaviate import WeaviateStartUpError
 
@@ -66,8 +68,24 @@ class WeaviateDocumentStore(DocumentStore):
                         hostname="localhost",
                     ),
                 )
+        except MissingSchema:
+            raise WeaviateRuntimeError(
+                error_messages.WEAVIATE_INVALID_URL.format(
+                    weaviate_url=settings.get().WEAVIATE_URL or "http://localhost:8080"
+                )
+            )
+        except InvalidSchema:
+            raise WeaviateRuntimeError(
+                error_messages.WEAVIATE_INVALID_URL.format(
+                    weaviate_url=settings.get().WEAVIATE_URL or "http://localhost:8080"
+                )
+            )
         except WeaviateStartUpError:
-            raise WeaviateRuntimeError(error_messages.WEAVIATE_DID_NOT_START)
+            raise WeaviateRuntimeError(
+                error_messages.WEAVIATE_DID_NOT_START.format(
+                    weaviate_url=settings.get().WEAVIATE_URL or "http://localhost:8080"
+                )
+            )
 
     def _get_vector_store(self):
         metadatas = [d.metadata for d in self.documents]

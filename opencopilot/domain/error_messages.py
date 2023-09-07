@@ -1,8 +1,13 @@
 WEAVIATE_DID_NOT_START = (
     "Weaviate did not start up in 5 seconds. Either the Weaviate URL "
-    "http://localhost:8080 is wrong or Weaviate did not start up in the interval "
+    "{weaviate_url} is wrong or Weaviate did not start up in the interval "
     "given in 'startup_period'."
     "\nPlease make sure that Weaviate is running."
+)
+
+WEAVIATE_INVALID_URL = (
+    "Invalid weaviate_url='{weaviate_url}' provided. Please make sure it starts with a "
+    "schema like http:// or https://"
 )
 
 WEAVIATE_CONNECTION_ERROR = (
