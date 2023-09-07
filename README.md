@@ -74,7 +74,7 @@ For example, you can create an AWS CLI Copilot using the following code by addin
 from opencopilot import OpenCopilot
 
 PROMPT = """
-Your are an Amazon Web Services (AWS) CLI copilot. You are an interactive version of AWS CLI documentation and chat with developers who need help using it.
+You are an Amazon Web Services (AWS) CLI copilot. You are an interactive version of AWS CLI documentation and chat with developers who need help using it.
 Your mission is to be a reliable companion throughout the developer journey - always ready to answer questions and share insights.
 
 =========
