@@ -27,4 +27,5 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           export OPENAI_API_KEY="$OPENAI_API_KEY"
+          export OPENCOPILOT_DO_NOT_TRACK=true
           python tests/assets/example_without_run.py
