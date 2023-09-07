@@ -35,7 +35,7 @@ class OpenCopilot:
         allowed_origins: str = "*",
         weaviate_url: Optional[str] = None,
         weaviate_read_timeout: int = 120,
-        llm_model_name: Literal["gpt-3.5-turbo-16k", "gpt-4"] = "gpt-4",
+        llm_model_name: Literal["gpt-3.5-turbo-16k", "gpt-4"] = "gpt-3.5-turbo-16k",
         max_document_size_mb: int = 50,
         slack_webhook: str = "",
         auth_type: Optional[str] = None,
