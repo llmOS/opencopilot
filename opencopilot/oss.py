@@ -153,9 +153,7 @@ def _try_llama_cpp_import() -> Any:
                 'To install: [code]CMAKE_ARGS="-DLLAMA_METAL=on" pip install llama-cpp-python[/code]'
             )
         else:
-            print(
-                'To install: [code]pip install llama-cpp-python[/code]'
-            )
+            print("To install: [code]pip install llama-cpp-python[/code]")
         print(
             "More information on how to install: [link]https://llama-cpp-python.readthedocs.io/en/latest/#installation[/link]"
         )

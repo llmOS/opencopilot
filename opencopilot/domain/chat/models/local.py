@@ -38,11 +38,7 @@ class LocalLLM(BaseLLM):
     ) -> LLMResult:
         final = ""
         for text in self._get_stream(
-            {
-                "query": messages[0],
-                "temperature": self.temperature,
-                "stop": stop
-            }
+            {"query": messages[0], "temperature": self.temperature, "stop": stop}
         ):
             final += self._process_text(text)
         return LLMResult(
