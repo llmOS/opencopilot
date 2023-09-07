@@ -1,8 +1,6 @@
-import logging
 import os
 from datetime import timedelta
 from typing import Callable
-from typing import Dict
 from typing import List
 from typing import Literal
 from typing import Optional
@@ -13,20 +11,19 @@ from langchain.schema import Document
 
 from opencopilot import exception_utils
 from opencopilot import settings
+from opencopilot.domain import error_messages
 from opencopilot.domain.errors import ModelError
+from opencopilot.logger import api_logger
 from opencopilot.repository.documents import split_documents_use_case
 from opencopilot.settings import Settings
 from opencopilot.utils.validators import validate_openai_api_key
 from opencopilot.utils.validators import validate_prompt_and_prompt_file_config
 from opencopilot.utils.validators import validate_system_prompt
-from .domain import error_messages
-from .logger import api_logger
 
 ALLOWED_LLM_MODEL_NAMES = ["gpt-3.5-turbo-16k", "gpt-4"]
 
-from .analytics import track
-from .analytics import TrackingEventType
-
+from opencopilot.analytics import track
+from opencopilot.analytics import TrackingEventType
 
 exception_utils.add_copilot_exception_catching()
 
