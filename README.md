@@ -53,7 +53,7 @@ OpenCopilot solves this problem so building your own Copilot becomes intuitive, 
 
 * Example: [Shopify Copilot](https://www.shopify.com/magic)
   
-See more [use cases in docs](https://docs.opencopilot.dev/welcome/overview#use-cases).
+See more [use cases in docs](https://docs.opencopilot.dev/welcome/use-cases).
 
 
 ## ⚡ Quickstart
@@ -117,14 +117,14 @@ opencopilot chat "Hello, who are you?"
 
 ### 5. Create your own copilot
 
-After seeing how easy it is to set up a copilot, you can now create your own and level it up step by step. For this, see [docs.opencopilot.dev](https://docs.opencopilot.dev/improve/customize-your-copilot), or check a more detailed example of the AWS copilot in the [examples directory](examples/aws_copilot/).
+After seeing how easy it is to set up a copilot, you can now create your own and level it up step by step. For this, see [docs.opencopilot.dev](https://docs.opencopilot.dev/create/iterative-development), or check a more detailed example of the AWS copilot in the [examples directory](examples/aws_copilot/).
 
 ## 🔍 Stack Overview
 OpenCopilot provides one coherent end-to-end stack which is purposely designed for building a variety of copilots. From LLM selection (OSS LLMs upcoming), knowledge base, monitoring, evaluation, etc - it covers all the needs to build a useful copilot.
 
 ![opencopilot_stack](https://github.com/opencopilotdev/opencopilot/assets/5147210/140ca313-cf8a-4635-913e-8dbb5e33e8d4)
 
-See our docs on [Stack Overview](https://docs.opencopilot.dev/welcome/overview#stack-overview) to learn more about each part of the OpenCopilot stack.
+See our docs on [Stack Overview](https://docs.opencopilot.dev/welcome/overview) to learn more about each part of the OpenCopilot stack.
 
 ## Analytics
 
