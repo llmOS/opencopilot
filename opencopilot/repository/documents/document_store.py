@@ -12,6 +12,7 @@ from requests.exceptions import InvalidSchema
 from requests.exceptions import MissingSchema
 from weaviate import UnexpectedStatusCodeException
 from weaviate import WeaviateStartUpError
+from weaviate.exceptions import WeaviateBaseError
 
 from opencopilot import settings
 from opencopilot.domain import error_messages
@@ -86,6 +87,8 @@ class WeaviateDocumentStore(DocumentStore):
                     weaviate_url=settings.get().WEAVIATE_URL or "http://localhost:8080"
                 )
             )
+        except WeaviateBaseError as exc:
+            raise WeaviateRuntimeError(exc.message)
 
     def _get_vector_store(self):
         metadatas = [d.metadata for d in self.documents]
@@ -121,6 +124,8 @@ class WeaviateDocumentStore(DocumentStore):
             raise WeaviateRuntimeError(error_messages.WEAVIATE_CONNECTION_ERROR)
         except UnexpectedStatusCodeException:
             raise WeaviateRuntimeError(error_messages.WEAVIATE_QUERY_ERROR)
+        except WeaviateBaseError as exc:
+            raise WeaviateRuntimeError(exc.message)
 
     def find(self, query: str, **kwargs) -> List[Document]:
         try:
@@ -131,6 +136,8 @@ class WeaviateDocumentStore(DocumentStore):
             raise WeaviateRuntimeError(error_messages.WEAVIATE_CONNECTION_ERROR)
         except UnexpectedStatusCodeException:
             raise WeaviateRuntimeError(error_messages.WEAVIATE_QUERY_ERROR)
+        except WeaviateBaseError as exc:
+            raise WeaviateRuntimeError(exc.message)
 
     def find_by_source(self, source: str, **kwargs) -> List[Document]:
         try:
@@ -157,6 +164,8 @@ class WeaviateDocumentStore(DocumentStore):
             raise WeaviateRuntimeError(error_messages.WEAVIATE_CONNECTION_ERROR)
         except UnexpectedStatusCodeException:
             raise WeaviateRuntimeError(error_messages.WEAVIATE_QUERY_ERROR)
+        except WeaviateBaseError as exc:
+            raise WeaviateRuntimeError(exc.message)
 
     def get_all(self) -> List[Document]:
         try:
@@ -190,6 +199,8 @@ class WeaviateDocumentStore(DocumentStore):
             raise WeaviateRuntimeError(error_messages.WEAVIATE_CONNECTION_ERROR)
         except UnexpectedStatusCodeException:
             raise WeaviateRuntimeError(error_messages.WEAVIATE_QUERY_ERROR)
+        except WeaviateBaseError as exc:
+            raise WeaviateRuntimeError(exc.message)
 
 
 class EmptyDocumentStore(DocumentStore):

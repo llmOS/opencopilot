@@ -12,7 +12,7 @@ from opencopilot.domain.errors import WeaviateRuntimeError
 from opencopilot.logger import api_logger
 from opencopilot.service.error_responses import APIErrorResponse
 from opencopilot.service.error_responses import GenericCopilotRuntimeError
-from opencopilot.service.error_responses import OpenAIUnavailableError
+from opencopilot.service.error_responses import OpenAIError
 from opencopilot.service.error_responses import WeaviateConnectionError
 from opencopilot.service.middleware import util
 from opencopilot.service.middleware.entities import RequestStateKey
@@ -55,7 +55,7 @@ class MainMiddleware(BaseHTTPMiddleware):
                 )
             return await _get_response_with_headers(response, duration)
         except OpenAIRuntimeError as exc:
-            raise OpenAIUnavailableError(exc.message)
+            raise OpenAIError(exc.message)
         except WeaviateRuntimeError as exc:
             raise WeaviateConnectionError(exc.message)
         except CopilotRuntimeError as exc:

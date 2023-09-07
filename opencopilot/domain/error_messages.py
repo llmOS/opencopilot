@@ -20,7 +20,8 @@ WEAVIATE_QUERY_ERROR = (
 )
 
 COPILOT_IS_NOT_RUNNING_ERROR = (
-    "Could not connect to Copilot." "\nPlease make sure that Copilot is running."
+    "Could not connect to Copilot on url: '{copilot_url}"
+    "\nPlease make sure that Copilot is running."
 )
 
 INVALID_MODEL_ERROR = (

@@ -3,8 +3,10 @@ from typing import List
 
 import xxhash
 from langchain.embeddings import OpenAIEmbeddings
+from openai import OpenAIError
 
 from opencopilot import settings
+from opencopilot.domain.errors import OpenAIRuntimeError
 from opencopilot.logger import api_logger
 
 logger = api_logger.get()
@@ -33,16 +35,19 @@ class CachedOpenAIEmbeddings(OpenAIEmbeddings):
 
     def _embed_documents_cached(self, texts: List[str]) -> List[List[float]]:
         embeddings = []
-        for text in texts:
-            text_hash = self._hash(text)
-            # pylint: disable-next=no-member
-            if embedding := self._cache.get(text_hash):
-                embeddings.append(embedding)
-            else:
-                embedding = super().embed_documents([text])[0]
+        try:
+            for text in texts:
+                text_hash = self._hash(text)
                 # pylint: disable-next=no-member
-                self._cache[text_hash] = embedding
-                embeddings.append(embedding)
+                if embedding := self._cache.get(text_hash):
+                    embeddings.append(embedding)
+                else:
+                    embedding = super().embed_documents([text])[0]
+                    # pylint: disable-next=no-member
+                    self._cache[text_hash] = embedding
+                    embeddings.append(embedding)
+        except OpenAIError as exc:
+            raise OpenAIRuntimeError(exc.user_message)
         return embeddings
 
     def _hash(self, text) -> str:

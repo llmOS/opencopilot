@@ -39,15 +39,17 @@ def conversation(
     conversation_id: uuid.UUID,
     message: str = DEFAULT_MESSAGE,
 ):
+    url = f"{base_url}/v0/conversations/{conversation_id}"
     try:
         jwt_token = get_jwt_token.execute(base_url)
         if jwt_token:
             headers["Authorization"] = "Bearer " + jwt_token
-        url = f"{base_url}/v0/conversations/{conversation_id}"
         data = {"message": message}
         return requests.post(url, json=data, headers=headers)
     except requests.exceptions.ConnectionError:
-        raise CopilotIsNotRunningError(error_messages.COPILOT_IS_NOT_RUNNING_ERROR)
+        raise CopilotIsNotRunningError(
+            error_messages.COPILOT_IS_NOT_RUNNING_ERROR.format(copilot_url=url)
+        )
 
 
 def conversation_stream(
@@ -56,9 +58,9 @@ def conversation_stream(
     message: str = DEFAULT_MESSAGE,
     stream: bool = False,
 ):
+    url = f"{base_url}/v0/conversations/{conversation_id}/stream"
     try:
         jwt_token = get_jwt_token.execute(base_url)
-        url = f"{base_url}/v0/conversations/{conversation_id}/stream"
         output = ""
         for text in _get_stream(url, message=message, jwt_token=jwt_token):
             text = _process_text(text)
@@ -68,7 +70,9 @@ def conversation_stream(
         return output
     except requests.exceptions.ConnectionError:
         print("\n")
-        raise CopilotIsNotRunningError(error_messages.COPILOT_IS_NOT_RUNNING_ERROR)
+        raise CopilotIsNotRunningError(
+            error_messages.COPILOT_IS_NOT_RUNNING_ERROR.format(copilot_url=url)
+        )
 
 
 if __name__ == "__main__":
