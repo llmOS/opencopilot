@@ -22,6 +22,12 @@ class DocumentStore:
     document_embed_model = "text-embedding-ada-002"
     document_chunk_size = 2000
 
+    def __init__(self):
+        embeddings = settings.get().EMBEDDING_MODEL
+        if not isinstance(embeddings, str):
+            # smaller chunks if not using OpenAI
+            self.document_chunk_size = 500
+
     def get_embeddings_model(self) -> CachedEmbeddings:
         return get_embedding_model_use_case.execute()
 
@@ -45,6 +51,7 @@ class WeaviateDocumentStore(DocumentStore):
     weaviate_index_name = "LangChain"  # TODO: Weaviate specific?
 
     def __init__(self):
+        super().__init__()
         self.documents = []
         self.embeddings = self.get_embeddings_model()
         self.weaviate_client = self._get_weaviate_client()

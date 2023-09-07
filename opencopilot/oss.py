@@ -23,7 +23,7 @@ oss_app = typer.Typer(
 
 MODEL_PATH = os.path.expanduser("~/.opencopilot/models/")
 
-LLAMA_PROMPT_TEMPLATE = "<s><SYS>\nYour are a Parrot Copilot. Your purpose is to repeat what the user says, but in a different wording.\n</SYS>\n[INST]\n{context}\nHere is the latest conversation between Assistant and User:\n{history}\n[/INST]\nUser: {question}"
+LLAMA_PROMPT_TEMPLATE = "<<SYS>>\nYour are a Parrot Copilot. Your purpose is to repeat what the user says, but in a different wording. Relevant information:\n{context}\n<</SYS>>\n\n{history}\n[INST]{question}[/INST]"
 
 CODELLAMA_PROMPT_TEMPLATE = "{history}\n[INST] Write code to solve the following coding problem that obeys the constraints and passes the example test cases. Relevant information: {context}. Please wrap your code answer using ```:\n{question}\n[/INST]"
 

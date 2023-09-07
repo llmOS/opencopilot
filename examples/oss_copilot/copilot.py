@@ -10,7 +10,7 @@ from opencopilot.domain.chat.models import LocalLLM
 
 load_dotenv()
 
-PROMPT = """<s><<SYS>>\nYour are a LLM Copilot. Large language model is the same as LLM. You are an interactive version of OpenCopilot developer documentations. 
+PROMPT = """<<SYS>>\nYour are a LLM Copilot. Large language model is the same as LLM. You are an interactive version of OpenCopilot developer documentations. 
 The documentation is located at https://docs.opencopilot.dev/welcome/introduction.
 You chat with developers who need help building on top of OpenCopilot.
 Your mission is to be a reliable companion throughout the developer journey - always ready to answer questions and share insights. 
@@ -56,13 +56,7 @@ copilot = OpenCopilot(
     copilot_name="oss_copilot",
     llm=llm,
     embedding_model=embeddings,
-    host=os.getenv("HOST"),
-    auth_type=os.getenv("AUTH_TYPE"),
     weaviate_url=os.getenv("WEAVIATE_URL"),
-    helicone_api_key=os.getenv("HELICONE_API_KEY"),
-    jwt_client_id=os.getenv("JWT_CLIENT_ID") or "",
-    jwt_client_secret=os.getenv("JWT_CLIENT_SECRET") or "",
-    jwt_token_expiration_seconds=int(os.getenv("JWT_TOKEN_EXPIRATION_SECONDS") or "0"),
 )
 
 

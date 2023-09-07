@@ -97,7 +97,7 @@ def test_invalid_model_name():
         OpenCopilot(
             prompt_file=VALID_PROMPT_FILE,
             openai_api_key=MOCK_OPENAI_API_KEY,
-            llm_model_name="invalid"
+            llm="invalid"
         )
 
 
