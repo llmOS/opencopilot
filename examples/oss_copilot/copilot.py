@@ -62,13 +62,15 @@ copilot = OpenCopilot(
     helicone_api_key=os.getenv("HELICONE_API_KEY"),
     jwt_client_id=os.getenv("JWT_CLIENT_ID") or "",
     jwt_client_secret=os.getenv("JWT_CLIENT_SECRET") or "",
-    jwt_token_expiration_seconds=int(os.getenv("JWT_TOKEN_EXPIRATION_SECONDS") or "0")
+    jwt_token_expiration_seconds=int(os.getenv("JWT_TOKEN_EXPIRATION_SECONDS") or "0"),
 )
+
 
 @copilot.data_loader
 def load_opencopilot_docs() -> List[Document]:
     loader = SitemapLoader("https://docs.opencopilot.dev/sitemap.xml")
     documents = loader.load()
     return documents
+
 
 copilot()
