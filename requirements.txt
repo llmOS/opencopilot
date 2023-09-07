@@ -37,3 +37,4 @@ trafilatura==1.6.1
 rich==12.6.0
 filetype==1.2.0
 segment-analytics-python==2.2.3
+colorama==0.4.6

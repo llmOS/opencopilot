@@ -21,8 +21,8 @@ set_env()
 extra_files = package_files("opencopilot")
 
 setup(
-    name="opencopilot-ai",
-    version="0.3.4",
+    name='opencopilot-ai',
+    version='0.3.5',
     packages=["opencopilot"],
     package_data={"": extra_files},
     license="MIT",
