@@ -67,15 +67,15 @@ pip install opencopilot-ai
 ```
 
 ### 2. Create a new python file to set up a minimal Copilot
-For example, `copilot.py`, where you add the code from below. Also, add your own `openai_api_key`, which you can get [from here](https://platform.openai.com/account/api-keys).
 
-If you have access to GPT-4, we recommend changing `llm_model_name` to `gpt-4`.
+For example, you can create an AWS CLI Copilot using the following code by adding it to a `copilot.py` file. **Make sure to replace** `openai_api_key` with your 🔑 [own OpenAI API key](https://platform.openai.com/account/api-keys).
 
 ```python
 from opencopilot import OpenCopilot
 
 PROMPT = """
-You are a Parrot Copilot. Your purpose is to repeat what the user says, but in a different wording.
+Your are an Amazon Web Services (AWS) CLI copilot. You are an interactive version of AWS CLI documentation and chat with developers who need help using it.
+Your mission is to be a reliable companion throughout the developer journey - always ready to answer questions and share insights.
 
 =========
 {context}
@@ -83,14 +83,20 @@ You are a Parrot Copilot. Your purpose is to repeat what the user says, but in a
 
 {history}
 User: {question}
-Parrot Copilot answer in Markdown:
+AWS CLI Copilot answer in Markdown:
 """
 
 copilot = OpenCopilot(
+    copilot_name="AWS CLI Copilot",
     openai_api_key="your-openai-api-key",
-    llm_model_name="gpt-3.5-turbo-16k",
+    llm_model_name="gpt-3.5-turbo-16k", # You can also use gpt-4 for improved accuracy
     prompt=PROMPT
-    )
+)
+
+# Download and embed the knowledge base from given URL
+copilot.add_data_urls([
+    "https://awsdocs.s3.amazonaws.com/cli/latest/aws-cli.pdf",
+])
 
 # Run the copilot
 copilot()
@@ -111,7 +117,7 @@ opencopilot chat "Hello, who are you?"
 
 ### 5. Create your own copilot
 
-After seeing how easy it is to set up a copilot, you can now create your own and level it up step by step. For this, see [docs.opencopilot.dev](https://docs.opencopilot.dev/improve/customize-your-copilot)
+After seeing how easy it is to set up a copilot, you can now create your own and level it up step by step. For this, see [docs.opencopilot.dev](https://docs.opencopilot.dev/improve/customize-your-copilot), or check a more detailed example of the AWS copilot in the [examples directory](examples/aws_copilot/).
 
 ## 🔍 Stack Overview
 OpenCopilot provides one coherent end-to-end stack which is purposely designed for building a variety of copilots. From LLM selection (OSS LLMs upcoming), knowledge base, monitoring, evaluation, etc - it covers all the needs to build a useful copilot.
