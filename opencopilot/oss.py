@@ -229,9 +229,11 @@ def run_model(
         typer.echo(f"Model {model_name} not found!")
         return
     try:
-        typer.echo(f"Downloading {model_name}...")
+        print(f"Preparing to download the {model_name} model from Huggingface. This might be a large file.")
+        print(f"The model will be saved to: {MODEL_PATH}.")
+        print(f"We appreciate your patience. If the download gets interrupted, don't worry, you can always resume it later.")
         _download_model(model.url, model.filename)
-        typer.echo(f"Loading {model.name}, please wait...")
+        print(f"Now loading {model.name}. Hang tight!")
     except:
         typer.echo(f"Could not run {model_name}!")
 
