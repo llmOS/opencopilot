@@ -79,10 +79,10 @@ async def execute(
     messages = [HumanMessage(content=prompt_text)]
     try:
         result_message = await llm.agenerate(
-        [messages],
-        callbacks=[callback] if callback is not None else None,
-        stream=callback is not None,
-    )
+            [messages],
+            callbacks=[callback] if callback is not None else None,
+            stream=callback is not None,
+        )
         result = result_message.generations[0][0].text
         return result
     except OpenAIError as exc:

@@ -67,9 +67,7 @@ class OpenCopilot:
             not os.environ.get("OPENCOPILOT_DO_NOT_TRACK", "").lower() == "true"
         )
 
-        if not isinstance(llm, BaseChatModel) and not isinstance(
-            embedding_model, Embeddings
-        ):
+        if isinstance(llm, str) or isinstance(embedding_model, str):
             validate_openai_api_key(openai_api_key)
         validate_prompt_and_prompt_file_config(prompt, prompt_file)
 

@@ -1,5 +1,5 @@
 """
-Coding copilot
+LLM copilot
 
 Prerequisite:
 - Before using this module, users need to run the LLM:
@@ -10,7 +10,7 @@ Key Components:
 - LocalLLM: A local instance of the language model used for code generation.
 - HuggingFaceEmbeddings: Used for generating embeddings based on a model from the HuggingFace model hub.
 - PROMPT: The template used by OpenCopilot for answering AI-related questions.
-
+cd 
 Environment Variables:
 - HOST: The host URL for the OpenCopilot service.
 - AUTH_TYPE: The authentication method used for the service.
