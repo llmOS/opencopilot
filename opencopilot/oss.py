@@ -81,7 +81,7 @@ MODELS = {
         prompt_template="None",
         filename="codellama-13b.Q4_0.gguf",
         context_size=4096,
-        url="https://huggingface.co/TheBloke/CodeLlama-7B-GGUF/resolve/main/codellama-13b.Q4_0.gguf",
+        url="https://huggingface.co/TheBloke/CodeLlama-13B-GGUF/resolve/main/codellama-13b.Q4_0.gguf",
     ),
     "codellama-34b": ModelInfo(
         name="CodeLlama-34b",
