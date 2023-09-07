@@ -146,7 +146,7 @@ def _try_llama_cpp_import() -> Any:
         return llama_cpp
     except:
         print(
-            "Could not run LLM, make sure you've installed [code]llama-cpp-python[/code] package and dependencies!"
+            "Cannot run LLM; make sure you've installed the [code]llama-cpp-python[/code] package and dependencies!"
         )
         if _is_macos():
             print(
