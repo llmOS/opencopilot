@@ -67,6 +67,7 @@ pip install opencopilot-ai
 ```
 
 ### 2. Create a new python file to set up a minimal Copilot
+
 For example, you can create an AWS CLI Copilot using the following code by adding it to a `copilot.py` file. **Make sure to replace** `openai_api_key` with your 🔑 [own OpenAI API key](https://platform.openai.com/account/api-keys).
 
 ```python
@@ -84,6 +85,7 @@ Your mission is to be a reliable companion throughout the developer journey - al
 User: {question}
 AWS CLI Copilot answer in Markdown:
 """
+
 copilot = OpenCopilot(
     copilot_name="AWS CLI Copilot",
     openai_api_key="your-openai-api-key",
