@@ -3,7 +3,7 @@ from typing import Dict
 
 import requests
 
-from opencopilot.scripts import chat
+from opencopilot.domain.cli import cli_chat_use_case
 from opencopilot.scripts import get_jwt_token
 
 conversation_id = uuid.uuid4()
@@ -21,7 +21,7 @@ def _index():
 
 
 def _chat_conversation():
-    result = chat.conversation(
+    result = cli_chat_use_case.conversation(
         base_url=base_url,
         conversation_id=conversation_id
     )
@@ -32,7 +32,7 @@ def _chat_conversation():
 
 
 def _chat_conversation_stream():
-    result = chat.conversation_stream(
+    result = cli_chat_use_case.conversation_stream(
         base_url=base_url,
         conversation_id=conversation_id
     )

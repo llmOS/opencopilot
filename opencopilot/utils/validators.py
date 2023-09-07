@@ -1,5 +1,7 @@
 import os
-from opencopilot.domain.errors import PromptError, APIKeyError
+
+from opencopilot.domain.errors import APIKeyError
+from opencopilot.domain.errors import PromptError
 
 
 def validate_prompt_and_prompt_file_config(prompt: str, prompt_file: str):
@@ -40,3 +42,7 @@ def validate_openai_api_key(key: str):
         raise APIKeyError(
             "OpenAI API key format is incorrect. Please check that you've entered a correct OpenAI API key."
         )
+
+
+def validate_settings(openai_api_key: str):
+    validate_openai_api_key(openai_api_key)

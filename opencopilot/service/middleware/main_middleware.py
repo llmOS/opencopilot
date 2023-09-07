@@ -6,8 +6,14 @@ from starlette.requests import Request
 from starlette.responses import Response
 from starlette.types import ASGIApp
 
+from opencopilot.domain.errors import CopilotRuntimeError
+from opencopilot.domain.errors import OpenAIRuntimeError
+from opencopilot.domain.errors import WeaviateRuntimeError
 from opencopilot.logger import api_logger
 from opencopilot.service.error_responses import APIErrorResponse
+from opencopilot.service.error_responses import GenericCopilotRuntimeError
+from opencopilot.service.error_responses import OpenAIError
+from opencopilot.service.error_responses import WeaviateConnectionError
 from opencopilot.service.middleware import util
 from opencopilot.service.middleware.entities import RequestStateKey
 from opencopilot.utils.http_headers import add_response_headers
@@ -48,6 +54,12 @@ class MainMiddleware(BaseHTTPMiddleware):
                     f"status_code={response.status_code}"
                 )
             return await _get_response_with_headers(response, duration)
+        except OpenAIRuntimeError as exc:
+            raise OpenAIError(exc.message)
+        except WeaviateRuntimeError as exc:
+            raise WeaviateConnectionError(exc.message)
+        except CopilotRuntimeError as exc:
+            raise GenericCopilotRuntimeError(exc.message)
         except Exception as error:
             if isinstance(error, APIErrorResponse):
                 is_exc_info = error.to_status_code() == 500

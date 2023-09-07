@@ -4,21 +4,28 @@ from typing import Callable
 from typing import List
 from typing import Literal
 from typing import Optional
+from typing import Union
 
 import uvicorn
 from langchain.schema import Document
 
-from .repository.documents import split_documents_use_case
-from .utils.validators import (
-    validate_openai_api_key,
-    validate_prompt_and_prompt_file_config,
-    validate_system_prompt,
-)
-from . import settings
-from .settings import Settings
+from opencopilot import exception_utils
+from opencopilot import settings
+from opencopilot.domain import error_messages
+from opencopilot.domain.errors import ModelError
+from opencopilot.logger import api_logger
+from opencopilot.repository.documents import split_documents_use_case
+from opencopilot.settings import Settings
+from opencopilot.utils.validators import validate_openai_api_key
+from opencopilot.utils.validators import validate_prompt_and_prompt_file_config
+from opencopilot.utils.validators import validate_system_prompt
 
-from .analytics import track
-from .analytics import TrackingEventType
+ALLOWED_LLM_MODEL_NAMES = ["gpt-3.5-turbo-16k", "gpt-4"]
+
+from opencopilot.analytics import track
+from opencopilot.analytics import TrackingEventType
+
+exception_utils.add_copilot_exception_catching()
 
 
 class OpenCopilot:
@@ -45,7 +52,10 @@ class OpenCopilot:
         jwt_token_expiration_seconds: int = timedelta(days=1).total_seconds(),
         helicone_api_key: str = "",
         helicone_rate_limit_policy: str = "3;w=60;s=user",
+        log_level: Optional[Union[str, int]] = None,
     ):
+        api_logger.set_log_level(log_level)
+
         if not openai_api_key:
             openai_api_key = os.getenv("OPENAI_API_KEY")
 
@@ -61,6 +71,14 @@ class OpenCopilot:
                 prompt = f.read()
 
         validate_system_prompt(prompt)
+
+        if llm_model_name not in ALLOWED_LLM_MODEL_NAMES:
+            raise ModelError(
+                error_messages.INVALID_MODEL_ERROR.format(
+                    llm_model_name=llm_model_name,
+                    allowed_model_names=ALLOWED_LLM_MODEL_NAMES,
+                )
+            )
 
         settings.set(
             Settings(
@@ -158,6 +176,3 @@ class OpenCopilot:
 
     def add_data_urls(self, urls: List[str]) -> None:
         self.data_urls.extend(urls)
-
-    # def add_local_file(self, file_path: str) -> None:
-    #    self.local_file_paths.append(file_path)

@@ -2,7 +2,7 @@ name: E2E Test Release
 
 on:
   push:
-    branches: [ api_redesign ]
+    branches: [ error-handling ]
     # Pattern matched against refs/tags
     tags:
       - '**'           # Push events to every tag including hierarchical tags like v1.0/beta

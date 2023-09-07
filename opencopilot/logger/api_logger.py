@@ -1,36 +1,36 @@
 import logging
+from typing import Dict
 from typing import Optional
-from uuid import UUID
+from typing import Union
 
-from pythonjsonlogger import jsonlogger
+DEFAULT_LOG_LEVEL = logging.WARNING
+LOG_LEVELS: Dict[str, int] = {
+    "critical": logging.CRITICAL,
+    "error": logging.ERROR,
+    "warning": logging.WARNING,
+    "info": logging.INFO,
+    "debug": logging.DEBUG,
+}
 
-LOGGING_MESSAGE_FORMAT = "%(asctime)s %(name)-12s %(levelname)s %(message)s"
 
-logger: Optional[any] = None
-
-
-def get(agent_id: UUID = None):
-    global logger
-    if logger:
-        return logger
-    console_handler = get_console_logger()
+def get():
+    logging.basicConfig()
     logger = logging.getLogger("OpenCopilot")
-    logger.setLevel(logging.DEBUG)
-
-    logger.addHandler(console_handler)
-    apply_default_formatter(console_handler)
-
-    if agent_id:
-        logger = logging.LoggerAdapter(logger, {"agent_id": str(agent_id)})
     return logger
 
 
-def get_console_logger() -> logging.StreamHandler:
-    console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.DEBUG)
-    return console_handler
+def set_log_level(log_level: Optional[Union[str, int]] = DEFAULT_LOG_LEVEL):
+    logger = logging.getLogger("OpenCopilot")
+    logger.setLevel(_convert_log_level(log_level))
 
 
-def apply_default_formatter(handler: logging.Handler):
-    formatter = jsonlogger.JsonFormatter(LOGGING_MESSAGE_FORMAT)
-    handler.setFormatter(formatter)
+def _convert_log_level(log_level: Optional[Union[str, int]]) -> int:
+    if not log_level:
+        log_level = DEFAULT_LOG_LEVEL
+    elif isinstance(log_level, str):
+        new_level = LOG_LEVELS.get(log_level)
+        if new_level:
+            log_level = new_level
+        else:
+            log_level = DEFAULT_LOG_LEVEL
+    return log_level
