@@ -1,8 +1,10 @@
 import os
+from unittest.mock import MagicMock
 
 import pytest
 
 from opencopilot import settings
+from opencopilot import application
 from opencopilot.application import OpenCopilot
 from opencopilot.domain.errors import APIKeyError
 from opencopilot.domain.errors import ModelError
@@ -97,3 +99,13 @@ def test_invalid_model_name():
             openai_api_key=MOCK_OPENAI_API_KEY,
             llm_model_name="invalid"
         )
+
+
+def test_sets_log_level():
+    application.api_logger = MagicMock()
+    OpenCopilot(
+        prompt_file=VALID_PROMPT_FILE,
+        openai_api_key=MOCK_OPENAI_API_KEY,
+        log_level="log_level"
+    )
+    application.api_logger.set_log_level.assert_called_with("log_level")
