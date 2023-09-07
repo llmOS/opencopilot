@@ -128,8 +128,10 @@ def _track_copilot_start(
 
 def _track_chat_message(user_agent, is_streaming):
     """Should be fired when a chat message is sent to the API."""
+    copilot_name = settings.get().COPILOT_NAME
     event = {
         "is_streaming": is_streaming,
+        "copilot_name_hash": hashed(copilot_name),
     }
     context = {
         "userAgent": user_agent,
