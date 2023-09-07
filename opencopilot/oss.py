@@ -214,7 +214,7 @@ def model_remove(model_name: str):
 
 @oss_app.command("run")
 def run_model(
-    model_name: Annotated[str, typer.Argument(...)] = "Llama-2-7b-chat",
+    model_name: Optional[str] = typer.Argument("Llama-2-7b-chat"),
     host: Optional[str] = typer.Option(
         None, "--host", help="Hostname to run the LLM on."
     ),
