@@ -1,4 +1,5 @@
 import json
+from typing import Any
 from typing import Dict
 from typing import List
 from typing import Optional
@@ -7,10 +8,11 @@ import requests
 import aiohttp
 from langchain.callbacks.manager import AsyncCallbackManagerForLLMRun
 from langchain.callbacks.manager import CallbackManagerForLLMRun
-from langchain.llms import BaseLLM
+from langchain.chat_models.base import BaseChatModel
 from langchain.schema import BaseMessage
-from langchain.schema import Generation
-from langchain.schema import LLMResult
+from langchain.schema import AIMessage
+from langchain.schema import ChatResult
+from langchain.schema import ChatGeneration
 from pydantic import Extra
 
 from urllib.parse import urljoin
@@ -19,7 +21,7 @@ from opencopilot.logger import api_logger
 logger = api_logger.get()
 
 
-class LocalLLM(BaseLLM):
+class LocalLLM(BaseChatModel):
     context_size: int = 4096
     temperature: float = 0.7
     llm_url: str
@@ -35,19 +37,18 @@ class LocalLLM(BaseLLM):
         messages: List[BaseMessage],
         stop: Optional[List[str]] = None,
         run_manager: Optional[CallbackManagerForLLMRun] = None,
-    ) -> LLMResult:
+        **kwargs: Any,
+    ) -> ChatResult:
         final = ""
         for text in self._get_stream(
             {"query": messages[0], "temperature": self.temperature, "stop": stop}
         ):
             final += self._process_text(text)
-        return LLMResult(
+        return ChatResult(
             generations=[
-                [
-                    Generation(
-                        text=final,
-                    )
-                ]
+                ChatGeneration(
+                    message=AIMessage(content=final),
+                )
             ]
         )
 
@@ -56,27 +57,25 @@ class LocalLLM(BaseLLM):
         messages: List[BaseMessage],
         stop: Optional[List[str]] = None,
         run_manager: Optional[AsyncCallbackManagerForLLMRun] = None,
-        stream: bool = True,
-    ) -> LLMResult:
+        **kwargs: Any,
+    ) -> ChatResult:
         final = ""
         async for text in self._get_async_stream(
             {
-                "query": messages[0][0].content,
+                "query": messages[0].content,
                 "temperature": self.temperature,
-                "max_tokens": 1024,
+                "max_tokens": 0,
             }
         ):
             token = self._process_text(text)
             final += token
             if run_manager:
                 await run_manager.on_llm_new_token(token)
-        return LLMResult(
+        return ChatResult(
             generations=[
-                [
-                    Generation(
-                        text=final,
-                    )
-                ]
+                ChatGeneration(
+                    message=AIMessage(content=final),
+                )
             ]
         )
 
