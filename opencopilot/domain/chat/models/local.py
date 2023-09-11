@@ -7,7 +7,7 @@ import requests
 import aiohttp
 from langchain.callbacks.manager import AsyncCallbackManagerForLLMRun
 from langchain.callbacks.manager import CallbackManagerForLLMRun
-from langchain.chat_models.base import BaseChatModel
+from langchain.llms import BaseLLM
 from langchain.schema import BaseMessage
 from langchain.schema import Generation
 from langchain.schema import LLMResult
@@ -19,7 +19,7 @@ from opencopilot.logger import api_logger
 logger = api_logger.get()
 
 
-class LocalLLM(BaseChatModel):
+class LocalLLM(BaseLLM):
     context_size: int = 4096
     temperature: float = 0.7
     llm_url: str
@@ -61,7 +61,7 @@ class LocalLLM(BaseChatModel):
         final = ""
         async for text in self._get_async_stream(
             {
-                "query": messages[0].content,
+                "query": messages[0][0].content,
                 "temperature": self.temperature,
                 "max_tokens": 1024,
             }
