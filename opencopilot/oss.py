@@ -3,7 +3,6 @@ import platform
 from dataclasses import dataclass
 from typing import Any
 from typing import Optional
-from typing_extensions import Annotated, TypedDict
 
 import typer
 import psutil
@@ -114,6 +113,13 @@ def _remove_model(model: ModelInfo) -> bool:
     return os.remove(os.path.join(MODEL_PATH, model.filename))
 
 
+def _print_model_not_found_message(model_name: str):
+    print(f"[red]Model [code]{model_name}[/code] is not available.[/red]")
+    names = [f"[code]{m}[/code]" for m in MODELS]
+    available_models = ", ".join(names[:-1]) + " and " + names[-1]
+    print(f"Available models: {available_models}")
+
+
 def _download_model(url: str, filename: str):
     model_file_path = os.path.join(MODEL_PATH, filename)
     if os.path.exists(model_file_path):
@@ -198,14 +204,14 @@ def model_info(model_name: str):
         table.add_row("Description:", model.description)
         console.print(table)
     except:
-        typer.echo(f"Model {model_name} not found!")
+        _print_model_not_found_message(model_name)
 
 
 @oss_app.command("remove")
 def model_remove(model_name: str):
     model = MODELS.get(model_name.lower())
     if not model:
-        typer.echo(f"Model {model_name} not found!")
+        _print_model_not_found_message(model_name)
         return
     if _is_model_installed(model):
         _remove_model(model)
@@ -225,7 +231,7 @@ def run_model(
     """Run a specific model."""
     model = MODELS.get(model_name.lower())
     if not model:
-        typer.echo(f"Model {model_name} not found!")
+        _print_model_not_found_message(model_name)
         return
     try:
         print(
@@ -237,8 +243,15 @@ def run_model(
         )
         _download_model(model.url, model.filename)
         print(f"Now loading {model.name}. Hang tight!")
+    except KeyboardInterrupt:
+        print("[red]Download interrupted.[/red]")
+        print(
+            f"You can resume it by running [code]opencopilot oss run {model_name}[/code] again."
+        )
+        return
     except:
-        typer.echo(f"Could not run {model_name}!")
+        print(f"[red]Could not run {model_name}![/red]")
+        return
 
     llama_cpp = _try_llama_cpp_import()
     if not llama_cpp:
@@ -264,4 +277,4 @@ def generate_prompt(model_name: str):
     if model_name.lower() in MODELS:
         typer.echo(MODELS[model_name].prompt_template)
     else:
-        typer.echo(f"No prompt template available for {model_name}!")
+        _print_model_not_found_message(model_name)
