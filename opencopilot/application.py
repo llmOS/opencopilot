@@ -5,6 +5,8 @@ from typing import List
 from typing import Optional
 from typing import Union
 
+from fastapi import APIRouter
+from gunicorn.app.base import BaseApplication
 from langchain.chat_models.base import BaseChatModel
 from langchain.embeddings.base import Embeddings
 import uvicorn
@@ -127,6 +129,7 @@ class OpenCopilot:
         self.data_urls = []
         self.local_file_paths = []
         self.documents = []
+        self.router = _get_custom_router()
 
     def __call__(self, *args, **kwargs):
         from .repository.documents import document_loader
@@ -171,6 +174,7 @@ class OpenCopilot:
 
         from .app import app
 
+        app.include_router(self.router)
         track(
             TrackingEventType.COPILOT_START,
             len(self.documents),
@@ -180,7 +184,11 @@ class OpenCopilot:
             len(self.data_urls),
         )
 
-        uvicorn.run(app, host=self.host, port=self.api_port)
+        options = {
+            "bind": "%s:%s" % (self.host, self.api_port),
+            "workers": 1,
+        }
+        StandaloneApplication(app, options).run()
 
     def data_loader(self, function: Callable[[], Document]):
         self.data_loaders.append(function)
@@ -190,3 +198,32 @@ class OpenCopilot:
 
     def add_data_urls(self, urls: List[str]) -> None:
         self.data_urls.extend(urls)
+
+
+def _get_custom_router() -> APIRouter:
+    router = APIRouter()
+    router.openapi_tags = ["Custom"]
+    router.title = "Custom router"
+    return router
+
+
+class StandaloneApplication(BaseApplication):
+    def __init__(self, app, options=None):
+        self.options = options or {}
+        self.application = app
+        super(StandaloneApplication, self).__init__()
+
+    def load_config(self):
+        config = dict(
+            [
+                (key, value)
+                for key, value in self.options.items()
+                if key in self.cfg.settings and value is not None
+            ]
+        )
+        for key, value in config.items():
+            self.cfg.set(key.lower(), value)
+        self.cfg.set("worker_class", "uvicorn.workers.UvicornWorker")
+
+    def load(self):
+        return self.application
