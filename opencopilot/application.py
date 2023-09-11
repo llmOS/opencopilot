@@ -17,9 +17,11 @@ from opencopilot.domain.errors import ModelError
 from opencopilot.logger import api_logger
 from opencopilot.repository.documents import split_documents_use_case
 from opencopilot.settings import Settings
+from opencopilot.domain.chat.models import LocalLLM
 from opencopilot.utils.validators import validate_openai_api_key
 from opencopilot.utils.validators import validate_prompt_and_prompt_file_config
 from opencopilot.utils.validators import validate_system_prompt
+from opencopilot.utils.validators import validate_local_llm
 
 ALLOWED_LLM_MODEL_NAMES = ["gpt-3.5-turbo-16k", "gpt-4"]
 
@@ -84,6 +86,8 @@ class OpenCopilot:
                     allowed_model_names=ALLOWED_LLM_MODEL_NAMES,
                 )
             )
+        if isinstance(llm, LocalLLM):
+            validate_local_llm(llm)
 
         settings.set(
             Settings(
