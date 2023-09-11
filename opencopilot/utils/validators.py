@@ -3,7 +3,7 @@ import os
 from opencopilot.domain.errors import APIKeyError
 from opencopilot.domain.errors import PromptError
 from opencopilot.domain.errors import ModelError
-from opencopilot.domain.chat.models import LocalLLM
+from opencopilot.domain.chat.models.local import LocalLLM
 
 
 def validate_prompt_and_prompt_file_config(prompt: str, prompt_file: str):

@@ -17,7 +17,7 @@ from opencopilot.domain.errors import ModelError
 from opencopilot.logger import api_logger
 from opencopilot.repository.documents import split_documents_use_case
 from opencopilot.settings import Settings
-from opencopilot.domain.chat.models import LocalLLM
+from opencopilot.domain.chat.models.local import LocalLLM
 from opencopilot.utils.validators import validate_openai_api_key
 from opencopilot.utils.validators import validate_prompt_and_prompt_file_config
 from opencopilot.utils.validators import validate_system_prompt

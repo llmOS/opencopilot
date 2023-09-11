@@ -4,7 +4,7 @@ from typing import Union
 
 from langchain.chat_models.base import BaseChatModel
 from langchain.embeddings.base import Embeddings
-from opencopilot.domain.chat.models import LocalLLM
+from opencopilot.domain.chat.models.local import LocalLLM
 
 
 @dataclass(frozen=False)

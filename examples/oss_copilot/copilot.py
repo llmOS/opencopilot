@@ -6,7 +6,7 @@ from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.document_loaders.sitemap import SitemapLoader
 
 from opencopilot import OpenCopilot
-from opencopilot.domain.chat.models import LocalLLM
+from opencopilot.domain.chat.models.local import LocalLLM
 
 load_dotenv()
 

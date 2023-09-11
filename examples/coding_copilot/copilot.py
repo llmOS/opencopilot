@@ -24,7 +24,7 @@ Simply run and use `opencopilot chat` CLI to query the code copilot.
 from langchain.embeddings import HuggingFaceEmbeddings
 
 from opencopilot import OpenCopilot
-from opencopilot.domain.chat.models import LocalLLM
+from opencopilot.domain.chat.models.local import LocalLLM
 
 
 PROMPT = """<s>[INST] <<SYS>>
