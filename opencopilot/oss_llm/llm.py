@@ -7,7 +7,7 @@ class LLamaLLM:
     def __init__(self, model: str, context_size: int) -> None:
         self.context_size = context_size
         self.model = Llama(
-            model_path=model, use_mlock=True, n_ctx=context_size, n_gpu_layers=10000
+            model_path=model, use_mlock=True, n_ctx=context_size, n_gpu_layers=-1
         )
 
     def generate(

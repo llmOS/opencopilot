@@ -27,10 +27,13 @@ from opencopilot import OpenCopilot
 from opencopilot.domain.chat.models import LocalLLM
 
 
-PROMPT = """{history}
-[INST] Write code to solve the following coding problem that obeys the constraints and passes the example test cases. Relevant information: {context}. Please wrap your code answer using ```:
-{question}
-[/INST]
+PROMPT = """<s>[INST] <<SYS>>
+Write code to solve the following coding problem that obeys the constraints and passes the example test cases. 
+Please wrap your code answer using ```.
+Relevant information: {context}. 
+<</SYS>>
+
+{history} {question} [/INST]
 """
 
 llm = LocalLLM(
@@ -42,8 +45,8 @@ embeddings = HuggingFaceEmbeddings(model_name="thenlper/gte-base")
 
 copilot = OpenCopilot(
     prompt=PROMPT,
-    question_template="[INST]{question}[/INST]",
-    response_template="{response}",
+    question_template=" {question} [/INST] ",
+    response_template="{response} </s><s> [INST]",
     copilot_name="codellama_copilot",
     llm=llm,
     embedding_model=embeddings,
