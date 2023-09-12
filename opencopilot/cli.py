@@ -13,6 +13,8 @@ from opencopilot import exception_utils
 from opencopilot.domain.cli import cli_chat_use_case
 from opencopilot.logger import api_logger
 from opencopilot.utils.scripting import set_default_settings
+
+from opencopilot.oss import oss_app
 from opencopilot.utils.validators import validate_openai_api_key
 
 logger = api_logger.get()
@@ -28,6 +30,7 @@ app = typer.Typer(
 )
 
 exception_utils.add_copilot_exception_catching()
+app.add_typer(oss_app, name="oss")
 
 
 @app.callback()

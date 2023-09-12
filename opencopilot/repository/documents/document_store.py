@@ -4,7 +4,7 @@ from typing import Optional
 import tqdm
 import weaviate
 from langchain.schema import Document
-from langchain.text_splitter import CharacterTextSplitter
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.text_splitter import TextSplitter
 from langchain.vectorstores import Weaviate
 from requests.exceptions import InvalidSchema
@@ -15,21 +15,26 @@ from opencopilot import settings
 from opencopilot.domain import error_messages
 from opencopilot.domain.errors import WeaviateRuntimeError
 from opencopilot.utils import get_embedding_model_use_case
-from opencopilot.utils.get_embedding_model_use_case import CachedOpenAIEmbeddings
+from opencopilot.utils.get_embedding_model_use_case import CachedEmbeddings
 
 
 class DocumentStore:
     document_embed_model = "text-embedding-ada-002"
     document_chunk_size = 2000
 
-    def get_embeddings_model(self) -> CachedOpenAIEmbeddings:
-        return get_embedding_model_use_case.execute(use_local_cache=True)
+    def __init__(self):
+        embeddings = settings.get().EMBEDDING_MODEL
+        if not isinstance(embeddings, str):
+            # smaller chunks if not using OpenAI
+            self.document_chunk_size = 500
+
+    def get_embeddings_model(self) -> CachedEmbeddings:
+        return get_embedding_model_use_case.execute()
 
     def get_text_splitter(self) -> TextSplitter:
-        return CharacterTextSplitter.from_tiktoken_encoder(
+        return RecursiveCharacterTextSplitter.from_tiktoken_encoder(
             chunk_size=self.document_chunk_size,
             model_name=self.document_embed_model,
-            separator=" ",
             disallowed_special=(),
         )
 
@@ -46,6 +51,7 @@ class WeaviateDocumentStore(DocumentStore):
     weaviate_index_name = "LangChain"  # TODO: Weaviate specific?
 
     def __init__(self):
+        super().__init__()
         self.documents = []
         self.embeddings = self.get_embeddings_model()
         self.weaviate_client = self._get_weaviate_client()

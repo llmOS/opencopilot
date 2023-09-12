@@ -1,7 +1,10 @@
 import pickle
 from typing import List
+from typing import Dict
+from pydantic import PrivateAttr
 
 import xxhash
+from langchain.embeddings.base import Embeddings
 from langchain.embeddings import OpenAIEmbeddings
 from openai import OpenAIError
 
@@ -12,26 +15,25 @@ from opencopilot.logger import api_logger
 logger = api_logger.get()
 
 
-class CachedOpenAIEmbeddings(OpenAIEmbeddings):
-    use_local_cache: bool = False
+class CachedEmbeddings:
+    embeddings: Embeddings = PrivateAttr()
+    _cache: Dict = PrivateAttr()
+    _embeddings_cache_filename: str = PrivateAttr()
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, embeddings: Embeddings, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        object.__setattr__(self, "_cache", {})
-        object.__setattr__(
-            self,
-            "_embeddings_cache_filename",
-            settings.get().COPILOT_NAME + "_embeddings_cache.pkl",
+        self._embeddings = embeddings
+        self._cache = {}
+        self._embeddings_cache_filename = (
+            settings.get().COPILOT_NAME + "_embeddings_cache.pkl"
         )
         self._load_local_cache()
 
     def embed_documents(self, texts: List[str], **kwargs) -> List[List[float]]:
-        if self.use_local_cache:
-            return self._embed_documents_cached(texts)
-        return super().embed_documents(texts)
+        return self._embed_documents_cached(texts)
 
     def embed_query(self, text: str) -> List[float]:
-        return super().embed_query(text)
+        return self._embeddings.embed_query(text)
 
     def _embed_documents_cached(self, texts: List[str]) -> List[List[float]]:
         embeddings = []
@@ -42,7 +44,7 @@ class CachedOpenAIEmbeddings(OpenAIEmbeddings):
                 if embedding := self._cache.get(text_hash):
                     embeddings.append(embedding)
                 else:
-                    embedding = super().embed_documents([text])[0]
+                    embedding = self._embeddings.embed_documents([text])[0]
                     # pylint: disable-next=no-member
                     self._cache[text_hash] = embedding
                     embeddings.append(embedding)
@@ -58,34 +60,35 @@ class CachedOpenAIEmbeddings(OpenAIEmbeddings):
             # pylint: disable-next=no-member
             with open(self._embeddings_cache_filename, "rb") as f:
                 data = pickle.load(f)
-                object.__setattr__(self, "_cache", data)
+                self._cache = data
         except:
             pass
 
     def save_local_cache(self):
-        if self.use_local_cache:
-            try:
-                with open(self._embeddings_cache_filename, "wb") as f:
-                    pickle.dump(self._cache, f)
-            except Exception as e:
-                logger.warning(
-                    f"Failed to save embeddings cache to {self._embeddings_cache_filename}"
-                )
+        try:
+            with open(self._embeddings_cache_filename, "wb") as f:
+                pickle.dump(self._cache, f)
+        except Exception as e:
+            logger.warning(
+                f"Failed to save embeddings cache to {self._embeddings_cache_filename}"
+            )
 
 
-def execute(use_local_cache: bool = False):
-    openai_api_base = None
-    headers = None
-    if settings.get().HELICONE_API_KEY:
-        openai_api_base = settings.get().HELICONE_BASE_URL
-        headers = {
-            "Helicone-Auth": "Bearer " + settings.get().HELICONE_API_KEY,
-            "Helicone-Cache-Enabled": "true",
-        }
-    return CachedOpenAIEmbeddings(
-        disallowed_special=(),
-        use_local_cache=use_local_cache,
-        openai_api_base=openai_api_base,
-        headers=headers,
-        openai_api_key=settings.get().OPENAI_API_KEY,
-    )
+def execute():
+    embeddings = settings.get().EMBEDDING_MODEL
+    if isinstance(embeddings, str):
+        openai_api_base = None
+        headers = None
+        if settings.get().HELICONE_API_KEY:
+            openai_api_base = settings.get().HELICONE_BASE_URL
+            headers = {
+                "Helicone-Auth": "Bearer " + settings.get().HELICONE_API_KEY,
+                "Helicone-Cache-Enabled": "true",
+            }
+        embeddings = OpenAIEmbeddings(
+            disallowed_special=(),
+            openai_api_base=openai_api_base,
+            headers=headers,
+            openai_api_key=settings.get().OPENAI_API_KEY,
+        )
+    return CachedEmbeddings(embeddings)

@@ -33,7 +33,8 @@ def test_execute_valid_credentials(mock_time, mock_settings):
         WEAVIATE_URL="mock_url",
         WEAVIATE_READ_TIMEOUT=120,
 
-        MODEL="gpt-4",
+        LLM="gpt-4",
+        EMBEDDING_MODEL="text-embedding-ada-002",
 
         OPENAI_API_KEY="None",
 
