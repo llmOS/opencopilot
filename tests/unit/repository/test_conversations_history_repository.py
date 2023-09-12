@@ -32,8 +32,8 @@ def create_mock_conversation():
 def test_get_prompt_history_default():
     repository = ConversationHistoryRepositoryLocal(
         CONVERSATIONS_DIR,
-        question_key="MockQues",
-        response_key="MockRes")
+        question_template="MockQues: {question}",
+        response_template="MockRes: {response}")
     result = repository.get_prompt_history(CONVERSATION_ID, 4)
     print("result:", result)
     expected = "MockQues: Prompt\nMockRes: Response\n" \
@@ -44,8 +44,8 @@ def test_get_prompt_history_default():
 def test_get_prompt_history_count_1():
     repository = ConversationHistoryRepositoryLocal(
         CONVERSATIONS_DIR,
-        question_key="MockQues",
-        response_key="MockRes")
+        question_template="MockQues: {question}",
+        response_template="MockRes: {response}")
     result = repository.get_prompt_history(CONVERSATION_ID, 1)
     expected = "MockQues: Prompt2\nMockRes: Response2\n"
     assert result == expected
@@ -54,8 +54,8 @@ def test_get_prompt_history_count_1():
 def test_get_prompt_history_not_found():
     repository = ConversationHistoryRepositoryLocal(
         CONVERSATIONS_DIR,
-        question_key="MockQues",
-        response_key="MockRes")
+        question_template="MockQues: {question}",
+        response_template="MockRes: {response}")
     result = repository.get_prompt_history(CONVERSATION_ID_INVALID, 1)
     assert result == ""
 
@@ -63,8 +63,8 @@ def test_get_prompt_history_not_found():
 def test_get_history():
     repository = ConversationHistoryRepositoryLocal(
         CONVERSATIONS_DIR,
-        question_key="MockQues",
-        response_key="MockRes")
+        question_template="MockQues: {question}",
+        response_template="MockRes: {response}")
     result = repository.get_history(CONVERSATION_ID)
     expected = [
         {"prompt": "Prompt", "response": "Response"},
@@ -76,8 +76,8 @@ def test_get_history():
 def test_get_history_not_found():
     repository = ConversationHistoryRepositoryLocal(
         CONVERSATIONS_DIR,
-        question_key="MockQues",
-        response_key="MockRes")
+        question_template="MockQues: {question}",
+        response_template="MockRes: {response}")
     result = repository.get_history(CONVERSATION_ID_INVALID)
     expected = []
     assert result == expected
@@ -86,8 +86,8 @@ def test_get_history_not_found():
 def test_save_history():
     repository = ConversationHistoryRepositoryLocal(
         CONVERSATIONS_DIR,
-        question_key="MockQues",
-        response_key="MockRes")
+        question_template="MockQues: {question}",
+        response_template="MockRes: {response}")
     repository.save_history(
         message="Prompt3",
         result="Response3",
@@ -109,8 +109,8 @@ def test_save_history():
 def test_remove_conversation():
     repository = ConversationHistoryRepositoryLocal(
         CONVERSATIONS_DIR,
-        question_key="MockQues",
-        response_key="MockRes")
+        question_template="MockQues: {question}",
+        response_template="MockRes: {response}")
     repository.remove_conversation(CONVERSATION_ID)
     result = repository.get_history(CONVERSATION_ID)
     print(result)

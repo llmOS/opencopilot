@@ -2,23 +2,33 @@ import os
 from datetime import timedelta
 from typing import Callable
 from typing import List
-from typing import Literal
 from typing import Optional
+from typing import Union
 
+from langchain.chat_models.base import BaseChatModel
+from langchain.embeddings.base import Embeddings
 import uvicorn
 from langchain.schema import Document
 
-from .repository.documents import split_documents_use_case
-from .utils.validators import (
-    validate_openai_api_key,
-    validate_prompt_and_prompt_file_config,
-    validate_system_prompt,
-)
-from . import settings
-from .settings import Settings
+from opencopilot import exception_utils
+from opencopilot import settings
+from opencopilot.domain import error_messages
+from opencopilot.domain.errors import ModelError
+from opencopilot.logger import api_logger
+from opencopilot.repository.documents import split_documents_use_case
+from opencopilot.settings import Settings
+from opencopilot.domain.chat.models.local import LocalLLM
+from opencopilot.utils.validators import validate_openai_api_key
+from opencopilot.utils.validators import validate_prompt_and_prompt_file_config
+from opencopilot.utils.validators import validate_system_prompt
+from opencopilot.utils.validators import validate_local_llm
 
-from .analytics import track
-from .analytics import TrackingEventType
+ALLOWED_LLM_MODEL_NAMES = ["gpt-3.5-turbo-16k", "gpt-4"]
+
+from opencopilot.analytics import track
+from opencopilot.analytics import TrackingEventType
+
+exception_utils.add_copilot_exception_catching()
 
 
 class OpenCopilot:
@@ -26,6 +36,8 @@ class OpenCopilot:
         self,
         prompt: Optional[str] = None,
         prompt_file: Optional[str] = None,
+        question_template: Optional[str] = "### Human: {question}",
+        response_template: Optional[str] = "### Assistant: {response}",
         openai_api_key: Optional[str] = None,
         copilot_name: str = "default",
         host: str = "127.0.0.1",
@@ -35,7 +47,8 @@ class OpenCopilot:
         allowed_origins: str = "*",
         weaviate_url: Optional[str] = None,
         weaviate_read_timeout: int = 120,
-        llm_model_name: Literal["gpt-3.5-turbo-16k", "gpt-4"] = "gpt-4",
+        llm: Optional[Union[str, BaseChatModel]] = "gpt-3.5-turbo-16k",
+        embedding_model: Optional[Union[str, Embeddings]] = "text-embedding-ada-002",
         max_document_size_mb: int = 50,
         slack_webhook: str = "",
         auth_type: Optional[str] = None,
@@ -45,7 +58,10 @@ class OpenCopilot:
         jwt_token_expiration_seconds: int = timedelta(days=1).total_seconds(),
         helicone_api_key: str = "",
         helicone_rate_limit_policy: str = "3;w=60;s=user",
+        log_level: Optional[Union[str, int]] = None,
     ):
+        api_logger.set_log_level(log_level)
+
         if not openai_api_key:
             openai_api_key = os.getenv("OPENAI_API_KEY")
 
@@ -53,7 +69,8 @@ class OpenCopilot:
             not os.environ.get("OPENCOPILOT_DO_NOT_TRACK", "").lower() == "true"
         )
 
-        validate_openai_api_key(openai_api_key)
+        if isinstance(llm, str) or isinstance(embedding_model, str):
+            validate_openai_api_key(openai_api_key)
         validate_prompt_and_prompt_file_config(prompt, prompt_file)
 
         if not prompt:
@@ -62,9 +79,21 @@ class OpenCopilot:
 
         validate_system_prompt(prompt)
 
+        if isinstance(llm, str) and llm not in ALLOWED_LLM_MODEL_NAMES:
+            raise ModelError(
+                error_messages.INVALID_MODEL_ERROR.format(
+                    llm_model_name=llm,
+                    allowed_model_names=ALLOWED_LLM_MODEL_NAMES,
+                )
+            )
+        if isinstance(llm, LocalLLM):
+            validate_local_llm(llm)
+
         settings.set(
             Settings(
                 PROMPT=prompt,
+                QUESTION_TEMPLATE=question_template,
+                RESPONSE_TEMPLATE=response_template,
                 OPENAI_API_KEY=openai_api_key,
                 COPILOT_NAME=copilot_name,
                 HOST=host,
@@ -74,7 +103,8 @@ class OpenCopilot:
                 ALLOWED_ORIGINS=allowed_origins,
                 WEAVIATE_URL=weaviate_url,
                 WEAVIATE_READ_TIMEOUT=weaviate_read_timeout,
-                MODEL=llm_model_name,
+                LLM=llm,
+                EMBEDDING_MODEL=embedding_model,
                 MAX_DOCUMENT_SIZE_MB=max_document_size_mb,
                 SLACK_WEBHOOK=slack_webhook,
                 AUTH_TYPE=auth_type,
@@ -88,6 +118,8 @@ class OpenCopilot:
             )
         )
 
+        self.llm = llm
+        self.embedding_model = embedding_model
         self.host = host
         self.api_port = api_port
         self.data_loaders = []
@@ -158,6 +190,3 @@ class OpenCopilot:
 
     def add_data_urls(self, urls: List[str]) -> None:
         self.data_urls.extend(urls)
-
-    # def add_local_file(self, file_path: str) -> None:
-    #    self.local_file_paths.append(file_path)

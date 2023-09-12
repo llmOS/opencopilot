@@ -2,27 +2,25 @@ from typing import Dict, Optional
 
 import openai
 from langchain.chat_models import ChatOpenAI
+from langchain.chat_models.base import BaseChatModel
 
 from opencopilot import settings
-from opencopilot.utils.callbacks.callback_handler import (
-    CustomAsyncIteratorCallbackHandler,
-)
 
 
-def execute(
-    user_id: str = None,
-    callback: CustomAsyncIteratorCallbackHandler = None,
-) -> ChatOpenAI:
-    if settings.get().HELICONE_API_KEY:
-        openai.api_base = settings.get().HELICONE_BASE_URL
-    llm = ChatOpenAI(
-        temperature=0.0,
-        model_name=settings.get().MODEL,
-        streaming=callback is not None,
-        callbacks=[callback] if callback is not None else None,
-        model_kwargs={"headers": _get_headers(user_id)},
-        openai_api_key=settings.get().OPENAI_API_KEY,
-    )
+def execute(user_id: str = None, streaming: bool = False) -> BaseChatModel:
+    llm = settings.get().LLM
+    if isinstance(llm, str):
+        if settings.get().HELICONE_API_KEY:
+            openai.api_base = settings.get().HELICONE_BASE_URL
+        return ChatOpenAI(
+            temperature=0.0,
+            model_name=settings.get().LLM,
+            streaming=streaming,
+            model_kwargs={"headers": _get_headers(user_id)},
+            openai_api_key=settings.get().OPENAI_API_KEY,
+        )
+    if hasattr(llm, "streaming"):
+        llm.streaming = streaming
     return llm
 
 

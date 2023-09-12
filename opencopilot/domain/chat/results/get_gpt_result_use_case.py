@@ -2,17 +2,19 @@ from typing import List
 from typing import Tuple
 
 from langchain import PromptTemplate
-from langchain.chat_models import ChatOpenAI
+from langchain.chat_models.base import BaseChatModel
 from langchain.schema import Document
 from langchain.schema import HumanMessage
+from openai import OpenAIError
 
 from opencopilot import settings
-from opencopilot.logger import api_logger
 from opencopilot.domain.chat import get_token_count_use_case
 from opencopilot.domain.chat import utils
 from opencopilot.domain.chat.entities import UserMessageInput
 from opencopilot.domain.chat.results import format_context_documents_use_case
 from opencopilot.domain.chat.results import get_llm
+from opencopilot.domain.errors import OpenAIRuntimeError
+from opencopilot.logger import api_logger
 from opencopilot.repository.conversation_history_repository import (
     ConversationHistoryRepositoryLocal,
 )
@@ -34,7 +36,7 @@ async def execute(
     history_repository: ConversationHistoryRepositoryLocal,
     callback: CustomAsyncIteratorCallbackHandler = None,
 ) -> str:
-    llm = get_llm.execute(domain_input.user_id, callback)
+    llm = get_llm.execute(domain_input.user_id, streaming=callback is not None)
 
     history = utils.add_history(
         system_message,
@@ -75,14 +77,21 @@ async def execute(
     )
 
     messages = [HumanMessage(content=prompt_text)]
-    result_message = await llm.agenerate([messages])
-    result = result_message.generations[0][0].text
-    return result
+    try:
+        result_message = await llm.agenerate(
+            [messages],
+            callbacks=[callback] if callback is not None else None,
+            stream=callback is not None,
+        )
+        result = result_message.generations[0][0].text
+        return result
+    except OpenAIError as exc:
+        raise OpenAIRuntimeError(exc.user_message)
 
 
 def _get_context(
     documents: List[Document],
-    llm: ChatOpenAI,
+    llm: BaseChatModel,
 ) -> Tuple[str, int]:
     while len(documents):
         context = format_context_documents_use_case.execute(documents)
@@ -98,7 +107,7 @@ def _get_prompt_text(
     domain_input: UserMessageInput,
     template_with_history: str,
     context_documents: List[Document],
-    llm: ChatOpenAI,
+    llm: BaseChatModel,
     logs_repository: ConversationLogsRepositoryLocal,
 ) -> str:
     # Almost duplicated with get_local_llm_result_use_case._get_prompt_text

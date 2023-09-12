@@ -1,5 +1,9 @@
 import os
-from opencopilot.domain.errors import PromptError, APIKeyError
+
+from opencopilot.domain.errors import APIKeyError
+from opencopilot.domain.errors import PromptError
+from opencopilot.domain.errors import ModelError
+from opencopilot.domain.chat.models.local import LocalLLM
 
 
 def validate_prompt_and_prompt_file_config(prompt: str, prompt_file: str):
@@ -40,3 +44,16 @@ def validate_openai_api_key(key: str):
         raise APIKeyError(
             "OpenAI API key format is incorrect. Please check that you've entered a correct OpenAI API key."
         )
+
+
+def validate_local_llm(llm: LocalLLM):
+    try:
+        llm.get_num_tokens("test")
+    except:
+        raise ModelError(
+            f"Failed to use local LLM.\nMake sure it is running at {llm.llm_url}"
+        )
+
+
+def validate_settings(openai_api_key: str):
+    validate_openai_api_key(openai_api_key)

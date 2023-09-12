@@ -34,7 +34,7 @@
 
 ## 🕊️ OpenCopilot Overview
 
-Copilots are becoming the new paradigm how to build successful LLM-based applications, as seen by [Github](https://github.com/features/copilot), [Shopify](https://www.shopify.com/magic), [Brex](https://www.brex.com/journal/press/brex-openai-ai-tools-for-finance-teams), [Hubspot](https://app.hubspot.com/chatspot/chat), etc Copilots. Yet, building a Copilot that goes beyond a Twitter demo is extremely complex as it's time-consuming, unreliable and feels like a massive undertaking. Moreover, existing solutions such as Microsoft Copilot Stack are closed-source. Building an LLM-app today feels like:
+Copilots are becoming the new paradigm how to build successful LLM-based applications, as seen by [Github](https://github.com/features/copilot), [Shopify](https://www.shopify.com/magic), [Brex](https://www.brex.com/journal/press/brex-openai-ai-tools-for-finance-teams), [Hubspot](https://app.hubspot.com/chatspot/chat), etc Copilots. Yet, building a Copilot that goes beyond a Twitter demo is time-consuming, unreliable and overly complex. Moreover, existing solutions such as Microsoft Copilot Stack are closed-source. Today, building an LLM-app feels like:
 
 ![Author: Soham Chatterjee](https://github.com/opencopilotdev/opencopilot/assets/3767980/f98def43-38b6-40ed-956b-8b5498c08318)
 
@@ -42,8 +42,8 @@ OpenCopilot solves this problem so building your own Copilot becomes intuitive, 
 
 **🛠️ Developer tooling Copilot**
 
-* End-to-end example: [Ready Player Me Copilot](https://github.com/opencopilotdev/opencopilot/tree/main/examples/ready_player_me_copilot)
-* Example: [Stripe Copilot](https://stripe.com/newsroom/news/stripe-and-openai)
+* Example: [Ready Player Me Copilot](https://venturebeat.com/games/ready-player-me-launches-ai-based-copilot-to-help-developers-streamline-avatars/)
+* Implementation: [Code](https://github.com/opencopilotdev/opencopilot/tree/main/examples/ready_player_me_copilot)
 
 **💾 SaaS Copilot**
 
@@ -53,7 +53,7 @@ OpenCopilot solves this problem so building your own Copilot becomes intuitive, 
 
 * Example: [Shopify Copilot](https://www.shopify.com/magic)
   
-See more [use cases in docs](https://docs.opencopilot.dev/welcome/overview#use-cases).
+See more [use cases in docs](https://docs.opencopilot.dev/welcome/use-cases).
 
 
 ## ⚡ Quickstart
@@ -67,15 +67,15 @@ pip install opencopilot-ai
 ```
 
 ### 2. Create a new python file to set up a minimal Copilot
-For example, `copilot.py`, where you add the code from below. Also, add your own `openai_api_key`, which you can get [from here](https://platform.openai.com/account/api-keys).
 
-If you have access to GPT-4, we recommend changing `llm_model_name` to `gpt-4`.
+For example, you can create an AWS CLI Copilot using the following code by adding it to a `copilot.py` file. **Make sure to replace** `openai_api_key` with your 🔑 [own OpenAI API key](https://platform.openai.com/account/api-keys).
 
 ```python
 from opencopilot import OpenCopilot
 
 PROMPT = """
-You are a Parrot Copilot. Your purpose is to repeat what the user says, but in a different wording.
+You are an Amazon Web Services (AWS) CLI copilot. You are an interactive version of AWS CLI documentation and chat with developers who need help using it.
+Your mission is to be a reliable companion throughout the developer journey - always ready to answer questions and share insights.
 
 =========
 {context}
@@ -83,14 +83,20 @@ You are a Parrot Copilot. Your purpose is to repeat what the user says, but in a
 
 {history}
 User: {question}
-Parrot Copilot answer in Markdown:
+AWS CLI Copilot answer in Markdown:
 """
 
 copilot = OpenCopilot(
+    copilot_name="AWS CLI Copilot",
     openai_api_key="your-openai-api-key",
-    llm_model_name="gpt-3.5-turbo-16k",
+    llm_model_name="gpt-3.5-turbo-16k", # You can also use gpt-4 for improved accuracy
     prompt=PROMPT
-    )
+)
+
+# Download and embed the knowledge base from given URL
+copilot.add_data_urls([
+    "https://awsdocs.s3.amazonaws.com/cli/latest/aws-cli.pdf",
+])
 
 # Run the copilot
 copilot()
@@ -111,14 +117,14 @@ opencopilot chat "Hello, who are you?"
 
 ### 5. Create your own copilot
 
-After seeing how easy it is to set up a copilot, you can now create your own and level it up step by step. For this, see [docs.opencopilot.dev](https://docs.opencopilot.dev/improve/customize-your-copilot)
+After seeing how easy it is to set up a copilot, you can now create your own and level it up step by step. For this, see [docs.opencopilot.dev](https://docs.opencopilot.dev/create/iterative-development), or check a more detailed example of the AWS copilot in the [examples directory](examples/aws_copilot/).
 
 ## 🔍 Stack Overview
 OpenCopilot provides one coherent end-to-end stack which is purposely designed for building a variety of copilots. From LLM selection (OSS LLMs upcoming), knowledge base, monitoring, evaluation, etc - it covers all the needs to build a useful copilot.
 
 ![opencopilot_stack](https://github.com/opencopilotdev/opencopilot/assets/5147210/140ca313-cf8a-4635-913e-8dbb5e33e8d4)
 
-See our docs on [Stack Overview](https://docs.opencopilot.dev/welcome/overview#stack-overview) to learn more about each part of the OpenCopilot stack.
+See our docs on [Stack Overview](https://docs.opencopilot.dev/welcome/overview) to learn more about each part of the OpenCopilot stack.
 
 ## Analytics
 

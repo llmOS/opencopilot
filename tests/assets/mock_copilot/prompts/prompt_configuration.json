@@ -1,4 +1,4 @@
 {
-  "question_key": "User",
-  "response_key": "Custom Copilot"
+  "question_template": "User: {question}",
+  "response_template": "Custom Copilot: {response}"
 }

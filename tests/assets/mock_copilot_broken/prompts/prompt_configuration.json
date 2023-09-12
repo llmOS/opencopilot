@@ -1,4 +1,4 @@
 {
-  "question_key"
-  "response_key": "Custom Copilot"
+  "question_template"
+  "response_template": "Custom Copilot"
 }

@@ -88,6 +88,48 @@ class BadGatewayAPIError(APIErrorResponse):
         )
 
 
+class OpenAIError(APIErrorResponse):
+    def __init__(self, message):
+        self.message = message
+
+    def to_status_code(self) -> status:
+        return status.HTTP_502_BAD_GATEWAY
+
+    def to_code(self) -> str:
+        return "openai_error"
+
+    def to_message(self) -> str:
+        return self.message
+
+
+class WeaviateConnectionError(APIErrorResponse):
+    def __init__(self, message):
+        self.message = message
+
+    def to_status_code(self) -> status:
+        return status.HTTP_502_BAD_GATEWAY
+
+    def to_code(self) -> str:
+        return "weaviate_error"
+
+    def to_message(self) -> str:
+        return self.message
+
+
+class GenericCopilotRuntimeError(APIErrorResponse):
+    def __init__(self, message):
+        self.message = message
+
+    def to_status_code(self) -> status:
+        return status.HTTP_502_BAD_GATEWAY
+
+    def to_code(self) -> str:
+        return "copilot_error"
+
+    def to_message(self) -> str:
+        return self.message
+
+
 class AuthorizationMissingAPIError(APIErrorResponse):
     def __init__(self):
         pass

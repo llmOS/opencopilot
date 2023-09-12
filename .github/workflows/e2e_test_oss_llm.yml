@@ -1,0 +1,57 @@
+name: E2E Test OSS LLM
+
+on:
+  push:
+    branches: [ main, ci-oss-llm ]
+
+jobs:
+  e2e-test-oss-llm:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 5
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: "Set up Python 3.10"
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.10'
+      - name: "Install requirements"
+        run: |
+          pip install -r requirements.txt
+          pip install llama-cpp-python
+          pip install -e .
+      - name: "Setup env"
+        run: |
+          export OPENCOPILOT_DO_NOT_TRACK=true
+      - name: "Start Weaviate"
+        run: |
+          docker run \
+            -e CONTEXTIONARY_URL="contextionary:9999" \
+            -e QUERY_DEFAULTS_LIMIT="25" \
+            -e AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED="true" \
+            -e PERSISTENCE_DATA_PATH="/var/lib/weaviate" \
+            -e CLUSTER_HOSTNAME="node1" \
+            -p 8080:8080 \
+            -d \
+            semitechnologies/weaviate:1.19.6 \
+              --host 0.0.0.0 --port '8080' --scheme http
+      - name: "Start OSS LLM"
+        run: |
+          nohup opencopilot oss run llama-2-7b-chat &> oss_logs.log &
+          sleep 5
+          cat oss_logs.log
+      - name: "Ping OSS LLM"
+        run: |
+          PYTHONPATH=. python tests/assets/ping_oss_llm.py
+      - name: "Start Backend"
+        run: |
+          PYTHONPATH=. nohup python tests/assets/e2e_oss_llm_example.py &> logs.log &
+          sleep 5
+          cat logs.log
+      - name: "Ping until backend up"
+        run: |
+          PYTHONPATH=. python tests/assets/ping_backend.py
+      - name: "Test Backend"
+        run: |
+          PYTHONPATH=. python tests/e2e/test_backend.py

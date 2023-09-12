@@ -2,7 +2,7 @@ name: E2E Test Full
 
 on:
   push:
-    branches: [ main, api_redesign ]
+    branches: [ main, fix-test]
 
 jobs:
   e2e-test-full:
@@ -26,6 +26,7 @@ jobs:
         run: |
           export OPENAI_API_KEY="$OPENAI_API_KEY"
           export HELICONE_API_KEY="$HELICONE_API_KEY"
+          export OPENCOPILOT_DO_NOT_TRACK=true
       - name: "Start Weaviate"
         run: |
           docker run \

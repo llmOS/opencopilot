@@ -1,6 +1,10 @@
 from dataclasses import dataclass
-from typing import Literal
 from typing import Optional
+from typing import Union
+
+from langchain.chat_models.base import BaseChatModel
+from langchain.embeddings.base import Embeddings
+from opencopilot.domain.chat.models.local import LocalLLM
 
 
 @dataclass(frozen=False)
@@ -16,7 +20,8 @@ class Settings:
     WEAVIATE_URL: Optional[str]
     WEAVIATE_READ_TIMEOUT: int
 
-    MODEL: Literal["gpt-3.5-turbo-16k", "gpt-4"]
+    LLM: Union[str, BaseChatModel]
+    EMBEDDING_MODEL: Union[str, Embeddings]
 
     OPENAI_API_KEY: str
 
@@ -42,6 +47,8 @@ class Settings:
     MAX_CONTEXT_DOCUMENTS_COUNT: int = 4
 
     PROMPT: Optional[str] = None
+    QUESTION_TEMPLATE: Optional[str] = None
+    RESPONSE_TEMPLATE: Optional[str] = None
 
     HELICONE_BASE_URL = "https://oai.hconeai.com/v1"
 
@@ -53,17 +60,16 @@ class Settings:
         ):
             self.AUTH_TYPE = None
 
-        self.PROMPT_QUESTION_KEY = "User"
-        self.PROMPT_ANSWER_KEY = "Copilot"
-
     def is_production(self):
         return self.ENVIRONMENT == "production"
 
     def get_max_token_count(self) -> int:
-        if self.MODEL == "gpt-3.5-turbo-16k":
+        if self.LLM == "gpt-3.5-turbo-16k":
             return 16384
-        if self.MODEL == "gpt-4":
+        elif self.LLM == "gpt-4":
             return 8192
+        elif isinstance(self.LLM, LocalLLM):
+            return self.LLM.context_size
         return 2048
 
 
