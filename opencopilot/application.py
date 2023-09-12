@@ -14,6 +14,7 @@ from opencopilot import exception_utils
 from opencopilot import settings
 from opencopilot.domain import error_messages
 from opencopilot.domain.chat.models.local import LocalLLM
+from opencopilot.domain.errors import LogsDirError
 from opencopilot.domain.errors import ModelError
 from opencopilot.logger import api_logger
 from opencopilot.repository.documents import split_documents_use_case
@@ -44,12 +45,11 @@ class OpenCopilot:
         api_port: int = 3000,
         environment: str = "local",
         allowed_origins: str = "*",
-        weaviate_url: Optional[str] = "http://localhost:8080",
+        weaviate_url: Optional[str] = None,
         weaviate_read_timeout: int = 120,
         llm: Optional[Union[str, BaseChatModel]] = "gpt-3.5-turbo-16k",
         embedding_model: Optional[Union[str, Embeddings]] = "text-embedding-ada-002",
         max_document_size_mb: int = 50,
-        slack_webhook: Optional[str] = None,
         auth_type: Optional[str] = None,
         api_key: Optional[str] = None,
         jwt_client_id: Optional[str] = None,
@@ -57,7 +57,7 @@ class OpenCopilot:
         jwt_token_expiration_seconds: Optional[int] = timedelta(days=1).total_seconds(),
         helicone_api_key: Optional[str] = None,
         helicone_rate_limit_policy: Optional[str] = "3;w=60;s=user",
-        logs_dir: Optional[str] = None,
+        logs_dir: Optional[str] = "logs",
         log_level: Optional[Union[str, int]] = None,
     ):
         api_logger.set_log_level(log_level)
@@ -89,6 +89,9 @@ class OpenCopilot:
         if isinstance(llm, LocalLLM):
             validate_local_llm(llm)
 
+        if not logs_dir:
+            raise LogsDirError(error_messages.INVALID_LOGS_DIR_ERROR)
+
         settings.set(
             Settings(
                 PROMPT=prompt,
@@ -105,7 +108,6 @@ class OpenCopilot:
                 LLM=llm,
                 EMBEDDING_MODEL=embedding_model,
                 MAX_DOCUMENT_SIZE_MB=max_document_size_mb,
-                SLACK_WEBHOOK=slack_webhook,
                 AUTH_TYPE=auth_type,
                 API_KEY=api_key,
                 JWT_CLIENT_ID=jwt_client_id,
@@ -114,7 +116,7 @@ class OpenCopilot:
                 HELICONE_API_KEY=helicone_api_key,
                 HELICONE_RATE_LIMIT_POLICY=helicone_rate_limit_policy,
                 TRACKING_ENABLED=tracking_enabled,
-                LOGS_DIR=logs_dir
+                LOGS_DIR=logs_dir,
             )
         )
 

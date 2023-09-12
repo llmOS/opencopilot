@@ -16,7 +16,8 @@ class ConversationLogsRepositoryLocal:
     def __init__(self, conversation_logs_dir: str = ""):
         if not conversation_logs_dir:
             conversation_logs_dir = os.path.join(
-                settings.get().LOGS_DIR, "conversation_logs")
+                settings.get().LOGS_DIR, "conversation_logs"
+            )
         self.conversation_logs_dir = conversation_logs_dir
 
     def log_prompt_template(

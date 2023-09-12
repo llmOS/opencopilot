@@ -22,8 +22,6 @@ class Settings:
 
     OPENAI_API_KEY: Optional[str] = None
 
-    SLACK_WEBHOOK: Optional[str] = None
-
     AUTH_TYPE: Optional[str] = None
     API_KEY: Optional[str] = None
 
