@@ -90,6 +90,7 @@ copilot = OpenCopilot(
     copilot_name="AWS CLI Copilot",
     openai_api_key="your-openai-api-key",
     llm_model_name="gpt-3.5-turbo-16k", # You can also use gpt-4 for improved accuracy
+                                        # or Llama 2 locally (https://docs.opencopilot.dev/create/opensource-llms#running-an-llm)
     prompt=PROMPT
 )
 
