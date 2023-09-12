@@ -61,7 +61,7 @@ setup(
     ],
     extras_require={
         "llama": [
-            "llama-cpp-python>=0.1.83",
+            "llama-cpp-python==0.1.83",
         ],
     },
     entry_points={

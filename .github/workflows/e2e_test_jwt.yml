@@ -2,7 +2,7 @@ name: E2E Test JWT
 
 on:
   push:
-    branches: [ main, error-handling ]
+    branches: [ main, error-handling, fix-test ]
 
 jobs:
   e2e-test-jwt:
