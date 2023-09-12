@@ -5,23 +5,23 @@ from typing import List
 from typing import Optional
 from typing import Union
 
+import uvicorn
 from langchain.chat_models.base import BaseChatModel
 from langchain.embeddings.base import Embeddings
-import uvicorn
 from langchain.schema import Document
 
 from opencopilot import exception_utils
 from opencopilot import settings
 from opencopilot.domain import error_messages
+from opencopilot.domain.chat.models.local import LocalLLM
 from opencopilot.domain.errors import ModelError
 from opencopilot.logger import api_logger
 from opencopilot.repository.documents import split_documents_use_case
 from opencopilot.settings import Settings
-from opencopilot.domain.chat.models.local import LocalLLM
+from opencopilot.utils.validators import validate_local_llm
 from opencopilot.utils.validators import validate_openai_api_key
 from opencopilot.utils.validators import validate_prompt_and_prompt_file_config
 from opencopilot.utils.validators import validate_system_prompt
-from opencopilot.utils.validators import validate_local_llm
 
 ALLOWED_LLM_MODEL_NAMES = ["gpt-3.5-turbo-16k", "gpt-4"]
 
@@ -41,23 +41,23 @@ class OpenCopilot:
         openai_api_key: Optional[str] = None,
         copilot_name: str = "default",
         host: str = "127.0.0.1",
-        api_base_url: str = "http://127.0.0.1/",
         api_port: int = 3000,
         environment: str = "local",
         allowed_origins: str = "*",
-        weaviate_url: Optional[str] = None,
+        weaviate_url: Optional[str] = "http://localhost:8080",
         weaviate_read_timeout: int = 120,
         llm: Optional[Union[str, BaseChatModel]] = "gpt-3.5-turbo-16k",
         embedding_model: Optional[Union[str, Embeddings]] = "text-embedding-ada-002",
         max_document_size_mb: int = 50,
-        slack_webhook: str = "",
+        slack_webhook: Optional[str] = None,
         auth_type: Optional[str] = None,
-        api_key: str = "",
-        jwt_client_id: str = "",
-        jwt_client_secret: str = "",
-        jwt_token_expiration_seconds: int = timedelta(days=1).total_seconds(),
-        helicone_api_key: str = "",
-        helicone_rate_limit_policy: str = "3;w=60;s=user",
+        api_key: Optional[str] = None,
+        jwt_client_id: Optional[str] = None,
+        jwt_client_secret: Optional[str] = None,
+        jwt_token_expiration_seconds: Optional[int] = timedelta(days=1).total_seconds(),
+        helicone_api_key: Optional[str] = None,
+        helicone_rate_limit_policy: Optional[str] = "3;w=60;s=user",
+        logs_dir: Optional[str] = None,
         log_level: Optional[Union[str, int]] = None,
     ):
         api_logger.set_log_level(log_level)
@@ -98,7 +98,6 @@ class OpenCopilot:
                 COPILOT_NAME=copilot_name,
                 HOST=host,
                 API_PORT=api_port,
-                API_BASE_URL=api_base_url,
                 ENVIRONMENT=environment,
                 ALLOWED_ORIGINS=allowed_origins,
                 WEAVIATE_URL=weaviate_url,
@@ -115,6 +114,7 @@ class OpenCopilot:
                 HELICONE_API_KEY=helicone_api_key,
                 HELICONE_RATE_LIMIT_POLICY=helicone_rate_limit_policy,
                 TRACKING_ENABLED=tracking_enabled,
+                LOGS_DIR=logs_dir
             )
         )
 

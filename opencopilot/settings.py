@@ -4,6 +4,7 @@ from typing import Union
 
 from langchain.chat_models.base import BaseChatModel
 from langchain.embeddings.base import Embeddings
+
 from opencopilot.domain.chat.models.local import LocalLLM
 
 
@@ -13,35 +14,34 @@ class Settings:
 
     HOST: str
     API_PORT: int
-    API_BASE_URL: str
     ENVIRONMENT: str
     ALLOWED_ORIGINS: str
-
-    WEAVIATE_URL: Optional[str]
-    WEAVIATE_READ_TIMEOUT: int
 
     LLM: Union[str, BaseChatModel]
     EMBEDDING_MODEL: Union[str, Embeddings]
 
-    OPENAI_API_KEY: str
+    OPENAI_API_KEY: Optional[str] = None
 
-    MAX_DOCUMENT_SIZE_MB: int
+    SLACK_WEBHOOK: Optional[str] = None
 
-    SLACK_WEBHOOK: str
+    AUTH_TYPE: Optional[str] = None
+    API_KEY: Optional[str] = None
 
-    AUTH_TYPE: Optional[str]
-    API_KEY: str
+    JWT_CLIENT_ID: Optional[str] = None
+    JWT_CLIENT_SECRET: Optional[str] = None
+    JWT_TOKEN_EXPIRATION_SECONDS: Optional[int] = 0
 
-    JWT_CLIENT_ID: str
-    JWT_CLIENT_SECRET: str
-    JWT_TOKEN_EXPIRATION_SECONDS: int
+    HELICONE_API_KEY: Optional[str] = None
+    HELICONE_RATE_LIMIT_POLICY: Optional[str] = None
 
-    HELICONE_API_KEY: str
-    HELICONE_RATE_LIMIT_POLICY: str
+    WEAVIATE_URL: Optional[str] = None
+    WEAVIATE_READ_TIMEOUT: Optional[int] = 120
+
+    MAX_DOCUMENT_SIZE_MB: Optional[int] = 50
 
     TRACKING_ENABLED: bool = False
 
-    CONVERSATIONS_DIR: str = "logs/conversations"
+    LOGS_DIR: str = "logs"
     # Configure based on model?
     PROMPT_HISTORY_INCLUDED_COUNT: int = 4
     MAX_CONTEXT_DOCUMENTS_COUNT: int = 4
@@ -71,6 +71,15 @@ class Settings:
         elif isinstance(self.LLM, LocalLLM):
             return self.LLM.context_size
         return 2048
+
+    def get_base_url(self) -> str:
+        base_url = self.HOST
+        if base_url.endswith("/"):
+            base_url = base_url[:-1]
+        base_url += ":" + str(self.API_PORT)
+        if not base_url.startswith("http://"):
+            base_url = "http://" + base_url
+        return base_url
 
 
 _settings: Optional[Settings] = None

@@ -7,16 +7,19 @@ from uuid import UUID
 
 import xxhash
 
+from opencopilot import settings
 from opencopilot.logger import api_logger
 
-DEFAULT_USERS_DIR = "logs/users"
 DEFAULT_USER_NAME = "default_user"
 
 logger = api_logger.get()
 
 
 class UsersRepositoryLocal:
-    def __init__(self, users_dir: str = DEFAULT_USERS_DIR):
+    def __init__(self, users_dir: str = ""):
+        if not users_dir:
+            users_dir = os.path.join(settings.get().LOGS_DIR, "users")
+        os.makedirs(users_dir, exist_ok=True)
         self.users_dir = users_dir
 
     def get_conversations(self, user_id: Optional[str] = None) -> List[str]:

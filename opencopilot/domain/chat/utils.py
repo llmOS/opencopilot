@@ -19,7 +19,7 @@ def add_history(
     conversation_id: UUID,
     history_repository: ConversationHistoryRepositoryLocal,
 ) -> History:
-    os.makedirs(settings.get().CONVERSATIONS_DIR, exist_ok=True)
+    conversations_dir = os.path.join(settings.get().LOGS_DIR, "conversations")
     history = history_repository.get_prompt_history(
         conversation_id, settings.get().PROMPT_HISTORY_INCLUDED_COUNT
     )
