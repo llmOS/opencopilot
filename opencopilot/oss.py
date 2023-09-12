@@ -229,10 +229,15 @@ def run_model(
     port: Optional[int] = typer.Option(None, "--port", help="Port to run the LLM on."),
 ):
     """Run a specific model."""
+    llama_cpp = _try_llama_cpp_import()
+    if not llama_cpp:
+        return
+
     model = MODELS.get(model_name.lower())
     if not model:
         _print_model_not_found_message(model_name)
         return
+
     try:
         print(
             f"Preparing to download the {model_name} model from Huggingface. This might be a large file."
@@ -251,10 +256,6 @@ def run_model(
         return
     except:
         print(f"[red]Could not run {model_name}![/red]")
-        return
-
-    llama_cpp = _try_llama_cpp_import()
-    if not llama_cpp:
         return
 
     import uvicorn
