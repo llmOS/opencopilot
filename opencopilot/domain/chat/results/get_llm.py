@@ -7,7 +7,7 @@ from langchain.chat_models.base import BaseChatModel
 from opencopilot import settings
 
 
-def execute(user_id: str = None) -> BaseChatModel:
+def execute(user_id: str = None, streaming: bool = False) -> BaseChatModel:
     llm = settings.get().LLM
     if isinstance(llm, str):
         if settings.get().HELICONE_API_KEY:
@@ -15,6 +15,7 @@ def execute(user_id: str = None) -> BaseChatModel:
         llm = ChatOpenAI(
             temperature=0.0,
             model_name=settings.get().LLM,
+            streaming=streaming,
             model_kwargs={"headers": _get_headers(user_id)},
             openai_api_key=settings.get().OPENAI_API_KEY,
         )
