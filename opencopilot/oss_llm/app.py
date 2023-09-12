@@ -1,7 +1,10 @@
 from threading import Lock
 
-from fastapi import FastAPI, APIRouter, Depends
+from fastapi import APIRouter
+from fastapi import Depends
+from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
+
 from opencopilot.oss_llm.entities import GenerateStreamRequest
 from opencopilot.oss_llm.entities import TokenizeRequest
 from opencopilot.oss_llm.entities import TokenizeResponse
@@ -31,6 +34,11 @@ def create_app(model: str, context_size: int) -> FastAPI:
     )
     app.include_router(router)
     return app
+
+
+@router.get("/")
+async def index():
+    return {"title": "OSS LLM API"}
 
 
 @router.post("/generate_stream")
