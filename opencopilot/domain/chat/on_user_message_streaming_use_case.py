@@ -8,13 +8,12 @@ from langchain.schema import Document
 
 from opencopilot import settings
 from opencopilot.domain.chat import is_user_allowed_to_chat_use_case
-from opencopilot.logger import api_logger
-from opencopilot.domain.chat import validate_urls_use_case
 from opencopilot.domain.chat.entities import LoadingMessage
 from opencopilot.domain.chat.entities import StreamingChunk
 from opencopilot.domain.chat.entities import UserMessageInput
 from opencopilot.domain.chat.results import get_gpt_result_use_case
 from opencopilot.domain.chat.utils import get_system_message
+from opencopilot.logger import api_logger
 from opencopilot.repository.conversation_history_repository import (
     ConversationHistoryRepositoryLocal,
 )
@@ -92,8 +91,6 @@ async def execute(
             error=f"OpenAI error: {type(exc).__name__}",
         )
     finally:
-        validate_urls_use_case.execute(result, domain_input.conversation_id)
-
         response_timestamp = datetime.now().timestamp()
 
         history_repository.save_history(

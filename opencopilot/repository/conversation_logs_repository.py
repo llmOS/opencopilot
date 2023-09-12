@@ -6,16 +6,18 @@ from uuid import UUID
 
 from langchain.schema import Document
 
+from opencopilot import settings
 from opencopilot.logger import api_logger
 
 logger = api_logger.get()
 
-DEFAULT_CONVERSATION_LOGS_DIR = "logs/conversation_logs"
-
 
 class ConversationLogsRepositoryLocal:
-    def __init__(self, conversation_logs_dir: str = DEFAULT_CONVERSATION_LOGS_DIR):
-        os.makedirs(conversation_logs_dir, exist_ok=True)
+    def __init__(self, conversation_logs_dir: str = ""):
+        if not conversation_logs_dir:
+            conversation_logs_dir = os.path.join(
+                settings.get().LOGS_DIR, "conversation_logs"
+            )
         self.conversation_logs_dir = conversation_logs_dir
 
     def log_prompt_template(
@@ -122,6 +124,8 @@ class ConversationLogsRepositoryLocal:
 
     def _append_to_file(self, conversation_id: UUID, log: Dict) -> None:
         try:
+            if not os.path.exists(self.conversation_logs_dir):
+                os.makedirs(self.conversation_logs_dir, exist_ok=True)
             with open(self._get_file_path(conversation_id), "a") as file:
                 file.write(json.dumps(log) + "\n")
         except:

@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from opencopilot.domain.chat import is_user_allowed_to_chat_use_case
-from opencopilot.domain.chat import validate_urls_use_case
 from opencopilot.domain.chat.entities import MessageModel
 from opencopilot.domain.chat.entities import UserMessageInput
 from opencopilot.domain.chat.results import get_gpt_result_use_case
@@ -47,8 +46,6 @@ async def execute(
         logs_repository=logs_repository,
         history_repository=history_repository,
     )
-
-    validate_urls_use_case.execute(result, domain_input.conversation_id)
 
     response_timestamp = datetime.now().timestamp()
 

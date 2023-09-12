@@ -37,34 +37,16 @@ async def test_execute_bearer_api_key(mock_validate_jwt, mock_settings):
 @pytest.mark.asyncio
 async def test_validate_jwt_success(mock_jwt, mock_settings):
     settings.get.return_value = Settings(
-        COPILOT_NAME="unit_tests",
-        HOST="127.0.0.1",
-        API_PORT=3000,
-        API_BASE_URL="http://localhost:3000/",
-        ENVIRONMENT="test",
-        ALLOWED_ORIGINS="*",
-
-        WEAVIATE_URL="mock_url",
-        WEAVIATE_READ_TIMEOUT=120,
-
-        LLM="gpt-4",
-        EMBEDDING_MODEL="text-embedding-ada-002",
-
-        OPENAI_API_KEY="None",
-
-        MAX_DOCUMENT_SIZE_MB=1,
-
-        SLACK_WEBHOOK="",
-
-        AUTH_TYPE=None,
-        API_KEY="",
-
+        COPILOT_NAME="str",
+        HOST="str",
+        API_PORT=123,
+        ENVIRONMENT="str",
+        ALLOWED_ORIGINS="str",
+        LLM="str",
+        EMBEDDING_MODEL="str",
         JWT_CLIENT_ID="",
         JWT_CLIENT_SECRET="secret",
-        JWT_TOKEN_EXPIRATION_SECONDS=3600,
-
-        HELICONE_API_KEY="",
-        HELICONE_RATE_LIMIT_POLICY="",
+        JWT_TOKEN_EXPIRATION_SECONDS=3600
     )
     mock_settings.JWT_CLIENT_SECRET = "secret"
     mock_jwt.decode.return_value = {"sub": "sub_value"}

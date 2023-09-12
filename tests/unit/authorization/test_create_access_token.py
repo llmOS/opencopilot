@@ -23,34 +23,16 @@ def test_execute_invalid_credentials(mock_settings):
 @patch("opencopilot.authorization.create_access_token.time")
 def test_execute_valid_credentials(mock_time, mock_settings):
     settings.get.return_value = Settings(
-        COPILOT_NAME="unit_tests",
-        HOST="127.0.0.1",
-        API_PORT=3000,
-        API_BASE_URL="http://localhost:3000/",
-        ENVIRONMENT="test",
-        ALLOWED_ORIGINS="*",
-
-        WEAVIATE_URL="mock_url",
-        WEAVIATE_READ_TIMEOUT=120,
-
-        LLM="gpt-4",
-        EMBEDDING_MODEL="text-embedding-ada-002",
-
-        OPENAI_API_KEY="None",
-
-        MAX_DOCUMENT_SIZE_MB=1,
-
-        SLACK_WEBHOOK="",
-
-        AUTH_TYPE=None,
-        API_KEY="",
-
+        COPILOT_NAME="str",
+        HOST="str",
+        API_PORT=123,
+        ENVIRONMENT="str",
+        ALLOWED_ORIGINS="str",
+        LLM="str",
+        EMBEDDING_MODEL="str",
         JWT_CLIENT_ID="valid_client_id",
         JWT_CLIENT_SECRET="valid_client_secret",
-        JWT_TOKEN_EXPIRATION_SECONDS=3600,
-
-        HELICONE_API_KEY="",
-        HELICONE_RATE_LIMIT_POLICY="",
+        JWT_TOKEN_EXPIRATION_SECONDS=3600
     )
     # generate 1 second old token
     current_timestamp = time.time() - 1
