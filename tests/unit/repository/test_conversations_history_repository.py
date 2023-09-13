@@ -92,16 +92,16 @@ def test_save_history():
         message="Prompt3",
         result="Response3",
         conversation_id=CONVERSATION_ID,
-        prompt_timestamp=123,
-        response_timestamp=124,
+        prompt_timestamp=123.12,
+        response_timestamp=124.12,
         response_message_id="mock_id"
     )
     result = repository.get_history(CONVERSATION_ID)
     expected = [
         {"prompt": "Prompt", "response": "Response"},
         {"prompt": "Prompt2", "response": "Response2"},
-        {"prompt": "Prompt3", "response": "Response3", "prompt_timestamp": 123,
-         "response_timestamp": 124, "response_message_id": "mock_id"}
+        {"prompt": "Prompt3", "response": "Response3", "prompt_timestamp": 123.12,
+         "response_timestamp": 124.12, "response_message_id": "mock_id"}
     ]
     assert result == expected
 
