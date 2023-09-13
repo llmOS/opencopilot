@@ -7,6 +7,8 @@ from typing import Optional
 import typer
 from rich.console import Console
 from rich.table import Table
+from rich import print as rich_print
+from rich.prompt import Prompt
 from typing_extensions import Annotated
 
 from opencopilot import exception_utils
@@ -16,6 +18,13 @@ from opencopilot.utils.scripting import set_default_settings
 
 from opencopilot.oss import oss_app
 from opencopilot.utils.validators import validate_openai_api_key
+from opencopilot.utils.prompting import generate_prompt
+from opencopilot.utils.prompting import (
+    GPT_PROMPT_SUFFIX,
+    LLAMA_2_PROMPT_PREFIX,
+    LLAMA_2_PROMPT_SUFFIX,
+)
+
 
 logger = api_logger.get()
 logger.setLevel(logging.WARNING)
@@ -53,6 +62,51 @@ def chat(message: str):
         )
         print()
         message = input("Message: ")
+
+
+@app.command(
+    help="Generate a prompt. Example: prompt 'Copilot for children teaching mathematics'"
+)
+def prompt(
+    description: str,
+    gpt: bool = typer.Option(
+        False,
+        "--gpt",
+        help="Enable GPT-style prompt generation. When active, the command will produce prompt in the style of GPT models.",
+    ),
+    llama2: bool = typer.Option(
+        False,
+        "--llama2",
+        help="Enable LLama-2 style prompt generation. This option generates prompts following the patterns and characteristics of the LLama-2 model.",
+    ),
+):
+    gpt = gpt or not llama2
+    openai_api_key = os.getenv("OPENAI_API_KEY")
+    while True:
+        try:
+            validate_openai_api_key(openai_api_key)
+            break
+        except:
+            openai_api_key = Prompt.ask(
+                "[yellow]For prompt generation, your OpenAI API key is required. Please type it in below:[/yellow]\n"
+            )
+            os.environ["OPENAI_API_KEY"] = openai_api_key
+    prompt = None
+    if gpt:
+        rich_print(
+            f'[bold]Generating GPT-style prompt template for "{description}"[/bold]:'
+        )
+        prompt = generate_prompt(description)
+        print(GPT_PROMPT_SUFFIX)
+        print()
+    if llama2:
+        rich_print(
+            f'[bold]Generating LLama-2 style prompt template for "{description}"[/bold]:'
+        )
+        print(LLAMA_2_PROMPT_PREFIX)
+        print(prompt) if prompt else generate_prompt(description)
+        print(LLAMA_2_PROMPT_SUFFIX)
+        print()
 
 
 @app.command(help="Query the retrieval pipeline.")
