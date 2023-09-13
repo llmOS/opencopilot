@@ -19,7 +19,7 @@ jobs:
       - name: "Install requirements"
         run: |
           pip install -r requirements.txt
-          pip install llama-cpp-python
+          pip install llama-cpp-python==0.1.83
           pip install -e .
       - name: "Setup env"
         run: |
