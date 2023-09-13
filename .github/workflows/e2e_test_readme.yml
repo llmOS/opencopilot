@@ -1,0 +1,46 @@
+name: E2E Test Readme
+
+on:
+  push:
+    branches: [ main, ci-readme ]
+
+jobs:
+  e2e-test-readme:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 5
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: "Set up Python 3.10"
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.10'
+      - name: "Install requirements"
+        run: |
+          pip install -r requirements.txt
+      - name: "Setup env"
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          HELICONE_API_KEY: ${{ secrets.HELICONE_API_KEY }}
+        run: |
+          export OPENAI_API_KEY="$OPENAI_API_KEY"
+          export HELICONE_API_KEY="$HELICONE_API_KEY"
+          export OPENCOPILOT_DO_NOT_TRACK=true
+      - name: "Create readme copilot"
+        run: |
+          PYTHONPATH=. python tests/assets/get_python_code_from_readme.py
+          cat readme_copilot.py
+      - name: "Start Copilot"
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          nohup python readme_copilot.py &> logs.log &
+          sleep 5
+          cat logs.log
+      - name: "Ping until backend up"
+        run: |
+          PYTHONPATH=. python tests/assets/ping_backend.py
+      - name: "Test Backend"
+        run: |
+          PYTHONPATH=. python tests/e2e/test_backend.py
