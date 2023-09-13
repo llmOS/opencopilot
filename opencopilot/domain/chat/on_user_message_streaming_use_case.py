@@ -64,15 +64,21 @@ async def execute(
     )
 
     result = ""
+    is_metadata_sent: bool = False
     try:
         async for callback_result in callback.aiter():
             parsed = json.loads(callback_result)
             if token := parsed.get("token"):
-                yield StreamingChunk(
+                response = StreamingChunk(
                     conversation_id=domain_input.conversation_id,
                     text=token,
                     sources=[],
                 )
+                if not is_metadata_sent:
+                    yield _include_metadata(response, domain_input.response_message_id)
+                    is_metadata_sent = True
+                else:
+                    yield response
             if loading_message := parsed.get("loading_message"):
                 yield StreamingChunk(
                     conversation_id=domain_input.conversation_id,
@@ -120,3 +126,17 @@ def _get_context(
             )
         )
     return context
+
+
+def _include_metadata(
+    chunk: StreamingChunk, response_message_id: str
+) -> StreamingChunk:
+    new_chunk = StreamingChunk(
+        conversation_id=chunk.conversation_id,
+        text=chunk.text,
+        sources=chunk.sources,
+        error=chunk.error,
+        loading_message=chunk.loading_message,
+        response_message_id=response_message_id,
+    )
+    return new_chunk

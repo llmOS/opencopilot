@@ -30,18 +30,19 @@ class ChatRequest(BaseModel):
 
 
 class ChatResponse(ApiResponse):
-    conversation_id: str = Field(description="Conversation id")
-
-    message: str = Field(description="Conversation output")
-
+    response_message_id: str = Field(
+        description="Response message ID, useful for debugging"
+    )
+    copilot_message: str = Field(description="Conversation output")
     sources: List[str] = Field(default_factory=list, description="Sources")
 
     class Config:
         schema_extra = {
             "example": {
                 "response": "OK",
-                "conversation_id": "e91042aa-d53a-41eb-8884-67aa4947982d",
-                "message": "I will use the 'search' command to find the weather in San Francisco.",
+                "response_message_id": "d5c10659-ce34-4fdd-b5b0-cb20d110a5e9",
+                "copilot_message": "I will use the 'search' command to find the weather in San Francisco.",
+                "sources": [],
             }
         }
 

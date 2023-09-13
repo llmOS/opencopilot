@@ -1,5 +1,6 @@
 import json
 import uuid
+from typing import AsyncIterable
 
 from opencopilot.domain.chat import on_user_message_streaming_use_case
 from opencopilot.domain.chat.entities import UserMessageInput
@@ -21,7 +22,7 @@ async def execute(
     history_repository: ConversationHistoryRepositoryLocal,
     logs_repository: ConversationLogsRepositoryLocal,
     users_repository: UsersRepositoryLocal,
-) -> str:
+) -> AsyncIterable[str]:
     conversation_id = get_uuid(request.conversation_id, "conversation_id")
     async for chunk in on_user_message_streaming_use_case.execute(
         UserMessageInput(
