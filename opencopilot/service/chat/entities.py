@@ -53,7 +53,7 @@ class ChatHistoryRequest(BaseModel):
 
 class ChatHistoryItem(BaseModel):
     content: str
-    timestamp: int
+    timestamp: float
     response_message_id: str
 
 
