@@ -68,7 +68,7 @@ def chat(message: str):
     help="Generate a prompt. Example: prompt 'Copilot for children teaching mathematics'"
 )
 def prompt(
-    description: str,
+    description: str = typer.Argument(..., help="Copilot description"),
     gpt: bool = typer.Option(
         False,
         "--gpt",
