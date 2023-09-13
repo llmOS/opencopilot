@@ -6,6 +6,7 @@ from typing import Optional
 from typing import Union
 
 import uvicorn
+from fastapi import APIRouter
 from langchain.chat_models.base import BaseChatModel
 from langchain.embeddings.base import Embeddings
 from langchain.schema import Document
@@ -129,6 +130,7 @@ class OpenCopilot:
         self.data_urls = []
         self.local_file_paths = []
         self.documents = []
+        self.router = _get_custom_router()
 
     def __call__(self, *args, **kwargs):
         from .repository.documents import document_loader
@@ -173,6 +175,7 @@ class OpenCopilot:
 
         from .app import app
 
+        app.include_router(self.router)
         track(
             TrackingEventType.COPILOT_START,
             len(self.documents),
@@ -192,3 +195,10 @@ class OpenCopilot:
 
     def add_data_urls(self, urls: List[str]) -> None:
         self.data_urls.extend(urls)
+
+
+def _get_custom_router() -> APIRouter:
+    router = APIRouter()
+    router.openapi_tags = ["Custom"]
+    router.title = "Custom router"
+    return router

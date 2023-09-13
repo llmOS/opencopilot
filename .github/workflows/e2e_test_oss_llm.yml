@@ -2,7 +2,7 @@ name: E2E Test OSS LLM
 
 on:
   push:
-    branches: [ main, kresimir/fix-oss-llm-ci ]
+    branches: [ main, expose-router ]
 
 jobs:
   e2e-test-oss-llm:

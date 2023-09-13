@@ -2,7 +2,7 @@ name: E2E Test
 
 on:
   push:
-    branches: [ main, error-handling, fix-test ]
+    branches: [ main, expose-router ]
 
 jobs:
   e2e-test:

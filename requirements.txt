@@ -4,7 +4,6 @@ python-json-logger==2.0.7
 uvicorn==0.21.1
 pandas==1.5.3
 pexpect==4.8.0
-gunicorn==20.1.0
 langchain==0.0.236
 passlib==1.7.4
 pyjwt[crypto]===2.6.0
