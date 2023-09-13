@@ -2,7 +2,7 @@ name: E2E Test OSS LLM
 
 on:
   push:
-    branches: [ main, ci-oss-llm ]
+    branches: [ main, kresimir/fix-oss-llm-ci ]
 
 jobs:
   e2e-test-oss-llm:
@@ -19,7 +19,7 @@ jobs:
       - name: "Install requirements"
         run: |
           pip install -r requirements.txt
-          pip install llama-cpp-python
+          pip install llama-cpp-python==0.1.83
           pip install -e .
       - name: "Setup env"
         run: |
