@@ -36,7 +36,6 @@ setup(
         "dataclasses-json",
         "python-dotenv",
         "python-json-logger",
-        "gunicorn",
         "uvicorn",
         "pandas",
         "pexpect",

@@ -5,25 +5,24 @@ from typing import List
 from typing import Optional
 from typing import Union
 
+import uvicorn
 from fastapi import APIRouter
-from gunicorn.app.base import BaseApplication
 from langchain.chat_models.base import BaseChatModel
 from langchain.embeddings.base import Embeddings
-import uvicorn
 from langchain.schema import Document
 
 from opencopilot import exception_utils
 from opencopilot import settings
 from opencopilot.domain import error_messages
+from opencopilot.domain.chat.models.local import LocalLLM
 from opencopilot.domain.errors import ModelError
 from opencopilot.logger import api_logger
 from opencopilot.repository.documents import split_documents_use_case
 from opencopilot.settings import Settings
-from opencopilot.domain.chat.models.local import LocalLLM
+from opencopilot.utils.validators import validate_local_llm
 from opencopilot.utils.validators import validate_openai_api_key
 from opencopilot.utils.validators import validate_prompt_and_prompt_file_config
 from opencopilot.utils.validators import validate_system_prompt
-from opencopilot.utils.validators import validate_local_llm
 
 ALLOWED_LLM_MODEL_NAMES = ["gpt-3.5-turbo-16k", "gpt-4"]
 
@@ -184,11 +183,7 @@ class OpenCopilot:
             len(self.data_urls),
         )
 
-        options = {
-            "bind": "%s:%s" % (self.host, self.api_port),
-            "workers": 1,
-        }
-        StandaloneApplication(app, options).run()
+        uvicorn.run(app, host=self.host, port=self.api_port)
 
     def data_loader(self, function: Callable[[], Document]):
         self.data_loaders.append(function)
@@ -205,25 +200,3 @@ def _get_custom_router() -> APIRouter:
     router.openapi_tags = ["Custom"]
     router.title = "Custom router"
     return router
-
-
-class StandaloneApplication(BaseApplication):
-    def __init__(self, app, options=None):
-        self.options = options or {}
-        self.application = app
-        super(StandaloneApplication, self).__init__()
-
-    def load_config(self):
-        config = dict(
-            [
-                (key, value)
-                for key, value in self.options.items()
-                if key in self.cfg.settings and value is not None
-            ]
-        )
-        for key, value in config.items():
-            self.cfg.set(key.lower(), value)
-        self.cfg.set("worker_class", "uvicorn.workers.UvicornWorker")
-
-    def load(self):
-        return self.application
