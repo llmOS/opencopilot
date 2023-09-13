@@ -23,11 +23,12 @@ async def execute(
     users_repository: UsersRepositoryLocal,
 ) -> ChatResponse:
     conversation_id = get_uuid(request.conversation_id, "conversation_id")
+    response_message_id: str = str(uuid.uuid4())
     domain_response = await on_user_message_use_case.execute(
         UserMessageInput(
             conversation_id=conversation_id,
             message=request.message,
-            response_message_id=str(uuid.uuid4()),
+            response_message_id=response_message_id,
             user_id=request.user_id,
         ),
         document_store,
@@ -37,7 +38,7 @@ async def execute(
     )
     return ChatResponse(
         response="OK",
-        conversation_id=str(conversation_id),
-        message=domain_response.content,
+        response_message_id=response_message_id,
+        copilot_message=domain_response.content,
         sources=domain_response.sources,
     )

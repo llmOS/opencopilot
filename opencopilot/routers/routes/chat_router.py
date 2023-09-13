@@ -144,9 +144,7 @@ async def handle_conversation(
         api_request.headers.get("user-agent"),
         False,
     )
-    return routing_utils.to_json_response(
-        {"copilot_message": response.message, "sources": response.sources}
-    )
+    return response
 
 
 @router.post(

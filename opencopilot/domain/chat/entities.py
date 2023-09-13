@@ -56,6 +56,7 @@ class StreamingChunk:
     sources: List[str]
     error: Optional[str] = None
     loading_message: Optional[LoadingMessage] = None
+    response_message_id: Optional[str] = None
 
     def to_dict(self) -> Dict:
         result = {"text": self.text}
@@ -63,6 +64,8 @@ class StreamingChunk:
             result["error"] = self.error
         if self.loading_message:
             result["loading_message"] = self.loading_message.to_dict()
+        if self.response_message_id:
+            result["response_message_id"] = self.response_message_id
         return result
 
 

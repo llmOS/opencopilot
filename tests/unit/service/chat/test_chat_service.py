@@ -9,6 +9,7 @@ from opencopilot.service.chat.entities import ChatRequest
 from opencopilot.service.chat.entities import ChatResponse
 
 CONVERSATION_ID = UUID("5a78244b-5c12-4366-b16a-00799bce7040")
+MESSAGE_ID = UUID("6a09629f-0ecd-4db6-96ca-ffa6be6d3061")
 
 
 def setup():
@@ -22,6 +23,9 @@ def setup():
     )
     service.get_uuid = MagicMock()
     service.get_uuid.return_value = CONVERSATION_ID
+
+    service.uuid = MagicMock()
+    service.uuid.uuid4.return_value = MESSAGE_ID
 
 
 @pytest.mark.asyncio
@@ -38,6 +42,7 @@ async def test_success():
     )
     assert response == ChatResponse(
         response="OK",
-        conversation_id=str(CONVERSATION_ID),
-        message="mock content",
+        response_message_id=str(MESSAGE_ID),
+        copilot_message="mock content",
+        sources=[],
     )
