@@ -27,6 +27,12 @@ class ModelError(CopilotConfigurationError):
     pass
 
 
+class LogsDirError(CopilotConfigurationError):
+    """Raised when invalid logs dir was passed."""
+
+    pass
+
+
 class CopilotRuntimeError(Exception, ABC):
     """Raised when the copilot gets known run time exception."""
 

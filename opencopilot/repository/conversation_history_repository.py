@@ -8,18 +8,18 @@ from uuid import UUID
 from opencopilot import settings
 from opencopilot.logger import api_logger
 
-DEFAULT_CONVERSATIONS_DIR = "logs/conversations"
-
 logger = api_logger.get()
 
 
 class ConversationHistoryRepositoryLocal:
     def __init__(
         self,
-        conversations_dir: str = DEFAULT_CONVERSATIONS_DIR,
+        conversations_dir: str = "",
         question_template: str = "",
         response_template: str = "",
     ):
+        if not conversations_dir:
+            conversations_dir = os.path.join(settings.get().LOGS_DIR, "conversations")
         self.conversations_dir = conversations_dir
         self.question_template = question_template or settings.get().QUESTION_TEMPLATE
         self.response_template = response_template or settings.get().RESPONSE_TEMPLATE
@@ -91,6 +91,8 @@ class ConversationHistoryRepositoryLocal:
 
     def _write_file(self, conversation_id: UUID, data):
         try:
+            if not os.path.exists(self.conversations_dir):
+                os.makedirs(self.conversations_dir, exist_ok=True)
             with open(self._get_file_path(conversation_id), "w") as f:
                 f.write(json.dumps(data, indent=4))
         except Exception:

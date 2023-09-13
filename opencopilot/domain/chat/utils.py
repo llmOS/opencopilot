@@ -1,4 +1,3 @@
-import os
 from dataclasses import dataclass
 from uuid import UUID
 
@@ -19,7 +18,6 @@ def add_history(
     conversation_id: UUID,
     history_repository: ConversationHistoryRepositoryLocal,
 ) -> History:
-    os.makedirs(settings.get().CONVERSATIONS_DIR, exist_ok=True)
     history = history_repository.get_prompt_history(
         conversation_id, settings.get().PROMPT_HISTORY_INCLUDED_COUNT
     )

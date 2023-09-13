@@ -7,6 +7,7 @@ from opencopilot import settings
 from opencopilot import application
 from opencopilot.application import OpenCopilot
 from opencopilot.domain.errors import APIKeyError
+from opencopilot.domain.errors import LogsDirError
 from opencopilot.domain.errors import ModelError
 from opencopilot.domain.errors import PromptError
 
@@ -109,3 +110,22 @@ def test_sets_log_level():
         log_level="log_level"
     )
     application.api_logger.set_log_level.assert_called_with("log_level")
+
+
+def test_invalid_logs_dir_none():
+    with pytest.raises(LogsDirError):
+        OpenCopilot(
+            prompt_file=VALID_PROMPT_FILE,
+            openai_api_key=MOCK_OPENAI_API_KEY,
+            logs_dir=None
+        )
+
+
+def test_invalid_logs_dir_empty():
+    with pytest.raises(LogsDirError):
+        OpenCopilot(
+            prompt_file=VALID_PROMPT_FILE,
+            openai_api_key=MOCK_OPENAI_API_KEY,
+            logs_dir=""
+        )
+

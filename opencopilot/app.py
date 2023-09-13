@@ -35,9 +35,7 @@ API_DESCRIPTION = (
 )
 API_VERSION = "0.1"
 
-base_url = settings.get().API_BASE_URL
-if base_url.endswith("/"):
-    base_url = base_url[:-1]
+base_url = settings.get().get_base_url()
 
 
 @app.on_event("startup")
@@ -100,7 +98,7 @@ def _get_servers():
     if settings.get().is_production():
         pass
     else:
-        servers.append({"url": f"{base_url}:{settings.get().API_PORT}"})
+        servers.append({"url": f"{base_url}"})
     return servers
 
 
