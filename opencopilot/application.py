@@ -24,6 +24,7 @@ from opencopilot.utils.validators import validate_local_llm
 from opencopilot.utils.validators import validate_openai_api_key
 from opencopilot.utils.validators import validate_prompt_and_prompt_file_config
 from opencopilot.utils.validators import validate_system_prompt
+from opencopilot.callback_types import PromptBuilder
 
 ALLOWED_LLM_MODEL_NAMES = ["gpt-3.5-turbo-16k", "gpt-4"]
 
@@ -130,6 +131,7 @@ class OpenCopilot:
         self.data_urls = []
         self.local_file_paths = []
         self.documents = []
+        self._prompt_builder_fn = None
         self.router = _get_custom_router()
 
     def __call__(self, *args, **kwargs):
@@ -175,6 +177,7 @@ class OpenCopilot:
 
         from .app import app
 
+        app.opencopilot_callbacks = {"prompt_builder": self._prompt_builder_fn}
         app.include_router(self.router)
         track(
             TrackingEventType.COPILOT_START,
@@ -195,6 +198,9 @@ class OpenCopilot:
 
     def add_data_urls(self, urls: List[str]) -> None:
         self.data_urls.extend(urls)
+
+    def prompt_builder(self, function: PromptBuilder):
+        self._prompt_builder_fn = function
 
 
 def _get_custom_router() -> APIRouter:

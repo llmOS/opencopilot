@@ -1,5 +1,6 @@
 import uuid
 
+from typing import Optional
 from opencopilot.domain.chat import on_user_message_use_case
 from opencopilot.domain.chat.entities import UserMessageInput
 from opencopilot.repository.conversation_history_repository import (
@@ -13,6 +14,7 @@ from opencopilot.repository.users_repository import UsersRepositoryLocal
 from opencopilot.service.chat.entities import ChatRequest
 from opencopilot.service.chat.entities import ChatResponse
 from opencopilot.service.utils import get_uuid
+from opencopilot.callback_types import PromptBuilder
 
 
 async def execute(
@@ -21,6 +23,7 @@ async def execute(
     history_repository: ConversationHistoryRepositoryLocal,
     logs_repository: ConversationLogsRepositoryLocal,
     users_repository: UsersRepositoryLocal,
+    prompt_builder: Optional[PromptBuilder],
 ) -> ChatResponse:
     conversation_id = get_uuid(request.conversation_id, "conversation_id")
     response_message_id: str = str(uuid.uuid4())
@@ -35,6 +38,7 @@ async def execute(
         history_repository,
         logs_repository=logs_repository,
         users_repository=users_repository,
+        prompt_builder=prompt_builder,
     )
     return ChatResponse(
         response="OK",

@@ -2,6 +2,7 @@ import asyncio
 import json
 from datetime import datetime
 from typing import AsyncGenerator
+from typing import Optional
 from typing import List
 
 from langchain.schema import Document
@@ -26,6 +27,7 @@ from opencopilot.service.error_responses import ForbiddenAPIError
 from opencopilot.utils.callbacks.callback_handler import (
     CustomAsyncIteratorCallbackHandler,
 )
+from opencopilot.callback_types import PromptBuilder
 
 logger = api_logger.get()
 
@@ -36,6 +38,7 @@ async def execute(
     history_repository: ConversationHistoryRepositoryLocal,
     logs_repository: ConversationLogsRepositoryLocal,
     users_repository: UsersRepositoryLocal,
+    prompt_builder: Optional[PromptBuilder],
 ) -> AsyncGenerator[StreamingChunk, None]:
     if not is_user_allowed_to_chat_use_case.execute(
         domain_input.conversation_id,
@@ -57,9 +60,11 @@ async def execute(
             domain_input,
             system_message,
             context,
+            document_store,
             logs_repository=logs_repository,
             history_repository=history_repository,
             callback=callback,
+            prompt_builder=prompt_builder,
         )
     )
 

@@ -1,5 +1,6 @@
 from typing import List
 from typing import Tuple
+from typing import Optional
 
 from langchain import PromptTemplate
 from langchain.chat_models.base import BaseChatModel
@@ -15,6 +16,7 @@ from opencopilot.domain.chat.results import format_context_documents_use_case
 from opencopilot.domain.chat.results import get_llm
 from opencopilot.domain.errors import OpenAIRuntimeError
 from opencopilot.logger import api_logger
+from opencopilot.repository.documents.document_store import DocumentStore
 from opencopilot.repository.conversation_history_repository import (
     ConversationHistoryRepositoryLocal,
 )
@@ -24,6 +26,7 @@ from opencopilot.repository.conversation_logs_repository import (
 from opencopilot.utils.callbacks.callback_handler import (
     CustomAsyncIteratorCallbackHandler,
 )
+from opencopilot.callback_types import PromptBuilder
 
 logger = api_logger.get()
 
@@ -32,9 +35,11 @@ async def execute(
     domain_input: UserMessageInput,
     system_message: str,
     context: List[Document],
+    document_store: DocumentStore,
     logs_repository: ConversationLogsRepositoryLocal,
     history_repository: ConversationHistoryRepositoryLocal,
     callback: CustomAsyncIteratorCallbackHandler = None,
+    prompt_builder: Optional[PromptBuilder] = None,
 ) -> str:
     llm = get_llm.execute(domain_input.user_id, streaming=callback is not None)
 
@@ -51,7 +56,8 @@ async def execute(
         token_count=get_token_count_use_case.execute(history.formatted_history, llm),
     )
 
-    prompt_text = _get_prompt_text(
+    user_prompt = prompt_builder(domain_input.message, [], document_store) if prompt_builder else None
+    prompt_text = user_prompt or _get_prompt_text(
         domain_input,
         history.template_with_history,
         context,
