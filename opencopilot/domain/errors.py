@@ -53,3 +53,7 @@ class OpenAIRuntimeError(CopilotRuntimeError):
 
 class WeaviateRuntimeError(CopilotRuntimeError):
     """Raised when cannot connect to Weaviate"""
+
+
+class LocalLLMRuntimeError(CopilotRuntimeError):
+    """Raised when error with connecting to LocalLLM"""

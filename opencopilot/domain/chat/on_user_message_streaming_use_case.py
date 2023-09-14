@@ -13,6 +13,7 @@ from opencopilot.domain.chat.entities import StreamingChunk
 from opencopilot.domain.chat.entities import UserMessageInput
 from opencopilot.domain.chat.results import get_gpt_result_use_case
 from opencopilot.domain.chat.utils import get_system_message
+from opencopilot.domain.errors import CopilotRuntimeError
 from opencopilot.logger import api_logger
 from opencopilot.repository.conversation_history_repository import (
     ConversationHistoryRepositoryLocal,
@@ -88,6 +89,14 @@ async def execute(
                 )
         await task
         result = task.result()
+    except CopilotRuntimeError as exc:
+        logger.error(f"{type(exc).__name__}: {exc.message}")
+        yield StreamingChunk(
+            conversation_id=domain_input.conversation_id,
+            text="",
+            sources=[],
+            error=f"{type(exc).__name__}: {exc.message}",
+        )
     except Exception as exc:
         logger.error(f"Stream error: {exc}")
         yield StreamingChunk(
