@@ -41,7 +41,7 @@ def get_opencopilot_version():
         ]
 
         for line in matching_lines:
-            if line.startswith(package_name):
+            if line.startswith(package_name) and "==" in line:
                 # Normal PyPI install
                 declared_version = line.split("==")[1]
                 break
