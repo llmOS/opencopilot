@@ -75,14 +75,16 @@ def get_repl_hash():
         return hashed("/".join(get_replit_owner_and_slug()))
     return None
 
+
 def is_running_in_docker():
-    if os.path.isfile('/proc/1/cgroup'):
-        with open('/proc/1/cgroup', 'rt') as f:
+    if os.path.isfile("/proc/1/cgroup"):
+        with open("/proc/1/cgroup", "rt") as f:
             contents = f.read()
-            if 'docker' in contents.lower():
+            if "docker" in contents.lower():
                 return True
-    
+
     return False
+
 
 def hashed(s: str):
     return xxhash.xxh64(s.encode("utf-8")).hexdigest()
@@ -94,10 +96,10 @@ def get_hashed_user_id():
         # Replit has a unique user ID
         owner, _ = get_replit_owner_and_slug()
         return hashed(f"replit:{owner}")
-    
+
     if is_running_in_docker():
         # There is no persistent user ID we can extract from within Docker
-        # We could get the container ID with socket.gethostname(), 
+        # We could get the container ID with socket.gethostname(),
         # but that's not persistent enough. So here, we just return a constant
         # value, which means we will undercount Docker users.
         return hashed("docker")
@@ -116,7 +118,6 @@ def get_hashed_user_id():
         f.write(new_uuid)
 
     return hashed(new_uuid)
-
 
 
 def track(event_type: TrackingEventType, *args, **kwargs):
@@ -175,7 +176,7 @@ def _track_copilot_start(
             "platform.system": platform.system(),
             "is_replit": is_running_in_replit(),
             "repl_hash": repl_hash,
-            "is_docker": is_running_in_docker()
+            "is_docker": is_running_in_docker(),
         },
     }
 
