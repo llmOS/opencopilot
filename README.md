@@ -91,14 +91,16 @@ copilot = OpenCopilot(
     openai_api_key="your-openai-api-key",
     # You can also use gpt-4 for improved accuracy
     # or Llama 2 locally (https://docs.opencopilot.dev/create/opensource-llms#running-an-llm)
-    llm="gpt-3.5-turbo-16k",                     
-    prompt=PROMPT
+    llm="gpt-3.5-turbo-16k",
+    prompt=PROMPT,
 )
 
 # Download and embed the knowledge base from given URL
-copilot.add_data_urls([
-    "https://awsdocs.s3.amazonaws.com/cli/latest/aws-cli.pdf",
-])
+copilot.add_data_urls(
+    [
+        "https://awsdocs.s3.amazonaws.com/cli/latest/aws-cli.pdf",
+    ]
+)
 
 # Run the copilot
 copilot()
