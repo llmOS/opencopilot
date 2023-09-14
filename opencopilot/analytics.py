@@ -81,7 +81,7 @@ def get_hashed_user_id():
     if is_running_in_replit():
         # Replit has a unique user ID
         owner, _ = get_replit_owner_and_slug()
-        return hashed(owner)
+        return hashed(f"replit:{owner}")
 
     # Fall back to mac address
     mac_address: int = uuid.getnode()
