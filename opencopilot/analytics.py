@@ -142,6 +142,7 @@ def track(event_type: TrackingEventType, *args, **kwargs):
         func(*args, **kwargs)
     except Exception as e:
         # Same reason to hide exception as above
+        raise(e)
         pass
 
 
