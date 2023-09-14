@@ -20,4 +20,4 @@ jobs:
       - name: Codespell
         run: |
           pip install codespell
-          codespell --skip="./examples,./tests/assets" --ignore-words-list="momento,aapply"
+          codespell --skip="./examples,./tests/assets,./tests/frontend" --ignore-words-list="momento,aapply"

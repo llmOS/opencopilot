@@ -38,3 +38,5 @@ embeddings_cache.pkl
 dist
 opencopilot_ai.egg-info
 examples/*/logs
+
+node_modules
