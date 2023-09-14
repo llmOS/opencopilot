@@ -13,6 +13,7 @@ import segment.analytics as segment_analytics
 from . import settings
 from .settings import Settings
 
+LOCAL_USER_ID_FILE_PATH = "~/.opencopilot/uuid"
 
 SEGMENT_WRITE_KEY = "iEkciV19ocu9abTCzjbvjPsCKzOJF30S"
 segment_analytics.write_key = SEGMENT_WRITE_KEY
@@ -74,6 +75,13 @@ def get_repl_hash():
         return hashed("/".join(get_replit_owner_and_slug()))
     return None
 
+def is_running_in_docker():
+    with open('/proc/1/cgroup', 'rt') as f:
+        contents = f.read()
+        if 'docker' in contents.lower():
+            return True
+    
+    return False
 
 def hashed(s: str):
     return xxhash.xxh64(s.encode("utf-8")).hexdigest()
@@ -85,10 +93,29 @@ def get_hashed_user_id():
         # Replit has a unique user ID
         owner, _ = get_replit_owner_and_slug()
         return hashed(f"replit:{owner}")
+    
+    if is_running_in_docker():
+        # There is no persistent user ID we can extract from within Docker
+        # We could get the container ID with socket.gethostname(), 
+        # but that's not persistent enough. So here, we just return a constant
+        # value, which means we will undercount Docker users.
+        return hashed("docker")
 
-    # Fall back to mac address
-    mac_address: int = uuid.getnode()
-    return hashed(str(mac_address))
+    # Fall back to locally-generated uuid
+    user_id_file_path = os.path.abspath(os.path.expanduser(LOCAL_USER_ID_FILE_PATH))
+    if os.path.isfile(user_id_file_path):
+        # Read existing uuid
+        with open(user_id_file_path, "r") as f:
+            return hashed(f.read())
+
+    # Generate and save a new local uuid
+    new_uuid = str(uuid.uuid4())
+    os.makedirs(os.path.dirname(user_id_file_path), exist_ok=True)
+    with open(user_id_file_path, "w") as f:
+        f.write(new_uuid)
+
+    return hashed(new_uuid)
+
 
 
 def track(event_type: TrackingEventType, *args, **kwargs):
@@ -132,7 +159,6 @@ def _track_copilot_start(
     event = {
         "llm_name": llm_name,
         "copilot_name_hash": hashed(s.COPILOT_NAME),
-        "repl_hash": repl_hash,
         "prompt": {"hash": hashed(s.PROMPT), "length": len(s.PROMPT)},
         "retrieval": {
             "n_documents": n_documents,
@@ -146,7 +172,9 @@ def _track_copilot_start(
             "opencopilot_version": get_opencopilot_version(),
             "platform.platform": platform.platform(),
             "platform.system": platform.system(),
-            # TODO track env type - conda, venv, docker, etc
+            "is_replit": is_running_in_replit(),
+            "repl_hash": repl_hash,
+            "is_docker": is_running_in_docker()
         },
     }
 
