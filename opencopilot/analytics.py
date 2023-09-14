@@ -1,4 +1,5 @@
 import uuid
+import os
 import enum
 import xxhash
 import platform
@@ -55,6 +56,21 @@ def get_opencopilot_version():
 
     return declared_version
 
+def is_running_in_replit():
+    replit_conf_file_exists = os.path.isfile(".replit")
+    return replit_conf_file_exists
+
+
+def get_replit_owner_and_slug():
+    repl_owner = os.environ.get("REPL_OWNER", "")
+    repl_slug = os.environ.get("REPL_SLUG", "")
+    return repl_owner, repl_slug
+
+def get_repl_hash():
+    """Returns a hashed unique identifier for the repl."""
+    if is_running_in_replit():
+        return hashed("/".join(get_replit_owner_and_slug()))
+    return None
 
 def hashed(s: str):
     return xxhash.xxh64(s.encode("utf-8")).hexdigest()
@@ -62,6 +78,12 @@ def hashed(s: str):
 
 def get_hashed_user_id():
     """Returns a hashed unique identifier for the user."""
+    if is_running_in_replit():
+        # Replit has a unique user ID
+        owner, _ = get_replit_owner_and_slug()
+        return hashed(owner)
+
+    # Fall back to mac address
     mac_address: int = uuid.getnode()
     return hashed(str(mac_address))
 
@@ -101,9 +123,13 @@ def _track_copilot_start(
     """Should be fired when the copilot starts."""
     s: Settings = settings.get()
 
+    repl_hash = get_repl_hash()
+    llm_name = str(s.LLM)
+
     event = {
-        "llm_name": s.MODEL,
+        "llm_name": llm_name,
         "copilot_name_hash": hashed(s.COPILOT_NAME),
+        "repl_hash": repl_hash,
         "prompt": {"hash": hashed(s.PROMPT), "length": len(s.PROMPT)},
         "retrieval": {
             "n_documents": n_documents,
