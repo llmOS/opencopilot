@@ -7,7 +7,7 @@ WORKDIR /app
 ADD requirements.txt /app
 
 # Install any needed packages specified in requirements.txt
-RUN pip install --no-cache-dir pip install git+https://github.com/opencopilotdev/opencopilot.git@analytics-replit
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Add the current directory contents into the container at /app
 ADD . /app
