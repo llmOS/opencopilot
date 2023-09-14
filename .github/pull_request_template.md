@@ -1,11 +1,6 @@
 ### Task / problem
 Insert the task link or describe the problem you're solving
 
-### Changes made
-In simple terms, explain the changes made. Eg
-- Added a new property to results so that it could be retrieved in FE
+### Checklist
 
-### Testing
-Explain how others could fully test your code. Eg:
-- Run local unit tests
-- Check report in FE service by running current branch as BE  
+- [ ] If relevant, checked and updated the [docs repo](https://github.com/opencopilotdev/docs), [README](https://github.com/opencopilotdev/opencopilot/tree/README), and [examples](https://github.com/opencopilotdev/opencopilot/tree/main/examples)

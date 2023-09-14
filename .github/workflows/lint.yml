@@ -24,3 +24,9 @@ jobs:
         run: |
           pip install black
           black --check opencopilot
+      - name: "Lint Readme Code"
+        run: |
+          PYTHONPATH=. python tests/assets/get_python_code_from_readme.py
+          cat readme_copilot.py
+          pylint readme_copilot.py
+          black --check readme_copilot.py

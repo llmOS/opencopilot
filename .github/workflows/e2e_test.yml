@@ -2,7 +2,7 @@ name: E2E Test
 
 on:
   push:
-    branches: [ main, expose-router ]
+    branches: [ main, ci-frontend ]
 
 jobs:
   e2e-test:
@@ -37,3 +37,10 @@ jobs:
       - name: "Test Backend"
         run: |
           PYTHONPATH=. python tests/e2e/test_backend.py
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: tests/frontend
+          build: npm install
+          start: npx cypress run
+          browser: chrome
