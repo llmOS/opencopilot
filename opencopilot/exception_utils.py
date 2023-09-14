@@ -16,7 +16,7 @@ def add_copilot_exception_catching():
         # "traceback" is the object containing what python needs to print
         # logger = logging.getLogger("OpenCopilot")
         logger = api_logger.get()
-        if logger.level >= logging.WARNING:
+        if logger.level >= logging.INFO:
             if issubclass(exctype, CopilotConfigurationError) or issubclass(
                 exctype, CopilotRuntimeError
             ):
