@@ -4,6 +4,9 @@ from typing import Dict
 from typing import List
 from typing import Optional
 from uuid import UUID
+from langchain.schema import BaseMessage
+from langchain.schema import HumanMessage
+from langchain.schema import AIMessage
 
 from opencopilot import settings
 from opencopilot.logger import api_logger
@@ -45,6 +48,14 @@ class ConversationHistoryRepositoryLocal:
         except:
             pass
         return history
+
+    def get_messages(self, conversation_id: UUID) -> List[BaseMessage]:
+        history = self.get_history(conversation_id)
+        messages = []
+        for message_pair in history:
+            messages.append(HumanMessage(content=message_pair["prompt"]))
+            messages.append(AIMessage(content=message_pair["response"]))
+        return messages
 
     def _to_string(self, history: List[Dict]) -> str:
         formatted: str = ""

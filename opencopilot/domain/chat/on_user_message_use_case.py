@@ -49,7 +49,7 @@ async def execute(
         document_store,
         logs_repository=logs_repository,
         history_repository=history_repository,
-        prompt_builder=rompt_builder,
+        prompt_builder=prompt_builder,
     )
 
     response_timestamp = datetime.now().timestamp()

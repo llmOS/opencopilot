@@ -135,7 +135,7 @@ async def handle_conversation(
         prompt_builder = api_request.app.opencopilot_callbacks.get("prompt_builder")
     except:
         prompt_builder = None
-    
+
     response: ChatResponse = await chat_service.execute(
         request,
         document_store.get_document_store(),
@@ -203,7 +203,7 @@ async def handle_conversation_streaming(
             history_repository,
             logs_repository,
             users_repository,
-            prompt_builder=prompt_builder
+            prompt_builder=prompt_builder,
         ),
         headers=headers,
         media_type="text/event-stream",

@@ -56,7 +56,10 @@ async def execute(
         token_count=get_token_count_use_case.execute(history.formatted_history, llm),
     )
 
-    user_prompt = prompt_builder(domain_input.message, [], document_store) if prompt_builder else None
+    if prompt_builder:
+        message_history = history_repository.get_messages(domain_input.conversation_id)
+        user_prompt = prompt_builder(domain_input.message, message_history, document_store)
+
     prompt_text = user_prompt or _get_prompt_text(
         domain_input,
         history.template_with_history,
