@@ -36,7 +36,7 @@ from opencopilot.service.chat.entities import ChatRequest
 from opencopilot.service.chat.entities import ChatResponse
 from opencopilot.service.chat.entities import ConversationsRequest
 from opencopilot.service.chat.entities import ConversationsResponse
-from opencopilot.callback_types import PromptBuilder
+from opencopilot.callbacks import PromptBuilder
 
 TAG = "Conversation"
 router = APIRouter()
@@ -131,18 +131,13 @@ async def handle_conversation(
     logs_repository = ConversationLogsRepositoryLocal()
     users_repository = UsersRepositoryLocal()
 
-    try:
-        prompt_builder = api_request.app.opencopilot_callbacks.get("prompt_builder")
-    except:
-        prompt_builder = None
-
     response: ChatResponse = await chat_service.execute(
         request,
         document_store.get_document_store(),
         history_repository,
         logs_repository,
         users_repository,
-        prompt_builder,
+        api_request.app.opencopilot_callbacks,
     )
 
     background_tasks.add_task(
@@ -191,10 +186,6 @@ async def handle_conversation_streaming(
         api_request.headers.get("user-agent"),
         True,
     )
-    try:
-        prompt_builder = api_request.app.opencopilot_callbacks.get("prompt_builder")
-    except:
-        prompt_builder = None
 
     return StreamingResponse(
         chat_streaming_service.execute(
@@ -203,7 +194,7 @@ async def handle_conversation_streaming(
             history_repository,
             logs_repository,
             users_repository,
-            prompt_builder=prompt_builder,
+            api_request.app.opencopilot_callbacks,
         ),
         headers=headers,
         media_type="text/event-stream",

@@ -15,7 +15,7 @@ from opencopilot.repository.documents.document_store import DocumentStore
 from opencopilot.repository.users_repository import UsersRepositoryLocal
 from opencopilot.service.chat.entities import ChatRequest
 from opencopilot.service.utils import get_uuid
-from opencopilot.callback_types import PromptBuilder
+from opencopilot.callbacks import Callbacks
 
 
 async def execute(
@@ -24,7 +24,7 @@ async def execute(
     history_repository: ConversationHistoryRepositoryLocal,
     logs_repository: ConversationLogsRepositoryLocal,
     users_repository: UsersRepositoryLocal,
-    prompt_builder: Optional[PromptBuilder],
+    callbacks: Callbacks,
 ) -> AsyncIterable[str]:
     conversation_id = get_uuid(request.conversation_id, "conversation_id")
     async for chunk in on_user_message_streaming_use_case.execute(
@@ -38,7 +38,7 @@ async def execute(
         history_repository,
         logs_repository,
         users_repository,
-        prompt_builder,
+        callbacks,
     ):
         data = chunk.to_dict()
         yield f"{json.dumps(data)}\n"

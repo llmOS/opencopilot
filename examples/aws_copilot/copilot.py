@@ -42,7 +42,6 @@ copilot = OpenCopilot(
 
 @copilot.prompt_builder
 def builder(message: str, history: List[BaseMessage], document_store: DocumentStore) -> Optional[str]:
-    print(history)
     if "EC2" in message:
         return "Make a sarcastic remark about how the user should switch to a serverless architecture."
 

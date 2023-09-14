@@ -26,7 +26,7 @@ from opencopilot.repository.conversation_logs_repository import (
 from opencopilot.utils.callbacks.callback_handler import (
     CustomAsyncIteratorCallbackHandler,
 )
-from opencopilot.callback_types import PromptBuilder
+from opencopilot.callbacks import Callbacks
 
 logger = api_logger.get()
 
@@ -38,10 +38,12 @@ async def execute(
     document_store: DocumentStore,
     logs_repository: ConversationLogsRepositoryLocal,
     history_repository: ConversationHistoryRepositoryLocal,
-    callback: CustomAsyncIteratorCallbackHandler = None,
-    prompt_builder: Optional[PromptBuilder] = None,
+    opencopilot_callbacks: Callbacks,
+    streaming_callback: CustomAsyncIteratorCallbackHandler = None,
 ) -> str:
-    llm = get_llm.execute(domain_input.user_id, streaming=callback is not None)
+    llm = get_llm.execute(
+        domain_input.user_id, streaming=streaming_callback is not None
+    )
 
     history = utils.add_history(
         system_message,
@@ -56,17 +58,21 @@ async def execute(
         token_count=get_token_count_use_case.execute(history.formatted_history, llm),
     )
 
-    if prompt_builder:
+    prompt_text = None
+    if opencopilot_callbacks.prompt_builder:
         message_history = history_repository.get_messages(domain_input.conversation_id)
-        user_prompt = prompt_builder(domain_input.message, message_history, document_store)
+        prompt_text = opencopilot_callbacks.prompt_builder(
+            domain_input.message, message_history, document_store
+        )
 
-    prompt_text = user_prompt or _get_prompt_text(
-        domain_input,
-        history.template_with_history,
-        context,
-        llm,
-        logs_repository,
-    )
+    if not prompt_text:
+        prompt_text = _get_prompt_text(
+            domain_input,
+            history.template_with_history,
+            context,
+            llm,
+            logs_repository,
+        )
 
     logs_repository.log_prompt_text(
         domain_input.conversation_id,
@@ -89,8 +95,8 @@ async def execute(
     try:
         result_message = await llm.agenerate(
             [messages],
-            callbacks=[callback] if callback is not None else None,
-            stream=callback is not None,
+            callbacks=[streaming_callback] if streaming_callback is not None else None,
+            stream=streaming_callback is not None,
         )
         result = result_message.generations[0][0].text
         return result

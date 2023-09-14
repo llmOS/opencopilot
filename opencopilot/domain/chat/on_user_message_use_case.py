@@ -16,7 +16,7 @@ from opencopilot.repository.conversation_logs_repository import (
 from opencopilot.repository.documents.document_store import DocumentStore
 from opencopilot.repository.users_repository import UsersRepositoryLocal
 from opencopilot.service.error_responses import ForbiddenAPIError
-from opencopilot.callback_types import PromptBuilder
+from opencopilot.callbacks import Callbacks
 
 logger = api_logger.get()
 
@@ -27,7 +27,7 @@ async def execute(
     history_repository: ConversationHistoryRepositoryLocal,
     logs_repository: ConversationLogsRepositoryLocal,
     users_repository: UsersRepositoryLocal,
-    prompt_builder: Optional[PromptBuilder],
+    callbacks: Callbacks,
 ) -> MessageModel:
     if not is_user_allowed_to_chat_use_case.execute(
         domain_input.conversation_id,
@@ -49,7 +49,7 @@ async def execute(
         document_store,
         logs_repository=logs_repository,
         history_repository=history_repository,
-        prompt_builder=prompt_builder,
+        opencopilot_callbacks=callbacks,
     )
 
     response_timestamp = datetime.now().timestamp()
