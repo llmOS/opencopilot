@@ -76,10 +76,11 @@ def get_repl_hash():
     return None
 
 def is_running_in_docker():
-    with open('/proc/1/cgroup', 'rt') as f:
-        contents = f.read()
-        if 'docker' in contents.lower():
-            return True
+    if os.path.isfile('/proc/1/cgroup'):
+        with open('/proc/1/cgroup', 'rt') as f:
+            contents = f.read()
+            if 'docker' in contents.lower():
+                return True
     
     return False
 
