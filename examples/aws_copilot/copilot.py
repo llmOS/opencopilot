@@ -2,7 +2,7 @@ from opencopilot import OpenCopilot
 
 copilot = OpenCopilot(
     copilot_name="AWS CLI Copilot",
-    llm_model_name="gpt-3.5-turbo-16k", # You can also use gpt-4 for improved accuracy
+    llm="gpt-3.5-turbo-16k", # You can also use gpt-4 for improved accuracy
     prompt_file="prompt_template.txt"
 )
 
