@@ -130,7 +130,6 @@ class OpenCopilot:
         self.local_file_paths = []
         self.documents = []
         self.router = _get_custom_router()
-        self.log_level = log_level
 
     def __call__(self, *args, **kwargs):
         from .repository.documents import document_loader
@@ -196,7 +195,7 @@ class OpenCopilot:
             app,
             host=self.host,
             port=self.api_port,
-            log_level=self.log_level or api_logger.DEFAULT_LOG_LEVEL,
+            log_level=api_logger.get().level,
         )
 
     def data_loader(self, function: Callable[[], Document]):
