@@ -3,10 +3,13 @@ import os
 import uuid
 from contextlib import nullcontext
 from typing import Optional
+from enum import Enum
 
 import typer
 from rich.console import Console
 from rich.table import Table
+from rich import print as rich_print
+from rich.prompt import Prompt
 from typing_extensions import Annotated
 
 from opencopilot import exception_utils
@@ -16,6 +19,18 @@ from opencopilot.utils.scripting import set_default_settings
 
 from opencopilot.oss import oss_app
 from opencopilot.utils.validators import validate_openai_api_key
+from opencopilot.utils.prompting import generate_prompt
+from opencopilot.utils.prompting import (
+    GPT_PROMPT_SUFFIX,
+    LLAMA_2_PROMPT_PREFIX,
+    LLAMA_2_PROMPT_SUFFIX,
+)
+
+
+class ModelType(str, Enum):
+    gpt = "gpt"
+    llama2 = "llama2"
+
 
 logger = api_logger.get()
 logger.setLevel(logging.WARNING)
@@ -53,6 +68,37 @@ def chat(message: str):
         )
         print()
         message = input("Message: ")
+
+
+@app.command(
+    help="Generate a prompt. Example: prompt 'Copilot for teaching children mathematics'"
+)
+def prompt(
+    description: str = typer.Argument(..., help="Copilot description"),
+    model: ModelType = typer.Option(
+        "gpt",
+        "--model",
+        help="Produce prompt suitable for the specified model.",
+    ),
+):
+    openai_api_key = os.getenv("OPENAI_API_KEY")
+    while True:
+        try:
+            validate_openai_api_key(openai_api_key)
+            break
+        except:
+            openai_api_key = Prompt.ask(
+                "[yellow]For prompt generation, your OpenAI API key is required. Please type it in below:[/yellow]\n"
+            )
+            os.environ["OPENAI_API_KEY"] = openai_api_key
+    rich_print(
+        f'[bold]Generating {"GPT-style prompt" if model == ModelType.gpt else "LLama-2 style"} template for "{description}"[/bold]:'
+    )
+    if model == ModelType.llama2:
+        print(LLAMA_2_PROMPT_PREFIX)
+    prompt = generate_prompt(description)
+    print(GPT_PROMPT_SUFFIX if model == ModelType.gpt else LLAMA_2_PROMPT_SUFFIX)
+    print()
 
 
 @app.command(help="Query the retrieval pipeline.")
