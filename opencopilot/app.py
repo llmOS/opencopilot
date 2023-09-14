@@ -12,6 +12,7 @@ from starlette.middleware.cors import CORSMiddleware
 
 import opencopilot
 from opencopilot import settings
+from opencopilot.logger import api_logger
 from opencopilot.routers import main_router
 from opencopilot.routers import routing_utils
 from opencopilot.service.exception_handlers.exception_handlers import (
@@ -37,6 +38,8 @@ API_VERSION = "0.1"
 
 base_url = settings.get().get_base_url()
 
+logger = api_logger.get()
+
 
 @app.on_event("startup")
 async def startup_event():
@@ -47,7 +50,7 @@ async def startup_event():
 
 async def _open_browser():
     await asyncio.sleep(1)
-    print(f"Started chat UI on {base_url}/ui")
+    logger.info(f"Started chat UI on {base_url}/ui")
     try:
         cache_dir: str = os.path.expanduser("~/.opencopilot")
         if os.path.exists(cache_dir):

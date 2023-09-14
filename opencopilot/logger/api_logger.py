@@ -3,7 +3,7 @@ from typing import Dict
 from typing import Optional
 from typing import Union
 
-DEFAULT_LOG_LEVEL = logging.WARNING
+DEFAULT_LOG_LEVEL = logging.INFO
 LOG_LEVELS: Dict[str, int] = {
     "critical": logging.CRITICAL,
     "error": logging.ERROR,

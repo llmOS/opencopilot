@@ -13,7 +13,10 @@ from langchain.schema import Document
 from langchain.text_splitter import TextSplitter
 
 from opencopilot import settings
+from opencopilot.logger import api_logger
 from opencopilot.repository.documents import split_documents_use_case
+
+logger = api_logger.get()
 
 
 def execute(
@@ -30,7 +33,9 @@ def execute(
 
     files_count = len(files)
     if files_count > 0:
-        print(f"[Loading {files_count} file{'s'[:files_count ^ 1]} from {data_dir}.]")
+        logger.info(
+            f"[Loading {files_count} file{'s'[:files_count ^ 1]} from {data_dir}.]"
+        )
     else:
         raise Exception(f"[Add files to {data_dir}.]")
 
@@ -40,7 +45,7 @@ def execute(
         if (
             file_size := _get_file_size(file_path)
         ) > settings.get().MAX_DOCUMENT_SIZE_MB:
-            print(
+            logger.warning(
                 f"Document {file_path} too big ({file_size} > {settings.get().MAX_DOCUMENT_SIZE_MB}), skipping."
             )
             continue
@@ -91,17 +96,17 @@ def execute(
                 loader = UnstructuredFileLoader(file_path)
                 new_documents = loader.load()
             except Exception as e:
-                print(f"Error loading {file_path}")
+                logger.warning(f"Error loading {file_path}, skipping.")
         if text_splitter:
             document_chunks = split_documents_use_case.execute(
                 text_splitter, new_documents
             )
-            print(
-                f"Generated {len(document_chunks)} document chunks from {len(new_documents)} documents"
+            logger.debug(
+                f"Generated {len(document_chunks)} document chunks from {len(new_documents)} local files."
             )
             documents.extend(document_chunks)
         else:
-            print(f"Generated {len(new_documents)} documents")
+            logger.debug(f"Generated {len(new_documents)} documents from local files.")
             documents.extend(new_documents)
     return documents
 

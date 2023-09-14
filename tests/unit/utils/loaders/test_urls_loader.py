@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock
 
-from opencopilot.src.utils.loaders import urls_loader as loader
+from opencopilot.utils.loaders import urls_loader as loader
 
 
 class Splitter(MagicMock):
