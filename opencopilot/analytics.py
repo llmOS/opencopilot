@@ -56,6 +56,7 @@ def get_opencopilot_version():
 
     return declared_version
 
+
 def is_running_in_replit():
     replit_conf_file_exists = os.path.isfile(".replit")
     return replit_conf_file_exists
@@ -66,11 +67,13 @@ def get_replit_owner_and_slug():
     repl_slug = os.environ.get("REPL_SLUG", "")
     return repl_owner, repl_slug
 
+
 def get_repl_hash():
     """Returns a hashed unique identifier for the repl."""
     if is_running_in_replit():
         return hashed("/".join(get_replit_owner_and_slug()))
     return None
+
 
 def hashed(s: str):
     return xxhash.xxh64(s.encode("utf-8")).hexdigest()
