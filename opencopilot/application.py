@@ -21,6 +21,7 @@ from opencopilot.domain.errors import LogsDirError
 from opencopilot.domain.errors import ModelError
 from opencopilot.logger import api_logger
 from opencopilot.repository.documents import split_documents_use_case
+from opencopilot.settings import FrontendConf
 from opencopilot.repository.conversation_history_repository import (
     ConversationHistoryRepositoryLocal,
 )
@@ -65,6 +66,7 @@ class OpenCopilot:
         helicone_rate_limit_policy: Optional[str] = "3;w=60;s=user",
         logs_dir: Optional[str] = "logs",
         log_level: Optional[Union[str, int]] = None,
+        frontend_conf: Optional[FrontendConf] = None,
     ):
         api_logger.set_log_level(log_level)
 
@@ -123,6 +125,7 @@ class OpenCopilot:
                 HELICONE_RATE_LIMIT_POLICY=helicone_rate_limit_policy,
                 TRACKING_ENABLED=tracking_enabled,
                 LOGS_DIR=logs_dir,
+                FRONTEND_CONF=frontend_conf,
             )
         )
 
