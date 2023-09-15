@@ -60,9 +60,10 @@ async def execute(
 
     prompt_text = None
     if opencopilot_callbacks.prompt_builder:
-        message_history = history_repository.get_messages(domain_input.conversation_id)
         prompt_text = opencopilot_callbacks.prompt_builder(
-            domain_input.message, message_history, document_store
+            conversation_id=domain_input.conversation_id, 
+            user_id=domain_input.user_id,
+            message=domain_input.message
         )
 
     if not prompt_text:

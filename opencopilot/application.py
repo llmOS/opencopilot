@@ -193,6 +193,7 @@ class OpenCopilot:
 
     def data_loader(self, function: Callable[[], Document]):
         self.data_loaders.append(function)
+        return function
 
     def add_local_files_dir(self, files_dir: str) -> None:
         self.local_files_dirs.append(files_dir)
@@ -202,6 +203,7 @@ class OpenCopilot:
 
     def prompt_builder(self, function: PromptBuilder):
         self.callbacks.prompt_builder = function
+        return function
 
 
 def _get_custom_router() -> APIRouter:
