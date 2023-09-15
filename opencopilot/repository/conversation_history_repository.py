@@ -15,12 +15,28 @@ logger = api_logger.get()
 
 
 class ConversationHistoryRepositoryLocal:
+    """
+    Manages the storage and retrieval of conversation histories locally.
+
+    This repository provides mechanisms to save, fetch, and format conversations for prompts,
+    and is backed by the local file system. Conversation histories include both human
+    and AI messages, and additional metadata like timestamps.
+    """
+
     def __init__(
         self,
         conversations_dir: str = "",
         question_template: str = "",
         response_template: str = "",
     ):
+        """
+        Initialize the repository with directory and message templates.
+
+        Args:
+            conversations_dir (str, optional): Directory to store conversation histories. Uses default if not provided.
+            question_template (str, optional): Template to format human messages. Uses default if not provided.
+            response_template (str, optional): Template to format AI responses. Uses default if not provided.
+        """
         if not conversations_dir:
             conversations_dir = os.path.join(settings.get().LOGS_DIR, "conversations")
         self.conversations_dir = conversations_dir
@@ -90,6 +106,18 @@ class ConversationHistoryRepositoryLocal:
         return messages
 
     def _to_string(self, history: List[Dict]) -> str:
+        """
+        Convert a conversation history list to a formatted string.
+
+        The conversation history list consists of dictionaries with "prompt" and "response" pairs.
+        This method uses the provided question and response templates to format them.
+
+        Args:
+            history (List[Dict]): The list of message pairs to be formatted.
+
+        Returns:
+            str: Formatted conversation history as a string.
+        """
         formatted: str = ""
         for i in history:
             formatted += (
@@ -153,9 +181,28 @@ class ConversationHistoryRepositoryLocal:
                 pass
 
     def _get_file_path(self, conversation_id: UUID):
+        """
+        Get the file path for a given conversation ID.
+
+        Args:
+            conversation_id (UUID): The unique identifier for the conversation.
+
+        Returns:
+            str: File path for the conversation's data.
+        """
         return f"{self.conversations_dir}/{str(conversation_id)}.json"
 
     def _write_file(self, conversation_id: UUID, data):
+        """
+        Write the conversation data to the corresponding file.
+
+        Args:
+            conversation_id (UUID): The unique identifier for the conversation.
+            data: The data to be saved.
+
+        Returns:
+            None
+        """
         try:
             if not os.path.exists(self.conversations_dir):
                 os.makedirs(self.conversations_dir, exist_ok=True)

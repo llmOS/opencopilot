@@ -35,6 +35,8 @@ API_DESCRIPTION = (
 )
 API_VERSION = "0.1"
 
+app.copilot_callbacks = None
+
 base_url = settings.get().get_base_url()
 
 
