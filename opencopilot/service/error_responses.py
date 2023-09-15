@@ -116,6 +116,20 @@ class WeaviateConnectionError(APIErrorResponse):
         return self.message
 
 
+class LocalLLMConnectionError(APIErrorResponse):
+    def __init__(self, message):
+        self.message = message
+
+    def to_status_code(self) -> status:
+        return status.HTTP_502_BAD_GATEWAY
+
+    def to_code(self) -> str:
+        return "local_llm_error"
+
+    def to_message(self) -> str:
+        return self.message
+
+
 class GenericCopilotRuntimeError(APIErrorResponse):
     def __init__(self, message):
         self.message = message

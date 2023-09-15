@@ -18,3 +18,7 @@ INVALID_MODEL_ERROR = (
 )
 
 INVALID_LOGS_DIR_ERROR = "Invalid logs_dir passed. Make sure it is non empty value."
+
+LOCAL_LLM_CONNECTION_ERROR = (
+    "Failed to connect to Local LLM. Please make sure that the service is running"
+)

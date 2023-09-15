@@ -13,6 +13,7 @@ from opencopilot.domain.chat import utils
 from opencopilot.domain.chat.entities import UserMessageInput
 from opencopilot.domain.chat.results import format_context_documents_use_case
 from opencopilot.domain.chat.results import get_llm
+from opencopilot.domain.errors import LocalLLMRuntimeError
 from opencopilot.domain.errors import OpenAIRuntimeError
 from opencopilot.logger import api_logger
 from opencopilot.repository.conversation_history_repository import (
