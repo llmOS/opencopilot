@@ -9,11 +9,11 @@ from langchain.text_splitter import TextSplitter
 from opencopilot import settings
 from opencopilot.logger import api_logger
 from opencopilot.repository.documents import split_documents_use_case
-from opencopilot.src.utils.loaders.url_loaders import csv_loader_use_case
-from opencopilot.src.utils.loaders.url_loaders import html_loader_use_case
-from opencopilot.src.utils.loaders.url_loaders import json_loader_use_case
-from opencopilot.src.utils.loaders.url_loaders import pdf_loader_use_case
-from opencopilot.src.utils.loaders.url_loaders import xls_loader_use_case
+from opencopilot.utils.loaders.url_loaders import csv_loader_use_case
+from opencopilot.utils.loaders.url_loaders import html_loader_use_case
+from opencopilot.utils.loaders.url_loaders import json_loader_use_case
+from opencopilot.utils.loaders.url_loaders import pdf_loader_use_case
+from opencopilot.utils.loaders.url_loaders import xls_loader_use_case
 
 logger = api_logger.get()
 
@@ -30,8 +30,13 @@ def execute(
     urls: List[str], text_splitter: TextSplitter, max_document_size_mb: int
 ) -> List[Document]:
     documents: List[Document] = []
+    success_count: int = 0
     for url in urls:
-        documents.extend(_load_url(url, max_document_size_mb))
+        new_docs = _load_url(url, max_document_size_mb)
+        documents.extend(new_docs)
+        if new_docs:
+            success_count += 1
+    logger.info(f"Successfully scraped {success_count} url{'s'[:success_count ^ 1]}.")
     return split_documents_use_case.execute(text_splitter, documents)
 
 

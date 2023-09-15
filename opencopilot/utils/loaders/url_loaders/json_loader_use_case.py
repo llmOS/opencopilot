@@ -4,7 +4,7 @@ from typing import List
 from langchain.document_loaders import TextLoader
 from langchain.schema import Document
 
-from opencopilot.src.utils.loaders.url_loaders.entities import (
+from opencopilot.utils.loaders.url_loaders.entities import (
     UnsupportedFileTypeException,
 )
 

@@ -14,8 +14,12 @@ from weaviate.exceptions import WeaviateBaseError
 from opencopilot import settings
 from opencopilot.domain import error_messages
 from opencopilot.domain.errors import WeaviateRuntimeError
+from opencopilot.logger import api_logger
 from opencopilot.utils import get_embedding_model_use_case
 from opencopilot.utils.get_embedding_model_use_case import CachedEmbeddings
+from opencopilot.utils.stdout import ignore_stdout
+
+logger = api_logger.get()
 
 
 class DocumentStore:
@@ -57,6 +61,7 @@ class WeaviateDocumentStore(DocumentStore):
         self.weaviate_client = self._get_weaviate_client()
         self.vector_store = self._get_vector_store()
 
+    @ignore_stdout
     def _get_weaviate_client(self):
         try:
             if url := settings.get().WEAVIATE_URL:
@@ -105,7 +110,7 @@ class WeaviateDocumentStore(DocumentStore):
         try:
             self.documents = documents
             batch_size = self.ingest_batch_size
-            print(
+            logger.info(
                 f"Got {len(documents)} documents, embedding with batch "
                 f"size: {batch_size}"
             )

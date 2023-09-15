@@ -13,6 +13,8 @@ from langchain.schema import Document
 
 from opencopilot import exception_utils
 from opencopilot import settings
+from opencopilot.analytics import TrackingEventType
+from opencopilot.analytics import track
 from opencopilot.domain import error_messages
 from opencopilot.domain.chat.models.local import LocalLLM
 from opencopilot.domain.errors import LogsDirError
@@ -26,9 +28,6 @@ from opencopilot.utils.validators import validate_prompt_and_prompt_file_config
 from opencopilot.utils.validators import validate_system_prompt
 
 ALLOWED_LLM_MODEL_NAMES = ["gpt-3.5-turbo-16k", "gpt-4"]
-
-from opencopilot.analytics import track
-from opencopilot.analytics import TrackingEventType
 
 exception_utils.add_copilot_exception_catching()
 
@@ -139,7 +138,10 @@ class OpenCopilot:
             WeaviateDocumentStore,
         )
         from opencopilot.repository.documents.document_store import EmptyDocumentStore
-        from .src.utils.loaders import urls_loader
+        from opencopilot.utils.loaders import urls_loader
+        from opencopilot.logger import api_logger
+
+        logger = api_logger.get()
 
         if (
             self.data_loaders
@@ -148,6 +150,10 @@ class OpenCopilot:
             or self.data_urls
         ):
             self.document_store = WeaviateDocumentStore()
+            if settings.get().WEAVIATE_URL:
+                logger.info("Connected to Weaviate vector DB.")
+            else:
+                logger.info("Running embedded Weaviate vector DB.")
         else:
             self.document_store = EmptyDocumentStore()
         document_store.init_document_store(self.document_store)
@@ -185,7 +191,12 @@ class OpenCopilot:
             len(self.data_urls),
         )
 
-        uvicorn.run(app, host=self.host, port=self.api_port)
+        uvicorn.run(
+            app,
+            host=self.host,
+            port=self.api_port,
+            log_level=api_logger.get().level,
+        )
 
     def data_loader(self, function: Callable[[], Document]):
         self.data_loaders.append(function)

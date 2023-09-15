@@ -15,7 +15,7 @@ def setup_function():
 
 def test_set_log_level_none():
     api_logger.set_log_level(None)
-    logger.setLevel.assert_called_with(30)
+    logger.setLevel.assert_called_with(20)
 
 
 def test_set_log_level_1():
@@ -35,4 +35,4 @@ def test_set_log_level_valid_string():
 
 def test_set_log_level_invalid_string():
     api_logger.set_log_level("invalid")
-    logger.setLevel.assert_called_with(30)
+    logger.setLevel.assert_called_with(20)
