@@ -16,12 +16,11 @@ async def test_user_not_allowed_to_chat():
     with pytest.raises(ForbiddenAPIError):
         await use_case.execute(
             domain_input=UserMessageInput(
-                conversation_id=uuid.uuid4(),
-                message="msg",
-                response_message_id="rmi"
+                conversation_id=uuid.uuid4(), message="msg", response_message_id="rmi"
             ),
             document_store=MagicMock(),
             history_repository=MagicMock(),
             logs_repository=MagicMock(),
-            users_repository=MagicMock()
+            users_repository=MagicMock(),
+            copilot_callbacks=MagicMock(),
         )

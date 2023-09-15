@@ -22,7 +22,6 @@ from opencopilot.repository.conversation_logs_repository import (
 )
 from opencopilot.repository.documents import document_store
 from opencopilot.repository.users_repository import UsersRepositoryLocal
-from opencopilot.routers import routing_utils
 from opencopilot.service.chat import chat_conversations_service
 from opencopilot.service.chat import chat_delete_service
 from opencopilot.service.chat import chat_history_service
@@ -36,6 +35,7 @@ from opencopilot.service.chat.entities import ChatRequest
 from opencopilot.service.chat.entities import ChatResponse
 from opencopilot.service.chat.entities import ConversationsRequest
 from opencopilot.service.chat.entities import ConversationsResponse
+from opencopilot.callbacks import PromptBuilder
 
 TAG = "Conversation"
 router = APIRouter()
@@ -136,6 +136,7 @@ async def handle_conversation(
         history_repository,
         logs_repository,
         users_repository,
+        api_request.app.copilot_callbacks,
     )
 
     background_tasks.add_task(
@@ -184,6 +185,7 @@ async def handle_conversation_streaming(
         api_request.headers.get("user-agent"),
         True,
     )
+
     return StreamingResponse(
         chat_streaming_service.execute(
             request,
@@ -191,6 +193,7 @@ async def handle_conversation_streaming(
             history_repository,
             logs_repository,
             users_repository,
+            api_request.app.copilot_callbacks,
         ),
         headers=headers,
         media_type="text/event-stream",

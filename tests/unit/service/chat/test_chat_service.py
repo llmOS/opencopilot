@@ -16,9 +16,7 @@ def setup():
     service.on_user_message_use_case = MagicMock()
     service.on_user_message_use_case.execute = AsyncMock(
         return_value=MessageModel(
-            conversation_id=CONVERSATION_ID,
-            content="mock content",
-            sources=[]
+            conversation_id=CONVERSATION_ID, content="mock content", sources=[]
         )
     )
     service.get_uuid = MagicMock()
@@ -38,7 +36,8 @@ async def test_success():
         MagicMock(),
         MagicMock(),
         MagicMock(),
-        MagicMock()
+        MagicMock(),
+        MagicMock(),
     )
     assert response == ChatResponse(
         response="OK",

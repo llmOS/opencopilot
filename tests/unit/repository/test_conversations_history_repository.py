@@ -34,7 +34,7 @@ def test_get_prompt_history_default():
         CONVERSATIONS_DIR,
         question_template="MockQues: {question}",
         response_template="MockRes: {response}")
-    result = repository.get_prompt_history(CONVERSATION_ID, 4)
+    result = repository.get_history_for_prompt(CONVERSATION_ID, 4)
     print("result:", result)
     expected = "MockQues: Prompt\nMockRes: Response\n" \
                "MockQues: Prompt2\nMockRes: Response2\n"
@@ -46,7 +46,7 @@ def test_get_prompt_history_count_1():
         CONVERSATIONS_DIR,
         question_template="MockQues: {question}",
         response_template="MockRes: {response}")
-    result = repository.get_prompt_history(CONVERSATION_ID, 1)
+    result = repository.get_history_for_prompt(CONVERSATION_ID, 1)
     expected = "MockQues: Prompt2\nMockRes: Response2\n"
     assert result == expected
 
@@ -56,7 +56,7 @@ def test_get_prompt_history_not_found():
         CONVERSATIONS_DIR,
         question_template="MockQues: {question}",
         response_template="MockRes: {response}")
-    result = repository.get_prompt_history(CONVERSATION_ID_INVALID, 1)
+    result = repository.get_history_for_prompt(CONVERSATION_ID_INVALID, 1)
     assert result == ""
 
 
