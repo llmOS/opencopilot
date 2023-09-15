@@ -50,6 +50,10 @@ def test():
     _chat_conversation(
         "Who was last Estonian president?",
         ["oli Kersti Kaljulaid", "Kersti Kaljulaid oli"])
+    _chat_conversation(
+        "Who is the prime minister of Estonia?",
+        ["Kaja Kallas"]
+    )
 
 
 if __name__ == '__main__':

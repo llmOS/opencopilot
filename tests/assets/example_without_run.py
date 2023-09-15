@@ -2,7 +2,7 @@ from opencopilot import OpenCopilot
 
 
 def create():
-    copilot = OpenCopilot(prompt_file="tests/assets/e2e_example_prompt.txt")
+    copilot = OpenCopilot(prompt="{question}-{history}-{context}")
 
 
 def import_app():
