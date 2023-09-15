@@ -17,10 +17,7 @@ class FrontendConf:
 
     @staticmethod
     def default():
-        return FrontendConf(
-            is_debug_enabled=True,
-            copilot_icon=None
-        )
+        return FrontendConf(is_debug_enabled=True, copilot_icon=None, theme="light")
 
 
 @dataclass(frozen=False)
@@ -65,7 +62,7 @@ class Settings:
 
     HELICONE_BASE_URL = "https://oai.hconeai.com/v1"
 
-    FRONTEND_CONF: FrontendConf = FrontendConf.default()
+    FRONTEND_CONF: FrontendConf = None
 
     def __post_init__(self):
         if self.AUTH_TYPE is not None and (
