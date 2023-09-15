@@ -17,16 +17,23 @@ def set_env():
         os.system('export CMAKE_ARGS="-DLLAMA_METAL=on"')
 
 
+def get_readme():
+    with open("README.md", "r", encoding="utf-8") as file:
+        return file.read()
+
+
 set_env()
 extra_files = package_files("opencopilot")
 
 setup(
     name='opencopilot-ai',
-    version='0.3.7',
+    version='0.3.8',
     packages=["opencopilot"],
     package_data={"": extra_files},
     license="MIT",
     description="OpenCopilot Backend",
+    long_description=get_readme(),
+    long_description_content_type='text/markdown',
     author="OpenCopilot",
     author_email="kaspar@nftport.xyz",
     url="https://github.com/opencopilotdev/opencopilot",
