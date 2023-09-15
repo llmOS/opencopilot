@@ -1,6 +1,5 @@
 from typing import List
 from typing import Tuple
-from typing import Optional
 
 from langchain import PromptTemplate
 from langchain.chat_models.base import BaseChatModel
@@ -16,7 +15,6 @@ from opencopilot.domain.chat.results import format_context_documents_use_case
 from opencopilot.domain.chat.results import get_llm
 from opencopilot.domain.errors import OpenAIRuntimeError
 from opencopilot.logger import api_logger
-from opencopilot.repository.documents.document_store import DocumentStore
 from opencopilot.repository.conversation_history_repository import (
     ConversationHistoryRepositoryLocal,
 )
@@ -35,7 +33,6 @@ async def execute(
     domain_input: UserMessageInput,
     system_message: str,
     context: List[Document],
-    document_store: DocumentStore,
     logs_repository: ConversationLogsRepositoryLocal,
     history_repository: ConversationHistoryRepositoryLocal,
     opencopilot_callbacks: Callbacks,
@@ -61,9 +58,9 @@ async def execute(
     prompt_text = None
     if opencopilot_callbacks.prompt_builder:
         prompt_text = opencopilot_callbacks.prompt_builder(
-            conversation_id=domain_input.conversation_id, 
+            conversation_id=domain_input.conversation_id,
             user_id=domain_input.user_id,
-            message=domain_input.message
+            message=domain_input.message,
         )
 
     if not prompt_text:

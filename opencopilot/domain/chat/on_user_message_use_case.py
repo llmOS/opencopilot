@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional
 
 from opencopilot.domain.chat import is_user_allowed_to_chat_use_case
 from opencopilot.domain.chat.entities import MessageModel
@@ -46,7 +45,6 @@ async def execute(
         domain_input,
         system_message,
         context,
-        document_store,
         logs_repository=logs_repository,
         history_repository=history_repository,
         opencopilot_callbacks=callbacks,

@@ -2,7 +2,6 @@ import asyncio
 import json
 from datetime import datetime
 from typing import AsyncGenerator
-from typing import Optional
 from typing import List
 
 from langchain.schema import Document
@@ -60,7 +59,6 @@ async def execute(
             domain_input,
             system_message,
             context,
-            document_store,
             logs_repository=logs_repository,
             history_repository=history_repository,
             opencopilot_callbacks=callbacks,
