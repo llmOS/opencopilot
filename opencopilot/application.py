@@ -19,12 +19,16 @@ from opencopilot.domain.errors import LogsDirError
 from opencopilot.domain.errors import ModelError
 from opencopilot.logger import api_logger
 from opencopilot.repository.documents import split_documents_use_case
+from opencopilot.repository.conversation_history_repository import (
+    ConversationHistoryRepositoryLocal,
+)
+from opencopilot.repository.users_repository import UsersRepositoryLocal
 from opencopilot.settings import Settings
 from opencopilot.utils.validators import validate_local_llm
 from opencopilot.utils.validators import validate_openai_api_key
 from opencopilot.utils.validators import validate_prompt_and_prompt_file_config
 from opencopilot.utils.validators import validate_system_prompt
-from opencopilot.callbacks import Callbacks
+from opencopilot.callbacks import CopilotCallbacks
 from opencopilot.callbacks import PromptBuilder
 
 ALLOWED_LLM_MODEL_NAMES = ["gpt-3.5-turbo-16k", "gpt-4"]
@@ -132,7 +136,7 @@ class OpenCopilot:
         self.data_urls = []
         self.local_file_paths = []
         self.documents = []
-        self.callbacks = Callbacks()
+        self.callbacks = CopilotCallbacks()
         self.router = _get_custom_router()
 
     def __call__(self, *args, **kwargs):
@@ -176,9 +180,12 @@ class OpenCopilot:
         if self.documents:
             self.document_store.ingest_data(self.documents)
 
+        self.chat_history_repository = ConversationHistoryRepositoryLocal()
+        self.users_repository = UsersRepositoryLocal()
+
         from .app import app
 
-        app.opencopilot_callbacks = self.callbacks
+        app.copilot_callbacks = self.callbacks
         app.include_router(self.router)
         track(
             TrackingEventType.COPILOT_START,

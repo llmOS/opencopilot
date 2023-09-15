@@ -26,7 +26,7 @@ from opencopilot.service.error_responses import ForbiddenAPIError
 from opencopilot.utils.callbacks.callback_handler import (
     CustomAsyncIteratorCallbackHandler,
 )
-from opencopilot.callbacks import Callbacks
+from opencopilot.callbacks import CopilotCallbacks
 
 logger = api_logger.get()
 
@@ -37,7 +37,7 @@ async def execute(
     history_repository: ConversationHistoryRepositoryLocal,
     logs_repository: ConversationLogsRepositoryLocal,
     users_repository: UsersRepositoryLocal,
-    callbacks: Callbacks,
+    copilot_callbacks: CopilotCallbacks = None,
 ) -> AsyncGenerator[StreamingChunk, None]:
     if not is_user_allowed_to_chat_use_case.execute(
         domain_input.conversation_id,
@@ -61,7 +61,7 @@ async def execute(
             context,
             logs_repository=logs_repository,
             history_repository=history_repository,
-            opencopilot_callbacks=callbacks,
+            copilot_callbacks=copilot_callbacks,
             streaming_callback=streaming_callback,
         )
     )

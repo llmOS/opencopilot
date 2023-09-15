@@ -6,5 +6,5 @@ from opencopilot.repository.documents.document_store import DocumentStore
 PromptBuilder = Callable[[str, UUID, str], Optional[str]]
 
 
-class Callbacks:
+class CopilotCallbacks:
     prompt_builder: Optional[PromptBuilder] = None

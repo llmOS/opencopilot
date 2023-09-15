@@ -1,5 +1,6 @@
 from typing import List
 from typing import Tuple
+from typing import Optional
 
 from langchain import PromptTemplate
 from langchain.chat_models.base import BaseChatModel
@@ -24,7 +25,7 @@ from opencopilot.repository.conversation_logs_repository import (
 from opencopilot.utils.callbacks.callback_handler import (
     CustomAsyncIteratorCallbackHandler,
 )
-from opencopilot.callbacks import Callbacks
+from opencopilot.callbacks import CopilotCallbacks
 
 logger = api_logger.get()
 
@@ -35,7 +36,7 @@ async def execute(
     context: List[Document],
     logs_repository: ConversationLogsRepositoryLocal,
     history_repository: ConversationHistoryRepositoryLocal,
-    opencopilot_callbacks: Callbacks,
+    copilot_callbacks: CopilotCallbacks = None,
     streaming_callback: CustomAsyncIteratorCallbackHandler = None,
 ) -> str:
     llm = get_llm.execute(
@@ -56,8 +57,8 @@ async def execute(
     )
 
     prompt_text = None
-    if opencopilot_callbacks.prompt_builder:
-        prompt_text = opencopilot_callbacks.prompt_builder(
+    if copilot_callbacks and copilot_callbacks.prompt_builder:
+        prompt_text = copilot_callbacks.prompt_builder(
             conversation_id=domain_input.conversation_id,
             user_id=domain_input.user_id,
             message=domain_input.message,

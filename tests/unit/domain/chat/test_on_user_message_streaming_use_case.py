@@ -22,6 +22,6 @@ async def test_not_allowed_to_chat():
             history_repository=MagicMock(),
             logs_repository=MagicMock(),
             users_repository=MagicMock(),
-            callbacks=MagicMock(),
+            copilot_callbacks=MagicMock(),
         ):
             pass
