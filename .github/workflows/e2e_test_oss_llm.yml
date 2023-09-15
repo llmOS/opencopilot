@@ -2,7 +2,7 @@ name: E2E Test OSS LLM
 
 on:
   push:
-    branches: [ main, expose-router ]
+    branches: [ main, ci-prompt-generator ]
 
 jobs:
   e2e-test-oss-llm:

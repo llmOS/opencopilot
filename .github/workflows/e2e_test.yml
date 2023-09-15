@@ -2,7 +2,7 @@ name: E2E Test
 
 on:
   push:
-    branches: [ main, ci-frontend ]
+    branches: [ main, ci-prompt-generator ]
 
 jobs:
   e2e-test:
