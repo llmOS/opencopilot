@@ -2,7 +2,7 @@ name: E2E Test JWT
 
 on:
   push:
-    branches: [ main, ci-prompt-generator ]
+    branches: [ main, updates-requirements ]
 
 jobs:
   e2e-test-jwt:
