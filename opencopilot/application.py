@@ -2,6 +2,7 @@ import os
 from datetime import timedelta
 from typing import Callable
 from typing import List
+from typing import Literal
 from typing import Optional
 from typing import Union
 
@@ -66,7 +67,9 @@ class OpenCopilot:
         helicone_rate_limit_policy: Optional[str] = "3;w=60;s=user",
         logs_dir: Optional[str] = "logs",
         log_level: Optional[Union[str, int]] = None,
-        frontend_conf: Optional[FrontendConf] = None,
+        ui_theme: Optional[Literal["light", "dark"]] = "light",
+        is_debug_enabled: Optional[bool] = True,
+        copilot_icon: Optional[str] = None,
     ):
         api_logger.set_log_level(log_level)
 
@@ -125,7 +128,11 @@ class OpenCopilot:
                 HELICONE_RATE_LIMIT_POLICY=helicone_rate_limit_policy,
                 TRACKING_ENABLED=tracking_enabled,
                 LOGS_DIR=logs_dir,
-                FRONTEND_CONF=frontend_conf,
+                FRONTEND_CONF=FrontendConf(
+                    theme=ui_theme,
+                    is_debug_enabled=is_debug_enabled,
+                    copilot_icon=copilot_icon,
+                ),
             )
         )
 
