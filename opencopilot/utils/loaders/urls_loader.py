@@ -50,7 +50,7 @@ def execute(
 def _load_url(url: str, max_document_size_mb: int) -> List[Document]:
     docs: List[Document] = []
     try:
-        response = requests.get(url, headers={"User-agent": USER_AGENT})
+        response = requests.get(url, stream=True, headers={"User-agent": USER_AGENT})
         response.raise_for_status()
 
         with tempfile.NamedTemporaryFile() as temp_file:
@@ -78,6 +78,7 @@ def _download_webpage(
         if downloaded_size > max_document_size_mb * 1024 * 1024:
             raise FileSizeException()
         temp_file.write(chunk)
+    temp_file.flush()
     return temp_file.name
 
 
