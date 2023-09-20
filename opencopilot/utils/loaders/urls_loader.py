@@ -73,7 +73,7 @@ def _download_webpage(
     for chunk in response.iter_content(chunk_size=CHUNK_SIZE):
         downloaded_size += len(chunk)
         if downloaded_size > max_document_size_mb * 1024 * 1024:
-            raise FileSizeExceededError()
+            raise FileSizeExceededError("")
         temp_file.write(chunk)
     temp_file.flush()
     return temp_file.name
