@@ -8,7 +8,7 @@ from langchain.schema import Document
 def execute(file_name: str, url: str) -> List[Document]:
     docs: List[Document] = []
     try:
-        with open(file_name, "r") as f:
+        with open(file_name, "rb") as f:
             content = f.read()
         text = trafilatura.extract(content)
         if not text:
