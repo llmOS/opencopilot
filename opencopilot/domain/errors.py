@@ -53,3 +53,7 @@ class OpenAIRuntimeError(CopilotRuntimeError):
 
 class WeaviateRuntimeError(CopilotRuntimeError):
     """Raised when cannot connect to Weaviate"""
+
+
+class FileSizeExceededError(CopilotRuntimeError):
+    """Raised when a document for ingestion is too big"""
