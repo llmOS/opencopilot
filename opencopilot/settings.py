@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Literal
 from typing import Optional
 from typing import Union
 
@@ -6,6 +7,17 @@ from langchain.chat_models.base import BaseChatModel
 from langchain.embeddings.base import Embeddings
 
 from opencopilot.domain.chat.models.local import LocalLLM
+
+
+@dataclass(frozen=True)
+class FrontendConf:
+    theme: Optional[Literal["light", "dark"]] = "light"
+    is_debug_enabled: Optional[bool] = True
+    copilot_icon: Optional[str] = None
+
+    @staticmethod
+    def default():
+        return FrontendConf(is_debug_enabled=True, copilot_icon=None, theme="light")
 
 
 @dataclass(frozen=False)
@@ -49,6 +61,8 @@ class Settings:
     RESPONSE_TEMPLATE: Optional[str] = None
 
     HELICONE_BASE_URL = "https://oai.hconeai.com/v1"
+
+    FRONTEND_CONF: FrontendConf = FrontendConf.default()
 
     def __post_init__(self):
         if self.AUTH_TYPE is not None and (
