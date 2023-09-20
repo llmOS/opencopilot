@@ -37,11 +37,3 @@ services:
       CLUSTER_HOSTNAME: 'node1'
     volumes:
       - /var/weaviate:/var/lib/weaviate
-  frontend:
-    image: ghcr.io/opencopilotdev/opencopilot-frontend:latest
-    ports:
-      - "3001:3001"
-    environment:
-      - 'BACKEND_HOST=http://nginx:80'
-      - 'PORT=3001'
-    command: pnpm start

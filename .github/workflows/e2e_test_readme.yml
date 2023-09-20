@@ -2,7 +2,7 @@ name: E2E Test Readme
 
 on:
   push:
-    branches: [ main, ci-readme ]
+    branches: [ main, updates-requirements ]
 
 jobs:
   e2e-test-readme:

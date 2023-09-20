@@ -18,7 +18,7 @@ def add_history(
     conversation_id: UUID,
     history_repository: ConversationHistoryRepositoryLocal,
 ) -> History:
-    history = history_repository.get_prompt_history(
+    history = history_repository.get_history_for_prompt(
         conversation_id, settings.get().PROMPT_HISTORY_INCLUDED_COUNT
     )
     history = history.replace("{", "{{").replace("}", "}}")

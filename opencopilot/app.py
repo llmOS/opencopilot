@@ -11,6 +11,7 @@ from pydantic import BaseModel
 from starlette.middleware.cors import CORSMiddleware
 
 import opencopilot
+from opencopilot import FrontendConf
 from opencopilot import settings
 from opencopilot.logger import api_logger
 from opencopilot.routers import main_router
@@ -35,6 +36,8 @@ API_DESCRIPTION = (
     "OpenCopilot API, for more information visit https://docs.opencopilot.dev/"
 )
 API_VERSION = "0.1"
+
+app.copilot_callbacks = None
 
 base_url = settings.get().get_base_url()
 
@@ -147,4 +150,13 @@ def root():
 
 @app.get("/ui", include_in_schema=False, response_class=HTMLResponse)
 def ui(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    frontend_conf: FrontendConf = settings.get().FRONTEND_CONF
+    template_params = {
+        "request": request,
+        "theme": frontend_conf.theme,
+        "is_debug_enabled": "true" if frontend_conf.is_debug_enabled else "false",
+        "copilot_icon": frontend_conf.copilot_icon
+        if frontend_conf.copilot_icon
+        else "",
+    }
+    return templates.TemplateResponse("index.html", template_params)

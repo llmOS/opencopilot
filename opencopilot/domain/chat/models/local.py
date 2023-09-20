@@ -3,19 +3,21 @@ from typing import Any
 from typing import Dict
 from typing import List
 from typing import Optional
+from urllib.parse import urljoin
 
-import requests
 import aiohttp
+import requests
 from langchain.callbacks.manager import AsyncCallbackManagerForLLMRun
 from langchain.callbacks.manager import CallbackManagerForLLMRun
 from langchain.chat_models.base import BaseChatModel
-from langchain.schema import BaseMessage
 from langchain.schema import AIMessage
-from langchain.schema import ChatResult
+from langchain.schema import BaseMessage
 from langchain.schema import ChatGeneration
+from langchain.schema import ChatResult
 from pydantic import Extra
 
-from urllib.parse import urljoin
+from opencopilot.domain import error_messages
+from opencopilot.domain.errors import LocalLLMRuntimeError
 from opencopilot.logger import api_logger
 
 logger = api_logger.get()
@@ -60,24 +62,29 @@ class LocalLLM(BaseChatModel):
         **kwargs: Any,
     ) -> ChatResult:
         final = ""
-        async for text in self._get_async_stream(
-            {
-                "query": messages[0].content,
-                "temperature": self.temperature,
-                "max_tokens": 0,
-            }
-        ):
-            token = self._process_text(text)
-            final += token
-            if run_manager:
-                await run_manager.on_llm_new_token(token)
-        return ChatResult(
-            generations=[
-                ChatGeneration(
-                    message=AIMessage(content=final),
-                )
-            ]
-        )
+        try:
+            async for text in self._get_async_stream(
+                {
+                    "query": messages[0].content,
+                    "temperature": self.temperature,
+                    "max_tokens": 0,
+                }
+            ):
+                token = self._process_text(text)
+                final += token
+                if run_manager:
+                    await run_manager.on_llm_new_token(token)
+            return ChatResult(
+                generations=[
+                    ChatGeneration(
+                        message=AIMessage(content=final),
+                    )
+                ]
+            )
+        except Exception as exc:
+            raise LocalLLMRuntimeError(
+                error_messages.LOCAL_LLM_CONNECTION_ERROR
+            ) from exc
 
     def get_token_ids(self, text: str) -> List[int]:
         try:
@@ -85,8 +92,10 @@ class LocalLLM(BaseChatModel):
                 urljoin(self.llm_url, "/tokenize"), json={"text": text}
             )
             return result.json()["tokens"]
-        except Exception as e:
-            logger.error("Failed to get token count: %s", e)
+        except Exception as exc:
+            raise LocalLLMRuntimeError(
+                error_messages.LOCAL_LLM_CONNECTION_ERROR
+            ) from exc
 
     @property
     def _llm_type(self) -> str:

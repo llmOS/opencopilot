@@ -13,6 +13,7 @@ from opencopilot.domain.chat.entities import StreamingChunk
 from opencopilot.domain.chat.entities import UserMessageInput
 from opencopilot.domain.chat.results import get_gpt_result_use_case
 from opencopilot.domain.chat.utils import get_system_message
+from opencopilot.domain.errors import CopilotRuntimeError
 from opencopilot.logger import api_logger
 from opencopilot.repository.conversation_history_repository import (
     ConversationHistoryRepositoryLocal,
@@ -26,6 +27,7 @@ from opencopilot.service.error_responses import ForbiddenAPIError
 from opencopilot.utils.callbacks.callback_handler import (
     CustomAsyncIteratorCallbackHandler,
 )
+from opencopilot.callbacks import CopilotCallbacks
 
 logger = api_logger.get()
 
@@ -36,6 +38,7 @@ async def execute(
     history_repository: ConversationHistoryRepositoryLocal,
     logs_repository: ConversationLogsRepositoryLocal,
     users_repository: UsersRepositoryLocal,
+    copilot_callbacks: CopilotCallbacks = None,
 ) -> AsyncGenerator[StreamingChunk, None]:
     if not is_user_allowed_to_chat_use_case.execute(
         domain_input.conversation_id,
@@ -50,7 +53,7 @@ async def execute(
     context = _get_context(domain_input, system_message, document_store)
     message_timestamp = datetime.now().timestamp()
 
-    callback = CustomAsyncIteratorCallbackHandler()
+    streaming_callback = CustomAsyncIteratorCallbackHandler()
 
     task = asyncio.create_task(
         get_gpt_result_use_case.execute(
@@ -59,14 +62,15 @@ async def execute(
             context,
             logs_repository=logs_repository,
             history_repository=history_repository,
-            callback=callback,
+            copilot_callbacks=copilot_callbacks,
+            streaming_callback=streaming_callback,
         )
     )
 
     result = ""
     is_metadata_sent: bool = False
     try:
-        async for callback_result in callback.aiter():
+        async for callback_result in streaming_callback.aiter():
             parsed = json.loads(callback_result)
             if token := parsed.get("token"):
                 response = StreamingChunk(
@@ -88,6 +92,14 @@ async def execute(
                 )
         await task
         result = task.result()
+    except CopilotRuntimeError as exc:
+        logger.error(f"{type(exc).__name__}: {exc.message}")
+        yield StreamingChunk(
+            conversation_id=domain_input.conversation_id,
+            text="",
+            sources=[],
+            error=f"{type(exc).__name__}: {exc.message}",
+        )
     except Exception as exc:
         logger.error(f"Stream error: {exc}")
         yield StreamingChunk(

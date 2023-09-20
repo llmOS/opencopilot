@@ -4,15 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OpenCopilot UI</title>
-    <script src="https://unpkg.com/opencopilot-ui@0.0.7/opencopilot.js"></script>
+    <script src="https://unpkg.com/opencopilot-ui@0.0.8/opencopilot.js"></script>
 </head>
 <body>
     <div id="embedded" style="width: 100vw; height: 100vh;"></div>
     <script>
         OpenCopilot.initialize({
             elementId: "embedded", // The argument is the id of the element where the component should be rendered
-            theme: "light",
-            isDebug: true,
+            theme: "{{ theme }}",
+            isDebug: {{ is_debug_enabled }},
+            copilotIcon: "{{ copilot_icon }}" || undefined,
             // authToken: "", // If auth is enabled in backend need to input JWT here
         });
     </script>
