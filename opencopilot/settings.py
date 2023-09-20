@@ -62,7 +62,7 @@ class Settings:
 
     HELICONE_BASE_URL = "https://oai.hconeai.com/v1"
 
-    FRONTEND_CONF: FrontendConf = None
+    FRONTEND_CONF: FrontendConf = FrontendConf.default()
 
     def __post_init__(self):
         if self.AUTH_TYPE is not None and (

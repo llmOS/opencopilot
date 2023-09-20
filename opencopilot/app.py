@@ -150,7 +150,7 @@ def root():
 
 @app.get("/ui", include_in_schema=False, response_class=HTMLResponse)
 def ui(request: Request):
-    frontend_conf: FrontendConf = settings.get().FRONTEND_CONF or FrontendConf.default()
+    frontend_conf: FrontendConf = settings.get().FRONTEND_CONF
     template_params = {
         "request": request,
         "theme": frontend_conf.theme,
