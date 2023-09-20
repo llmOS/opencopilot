@@ -57,3 +57,7 @@ class WeaviateRuntimeError(CopilotRuntimeError):
 
 class LocalLLMRuntimeError(CopilotRuntimeError):
     """Raised when error with connecting to LocalLLM"""
+
+
+class FileSizeExceededError(CopilotRuntimeError):
+    """Raised when a document for ingestion is too big"""
