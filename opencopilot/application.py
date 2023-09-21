@@ -16,24 +16,24 @@ from opencopilot import exception_utils
 from opencopilot import settings
 from opencopilot.analytics import TrackingEventType
 from opencopilot.analytics import track
+from opencopilot.callbacks import CopilotCallbacks
+from opencopilot.callbacks import PromptBuilder
 from opencopilot.domain import error_messages
 from opencopilot.domain.chat.models.local import LocalLLM
 from opencopilot.domain.errors import LogsDirError
 from opencopilot.domain.errors import ModelError
 from opencopilot.logger import api_logger
-from opencopilot.repository.documents import split_documents_use_case
-from opencopilot.settings import FrontendConf
 from opencopilot.repository.conversation_history_repository import (
     ConversationHistoryRepositoryLocal,
 )
+from opencopilot.repository.documents import split_documents_use_case
 from opencopilot.repository.users_repository import UsersRepositoryLocal
+from opencopilot.settings import FrontendConf
 from opencopilot.settings import Settings
 from opencopilot.utils.validators import validate_local_llm
 from opencopilot.utils.validators import validate_openai_api_key
 from opencopilot.utils.validators import validate_prompt_and_prompt_file_config
 from opencopilot.utils.validators import validate_system_prompt
-from opencopilot.callbacks import CopilotCallbacks
-from opencopilot.callbacks import PromptBuilder
 
 ALLOWED_LLM_MODEL_NAMES = ["gpt-3.5-turbo-16k", "gpt-4"]
 

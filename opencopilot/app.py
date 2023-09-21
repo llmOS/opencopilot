@@ -2,6 +2,7 @@ import asyncio
 import os
 import webbrowser
 
+import pydantic
 from fastapi import FastAPI
 from fastapi import Request
 from fastapi.openapi.utils import get_openapi
@@ -69,12 +70,14 @@ class ApiInfo(BaseModel):
     description: str
     version: str
 
-    class Config:
-        schema_extra = {
-            "example": {
-                "title": API_TITLE,
-                "description": API_DESCRIPTION,
-                "version": API_VERSION,
+    if pydantic.__version__.startswith("2"):
+        model_config = {
+            "json_schema_extra": {
+                "example": {
+                    "title": API_TITLE,
+                    "description": API_DESCRIPTION,
+                    "version": API_VERSION,
+                }
             }
         }
 

@@ -1,17 +1,18 @@
 from typing import Optional
 
+import pydantic
 from fastapi import APIRouter
 from fastapi import BackgroundTasks
 from fastapi import Body
 from fastapi import Depends
-from fastapi import Request
 from fastapi import Path
+from fastapi import Request
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from pydantic import Field
 
-from opencopilot.analytics import track
 from opencopilot.analytics import TrackingEventType
+from opencopilot.analytics import track
 from opencopilot.authorization import validate_api_key_use_case
 from opencopilot.logger import api_logger
 from opencopilot.repository.conversation_history_repository import (
@@ -35,7 +36,6 @@ from opencopilot.service.chat.entities import ChatRequest
 from opencopilot.service.chat.entities import ChatResponse
 from opencopilot.service.chat.entities import ConversationsRequest
 from opencopilot.service.chat.entities import ConversationsResponse
-from opencopilot.callbacks import PromptBuilder
 
 TAG = "Conversation"
 router = APIRouter()
@@ -71,18 +71,28 @@ class ConversationInput(BaseModel):
     message: str = Field(
         ...,
         description="Message to be answered by the copilot.",
-        example="How do I make a delicious lemon cheesecake?",
+        examples=["How do I make a delicious lemon cheesecake?"],
     )
     response_message_id: Optional[str] = Field(
         None,
     )
 
-    class Config:
-        schema_extra = {
-            "example": {
-                "message": "How do I make a delicious lemon cheesecake?",
+    if pydantic.__version__.startswith("2"):
+        model_config = {
+            "json_schema_extra": {
+                "example": {
+                    "message": "How do I make a delicious lemon cheesecake?",
+                }
             }
         }
+    else:
+
+        class Config:
+            schema_extra = {
+                "example": {
+                    "message": "How do I make a delicious lemon cheesecake?",
+                }
+            }
 
 
 @router.get(
