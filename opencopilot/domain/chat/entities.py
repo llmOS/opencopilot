@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from dataclasses import field
 from typing import Dict
 from typing import List
 from typing import Optional
@@ -23,10 +24,19 @@ class MessageModel:
 
 
 @dataclass(frozen=True)
+class UserMessageHistoryItem:
+    type: str
+    message: str
+
+
+@dataclass(frozen=True)
 class UserMessageInput:
     conversation_id: UUID
     message: str
     response_message_id: str
+    message_history: Optional[List[UserMessageHistoryItem]] = field(
+        default_factory=lambda: []
+    )
     user_id: str = None
 
 

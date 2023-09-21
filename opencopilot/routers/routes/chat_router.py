@@ -1,6 +1,3 @@
-from typing import Optional
-
-import pydantic
 from fastapi import APIRouter
 from fastapi import BackgroundTasks
 from fastapi import Body
@@ -8,8 +5,6 @@ from fastapi import Depends
 from fastapi import Path
 from fastapi import Request
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
-from pydantic import Field
 
 from opencopilot.analytics import TrackingEventType
 from opencopilot.analytics import track
@@ -34,6 +29,7 @@ from opencopilot.service.chat.entities import ChatHistoryRequest
 from opencopilot.service.chat.entities import ChatHistoryResponse
 from opencopilot.service.chat.entities import ChatRequest
 from opencopilot.service.chat.entities import ChatResponse
+from opencopilot.service.chat.entities import ConversationInput
 from opencopilot.service.chat.entities import ConversationsRequest
 from opencopilot.service.chat.entities import ConversationsResponse
 
@@ -65,34 +61,6 @@ For example, the message "I like to eat apples" might be streamed as follows:
 CONVERSATION_ID_DESCRIPTION = """
 The ID of the conversation. To start a new conversation, you should pass in a random uuid version 4 (Python: `import uuid; uuid.uuid4()`). To continue a conversation, re-use the same uuid.
 """
-
-
-class ConversationInput(BaseModel):
-    message: str = Field(
-        ...,
-        description="Message to be answered by the copilot.",
-        examples=["How do I make a delicious lemon cheesecake?"],
-    )
-    response_message_id: Optional[str] = Field(
-        None,
-    )
-
-    if pydantic.__version__.startswith("2"):
-        model_config = {
-            "json_schema_extra": {
-                "example": {
-                    "message": "How do I make a delicious lemon cheesecake?",
-                }
-            }
-        }
-    else:
-
-        class Config:
-            schema_extra = {
-                "example": {
-                    "message": "How do I make a delicious lemon cheesecake?",
-                }
-            }
 
 
 @router.get(
@@ -132,7 +100,7 @@ async def handle_conversation(
     request = ChatRequest(
         conversation_id=conversation_id,
         message=payload.message,
-        response_message_id=payload.response_message_id,
+        message_history=payload.message_history,
         user_id=user_id,
     )
 
@@ -176,8 +144,8 @@ async def handle_conversation_streaming(
     request = ChatRequest(
         conversation_id=conversation_id,
         message=payload.message,
-        response_message_id=payload.response_message_id,
         user_id=user_id,
+        message_history=payload.message_history,
     )
 
     history_repository = ConversationHistoryRepositoryLocal()

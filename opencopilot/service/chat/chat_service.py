@@ -1,6 +1,6 @@
 import uuid
 
-from typing import Optional
+from opencopilot.callbacks import CopilotCallbacks
 from opencopilot.domain.chat import on_user_message_use_case
 from opencopilot.domain.chat.entities import UserMessageInput
 from opencopilot.repository.conversation_history_repository import (
@@ -11,10 +11,10 @@ from opencopilot.repository.conversation_logs_repository import (
 )
 from opencopilot.repository.documents.document_store import DocumentStore
 from opencopilot.repository.users_repository import UsersRepositoryLocal
+from opencopilot.service.chat import chat_utils
 from opencopilot.service.chat.entities import ChatRequest
 from opencopilot.service.chat.entities import ChatResponse
 from opencopilot.service.utils import get_uuid
-from opencopilot.callbacks import CopilotCallbacks
 
 
 async def execute(
@@ -33,6 +33,7 @@ async def execute(
             message=request.message,
             response_message_id=response_message_id,
             user_id=request.user_id,
+            message_history=chat_utils.convert_message_history(request.message_history),
         ),
         document_store,
         history_repository,

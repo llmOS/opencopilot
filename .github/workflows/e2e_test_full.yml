@@ -2,7 +2,7 @@ name: E2E Test Full
 
 on:
   push:
-    branches: [ main, updates-requirements ]
+    branches: [ main, message-history-override ]
 
 jobs:
   e2e-test-full:

@@ -1,7 +1,8 @@
-import pytest
 from unittest.mock import AsyncMock
 from unittest.mock import MagicMock
 from uuid import UUID
+
+import pytest
 
 from opencopilot.domain.chat.entities import MessageModel
 from opencopilot.service.chat import chat_service as service
@@ -32,6 +33,7 @@ async def test_success():
         ChatRequest(
             conversation_id=str(CONVERSATION_ID),
             message="what's up",
+            message_history=[],
         ),
         MagicMock(),
         MagicMock(),
