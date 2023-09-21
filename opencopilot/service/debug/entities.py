@@ -1,5 +1,6 @@
 from typing import Optional
 
+import pydantic
 from pydantic import BaseModel
 from pydantic import Field
 
@@ -35,23 +36,25 @@ class GetMessageDebugResponse(ApiResponse):
     )
     llm_response: Optional[ValueWithTokens] = Field(description="LLM answer.")
 
-    class Config:
-        schema_extra = {
-            "example": {
-                "response": "OK",
-                "prompt_template": "You are a copilot.\n{context} {history} {answer}",
-                # TODO:
-                "data_sources": ["{}"],
-                "user_question": "Who are you?",
-                # "citations": "Who are you?",
-                "context": [
-                    '[{"page_content": "This is some text from the data files.", "metadata": {"source": "copilots/data/test.txt"}}]'
-                ],
-                "chat_history": [
-                    '[{"user": "Who are you?", {"copilot": "I am a copilot."}]'
-                ],
-                "full_prompt": "Full formatted prompt text here",
-                "llm_response": "I am a copilot.",
+    if pydantic.__version__.startswith("2"):
+        model_config = {
+            "json_schema_extra": {
+                "example": {
+                    "response": "OK",
+                    "prompt_template": "You are a copilot.\n{context} {history} {answer}",
+                    # TODO:
+                    "data_sources": ["{}"],
+                    "user_question": "Who are you?",
+                    # "citations": "Who are you?",
+                    "context": [
+                        '[{"page_content": "This is some text from the data files.", "metadata": {"source": "copilots/data/test.txt"}}]'
+                    ],
+                    "chat_history": [
+                        '[{"user": "Who are you?", {"copilot": "I am a copilot."}]'
+                    ],
+                    "full_prompt": "Full formatted prompt text here",
+                    "llm_response": "I am a copilot.",
+                }
             }
         }
 
@@ -67,10 +70,12 @@ class EvaluationResponse(ApiResponse):
         description="Evaluation result, a grade from A-F, with A being the best grade."
     )
 
-    class Config:
-        schema_extra = {
-            "example": {
-                "response": "OK",
-                "evaluation": "B",
+    if pydantic.__version__.startswith("2"):
+        model_config = {
+            "json_schema_extra": {
+                "example": {
+                    "response": "OK",
+                    "evaluation": "B",
+                }
             }
         }

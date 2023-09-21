@@ -1,6 +1,8 @@
+from typing import List
+
+import pydantic
 from pydantic import BaseModel
 from pydantic import Field
-from typing import List
 
 
 class GenerateStreamRequest(BaseModel):
@@ -16,5 +18,7 @@ class TokenizeRequest(BaseModel):
 class TokenizeResponse(BaseModel):
     tokens: List[int] = Field(description="List of tokens")
 
-    class Config:
-        schema_extra = {"example": {"tokens": [1, 52, 332, 44, 16]}}
+    if pydantic.__version__.startswith("2"):
+        model_config = {
+            "json_schema_extra": {"example": {"tokens": [1, 52, 332, 44, 16]}}
+        }

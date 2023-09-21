@@ -1,3 +1,4 @@
+import pydantic
 from pydantic import BaseModel
 from pydantic import Field
 
@@ -13,10 +14,12 @@ class TokenRequest(BaseModel):
 class TokenResponse(ApiResponse):
     token: str = Field(description="JWT token")
 
-    class Config:
-        schema_extra = {
-            "example": {
-                "response": "OK",
-                "token": "e91042aa-d53a-41eb-8884-67aa4947982d",
+    if pydantic.__version__.startswith("2"):
+        model_config = {
+            "json_schema_extra": {
+                "example": {
+                    "response": "OK",
+                    "token": "e91042aa-d53a-41eb-8884-67aa4947982d",
+                }
             }
         }
