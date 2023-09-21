@@ -7,7 +7,10 @@ from typing import List
 from langchain.schema import Document
 
 from opencopilot import settings
+from opencopilot.callbacks import ContextInput
+from opencopilot.callbacks import CopilotCallbacks
 from opencopilot.domain.chat import is_user_allowed_to_chat_use_case
+from opencopilot.domain.chat.entities import ChatContext
 from opencopilot.domain.chat.entities import LoadingMessage
 from opencopilot.domain.chat.entities import StreamingChunk
 from opencopilot.domain.chat.entities import UserMessageInput
@@ -27,7 +30,6 @@ from opencopilot.service.error_responses import ForbiddenAPIError
 from opencopilot.utils.callbacks.callback_handler import (
     CustomAsyncIteratorCallbackHandler,
 )
-from opencopilot.callbacks import CopilotCallbacks
 
 logger = api_logger.get()
 
@@ -50,16 +52,37 @@ async def execute(
 
     system_message = get_system_message()
 
-    context = _get_context(domain_input, system_message, document_store)
-    message_timestamp = datetime.now().timestamp()
-
     streaming_callback = CustomAsyncIteratorCallbackHandler()
+
+    context: List[Document] = _get_local_context(domain_input, system_message, document_store)
+    custom_context: List[Document] = []
+    if copilot_callbacks.context_builder:
+        yield StreamingChunk(
+            conversation_id=domain_input.conversation_id,
+            text="",
+            sources=[],
+            loading_message=LoadingMessage(
+                # Should be customizable?
+                message="Loading",
+                called_copilot="Analyst"
+            ),
+        )
+
+        custom_context = await copilot_callbacks.context_builder(
+            ContextInput(
+                conversation_id=domain_input.conversation_id,
+                user_id=domain_input.user_id,
+                message=domain_input.message,
+                history=history_repository.get_messages(domain_input.conversation_id),
+            )
+        )
+    message_timestamp = datetime.now().timestamp()
 
     task = asyncio.create_task(
         get_gpt_result_use_case.execute(
             domain_input,
             system_message,
-            context,
+            ChatContext(local_context=context, custom_context=custom_context),
             logs_repository=logs_repository,
             history_repository=history_repository,
             copilot_callbacks=copilot_callbacks,
@@ -124,7 +147,7 @@ async def execute(
         )
 
 
-def _get_context(
+def _get_local_context(
     domain_input: UserMessageInput, system_message: str, document_store: DocumentStore
 ) -> List[Document]:
     # TODO: handle context length and all the edge cases somehow a bit better

@@ -1,6 +1,11 @@
 from datetime import datetime
+from typing import List
 
+from langchain.schema import Document
+
+from opencopilot.callbacks import ContextInput
 from opencopilot.domain.chat import is_user_allowed_to_chat_use_case
+from opencopilot.domain.chat.entities import ChatContext
 from opencopilot.domain.chat.entities import MessageModel
 from opencopilot.domain.chat.entities import UserMessageInput
 from opencopilot.domain.chat.results import get_gpt_result_use_case
@@ -40,11 +45,21 @@ async def execute(
     context = []
     if "{context}" in system_message:
         context = document_store.find(domain_input.message)
+    custom_context: List[Document] = []
+    if copilot_callbacks.context_builder:
+        custom_context = copilot_callbacks.context_builder(
+            ContextInput(
+                conversation_id=domain_input.conversation_id,
+                user_id=domain_input.user_id,
+                message=domain_input.message,
+                history=history_repository.get_messages(domain_input.conversation_id),
+            )
+        )
     message_timestamp = datetime.now().timestamp()
     result = await get_gpt_result_use_case.execute(
         domain_input,
         system_message,
-        context,
+        ChatContext(local_context=context, custom_context=custom_context),
         logs_repository=logs_repository,
         history_repository=history_repository,
         copilot_callbacks=copilot_callbacks,
