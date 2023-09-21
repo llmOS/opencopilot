@@ -45,9 +45,10 @@ async def execute(
     )
 
     history = utils.add_history(
-        system_message,
-        domain_input.conversation_id,
-        history_repository,
+        template=system_message,
+        conversation_id=domain_input.conversation_id,
+        history_repository=history_repository,
+        message_history=domain_input.message_history,
     )
     logs_repository.log_history(
         domain_input.conversation_id,

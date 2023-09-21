@@ -44,7 +44,7 @@ copilot.add_local_files_dir("tests/assets/e2e_example_data")
 def e2e_data_loader():
     return [
         Document(
-            page_content="Estonian last president was Kersti Kaljulaid",
+            page_content="Estonian last president was Kersti Mock Kaljulaid",
             metadata={"source": "internet"}
         )
     ]
@@ -52,9 +52,9 @@ def e2e_data_loader():
 
 @copilot.prompt_builder
 def prompt_builder(conversation_id: UUID, user_id: str, message: str) -> str:
-    if "prime minister" in message.lower():
+    if "who is the prime minister" in message.lower():
         return PROMPT_TEMPLATE.format(
-            context="Prime minister of Estonia is Kaja Kallas",
+            context="Prime minister of Estonia is Kaja Mock Kallas",
             history="",
             question=message
         )

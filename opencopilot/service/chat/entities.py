@@ -26,9 +26,44 @@ class ConversationsResponse(ApiResponse):
         }
 
 
+class MessageHistoryItem(BaseModel):
+    type: str
+    message: str
+
+
+class ConversationInput(BaseModel):
+    message: str = Field(
+        ...,
+        description="Message to be answered by the copilot.",
+        examples=["How do I make a delicious lemon cheesecake?"],
+    )
+    message_history: Optional[List[MessageHistoryItem]] = Field(
+        default=[],
+        description="Message history of the current conversation",
+    )
+
+    if pydantic.__version__.startswith("2"):
+        model_config = {
+            "json_schema_extra": {
+                "example": {
+                    "message": "How do I make a delicious lemon cheesecake?",
+                }
+            }
+        }
+    else:
+
+        class Config:
+            schema_extra = {
+                "example": {
+                    "message": "How do I make a delicious lemon cheesecake?",
+                }
+            }
+
+
 class ChatRequest(BaseModel):
     conversation_id: str = Field(description="Conversation id")
     message: str
+    message_history: Optional[List[MessageHistoryItem]]
     user_id: Optional[str] = None
 
 

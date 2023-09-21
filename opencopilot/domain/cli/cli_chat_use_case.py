@@ -1,5 +1,7 @@
 import json
 import uuid
+from typing import List
+from typing import Optional
 
 import requests
 
@@ -11,8 +13,15 @@ headers = {"accept": "application/json", "Content-Type": "application/json"}
 DEFAULT_MESSAGE = "Hi"
 
 
-def _get_stream(url: str, message: str = DEFAULT_MESSAGE, jwt_token: str = None):
+def _get_stream(
+    url: str,
+    message: str = DEFAULT_MESSAGE,
+    jwt_token: str = None,
+    message_history: Optional[List] = [],
+):
     data = {"message": message}
+    if message_history:
+        data["message_history"] = message_history
     if jwt_token:
         headers["Authorization"] = "Bearer " + jwt_token
     s = requests.Session()
@@ -38,6 +47,7 @@ def conversation(
     base_url: str,
     conversation_id: uuid.UUID,
     message: str = DEFAULT_MESSAGE,
+    message_history: Optional[List] = [],
 ):
     url = f"{base_url}/v0/conversations/{conversation_id}"
     try:
@@ -45,6 +55,8 @@ def conversation(
         if jwt_token:
             headers["Authorization"] = "Bearer " + jwt_token
         data = {"message": message}
+        if message_history:
+            data["message_history"] = message_history
         return requests.post(url, json=data, headers=headers)
     except requests.exceptions.ConnectionError:
         raise CopilotIsNotRunningError(
@@ -57,12 +69,15 @@ def conversation_stream(
     conversation_id: uuid.UUID,
     message: str = DEFAULT_MESSAGE,
     stream: bool = False,
+    message_history: Optional[List] = [],
 ):
     url = f"{base_url}/v0/conversations/{conversation_id}/stream"
     try:
         jwt_token = get_jwt_token.execute(base_url)
         output = ""
-        for text in _get_stream(url, message=message, jwt_token=jwt_token):
+        for text in _get_stream(
+            url, message=message, jwt_token=jwt_token, message_history=message_history
+        ):
             text = _process_text(text)
             output += text
             if stream:
