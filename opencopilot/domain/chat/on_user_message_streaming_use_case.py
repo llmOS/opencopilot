@@ -54,7 +54,9 @@ async def execute(
 
     streaming_callback = CustomAsyncIteratorCallbackHandler()
 
-    context: List[Document] = _get_local_context(domain_input, system_message, document_store)
+    context: List[Document] = _get_local_context(
+        domain_input, system_message, document_store
+    )
     custom_context: List[Document] = []
     if copilot_callbacks.context_builder:
         yield StreamingChunk(
@@ -64,7 +66,7 @@ async def execute(
             loading_message=LoadingMessage(
                 # Should be customizable?
                 message="Loading",
-                called_copilot="Analyst"
+                called_copilot="Analyst",
             ),
         )
 

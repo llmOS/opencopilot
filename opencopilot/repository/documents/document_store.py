@@ -101,7 +101,9 @@ class WeaviateDocumentStore(DocumentStore):
     def __init__(self, copilot_name: str = None):
         super().__init__()
         copilot_name = copilot_name or "opencopilot"
-        self.weaviate_index_name = ''.join([i.upper() for i in copilot_name if i.isalpha()])
+        self.weaviate_index_name = "".join(
+            [i.upper() for i in copilot_name if i.isalpha()]
+        )
         self.documents = []
         self.embeddings = self.get_embeddings_model()
         self.weaviate_client = self._get_weaviate_client()
