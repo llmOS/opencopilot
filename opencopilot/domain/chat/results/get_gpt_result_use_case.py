@@ -113,17 +113,20 @@ def _get_prompt_text(
     # Almost duplicated with get_local_llm_result_use_case._get_prompt_text
     context, context_documents_count = _get_context(chat_context.local_context, llm)
     prompt_text = ""
-    if "{custom_context}" in template_with_history and chat_context.custom_context:
-        formatted_prompt = template_with_history
-        custom_context, custom_context_documents_count = _get_context(chat_context.custom_context, llm)
-        formatted_prompt = formatted_prompt.replace("{custom_context}", custom_context)
-        if (
-            get_token_count_use_case.execute(formatted_prompt, llm)
-            < settings.get().get_max_token_count()
-        ):
-            template_with_history = formatted_prompt
+    if "{custom_context}" in template_with_history:
+        if chat_context.custom_context:
+            formatted_prompt = template_with_history
+            custom_context, custom_context_documents_count = _get_context(chat_context.custom_context, llm)
+            formatted_prompt = formatted_prompt.replace("{custom_context}", custom_context)
+            if (
+                get_token_count_use_case.execute(formatted_prompt, llm)
+                < settings.get().get_max_token_count()
+            ):
+                template_with_history = formatted_prompt
+            else:
+                logger.warning("Ignoring custom context")
+                template_with_history = template_with_history.replace("{custom_context}", "")
         else:
-            logger.warning("Ignoring custom context")
             template_with_history = template_with_history.replace("{custom_context}", "")
     if "{context}" in template_with_history:
         prompt = PromptTemplate(

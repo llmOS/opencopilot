@@ -1,3 +1,4 @@
+import uuid
 from typing import List
 from urllib.parse import urljoin
 
@@ -12,7 +13,7 @@ async def execute(base_url: str, copilot_name: str, context_input: ContextInput)
     try:
         async with aiohttp.ClientSession() as session:
             async with session.post(
-                urljoin(base_url, f"/v0/conversations/{context_input.conversation_id}"),
+                urljoin(base_url, f"/v0/conversations/{uuid.uuid4()}"),
                 json={
                     "message": context_input.message,
                     #  TODO: add other context like history
