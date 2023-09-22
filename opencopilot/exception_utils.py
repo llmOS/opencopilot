@@ -7,6 +7,8 @@ from colorama import Style
 from opencopilot.domain.errors import CopilotConfigurationError
 from opencopilot.domain.errors import CopilotRuntimeError
 from opencopilot.logger import api_logger
+from opencopilot.analytics import TrackingEventType
+from opencopilot.analytics import track
 
 
 def add_copilot_exception_catching():
@@ -22,6 +24,12 @@ def add_copilot_exception_catching():
             ):
                 # Instead of the stack trace, we print an error message to stderr
                 logger.error(f"{Fore.RED}{exctype.__name__}{Style.RESET_ALL}: {value}")
+                track(
+                    TrackingEventType.COPILOT_ERROR,
+                    exctype.__name__,
+                    value,
+                    traceback,
+                )
             else:
                 # sys.__excepthook__ is the default excepthook that prints the stack trace
                 # so we use it directly if we want to see it

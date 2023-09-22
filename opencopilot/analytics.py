@@ -3,6 +3,7 @@ import os
 import enum
 import xxhash
 import platform
+import traceback
 import subprocess
 from subprocess import CalledProcessError
 import importlib.metadata as importlib_metadata
@@ -22,6 +23,7 @@ segment_analytics.write_key = SEGMENT_WRITE_KEY
 class TrackingEventType(enum.Enum):
     COPILOT_START = 1
     CHAT_MESSAGE = 2
+    COPILOT_ERROR = 3
 
 
 def get_opencopilot_version():
@@ -126,7 +128,13 @@ def get_hashed_user_id():
 
 def track(event_type: TrackingEventType, *args, **kwargs):
     """Should be the entry point to all tracking."""
-    tracking_enabled = settings.get().TRACKING_ENABLED
+    if settings.get():
+        tracking_enabled = settings.get().TRACKING_ENABLED
+    else:
+        # necessary for cases when settings aren't still set (startup errors...)
+        tracking_enabled = (
+            not os.environ.get("OPENCOPILOT_DO_NOT_TRACK", "").lower() == "true"
+        )
 
     if not tracking_enabled:
         return
@@ -134,8 +142,8 @@ def track(event_type: TrackingEventType, *args, **kwargs):
     switcher = {
         TrackingEventType.COPILOT_START: _track_copilot_start,
         TrackingEventType.CHAT_MESSAGE: _track_chat_message,
+        TrackingEventType.COPILOT_ERROR: _track_copilot_error,
     }
-
     func = switcher.get(event_type)
     if func is None:
         # We cannot raise an exception (to not break the app), and probably warning would be too much spam here too? So currently failing silently.
@@ -205,4 +213,27 @@ def _track_chat_message(user_agent, is_streaming):
         event="Messaged Copilot",
         properties=event,
         context=context,
+    )
+
+
+def _track_copilot_error(exc_type, exc_value, exc_traceback):
+    """Should be fired when a CopilotConfigurationError or CopilotRuntimeError is thrown."""
+    traceback_string = "".join(
+        traceback.format_exception(exc_type, exc_value, exc_traceback)
+    )
+    event = {
+        "error": {
+            "exc_type": exc_type,
+            "value": exc_value,
+            "traceback": traceback_string,
+        }
+    }
+
+    if current_settings := settings.get():
+        event["copilot_name_hash"] = hashed(current_settings.COPILOT_NAME)
+
+    segment_analytics.track(
+        anonymous_id=get_hashed_user_id(),
+        event="Copilot Error",
+        properties=event,
     )
