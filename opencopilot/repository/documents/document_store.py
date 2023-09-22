@@ -98,10 +98,12 @@ class DocumentStore:
 class WeaviateDocumentStore(DocumentStore):
     ingest_batch_size = 100
 
-    weaviate_index_name = "LangChain"  # TODO: Weaviate specific?
-
-    def __init__(self):
+    def __init__(self, copilot_name: str = None):
         super().__init__()
+        copilot_name = copilot_name or "opencopilot"
+        self.weaviate_index_name = "".join(
+            [i.upper() for i in copilot_name if i.isalpha()]
+        )
         self.documents = []
         self.embeddings = self.get_embeddings_model()
         self.weaviate_client = self._get_weaviate_client()
@@ -160,7 +162,10 @@ class WeaviateDocumentStore(DocumentStore):
                 f"Got {len(documents)} documents, embedding with batch "
                 f"size: {batch_size}"
             )
-            self.weaviate_client.schema.delete_all()
+            try:
+                self.weaviate_client.schema.delete_class(self.weaviate_index_name)
+            except:
+                pass
 
             for i in tqdm.tqdm(
                 range(0, int(len(documents) / batch_size) + 1), desc="Embedding.."

@@ -5,6 +5,8 @@ from typing import List
 from typing import Optional
 from uuid import UUID
 
+from langchain.schema import Document
+
 
 @dataclass(frozen=True)
 class ChatConversationsInput:
@@ -88,3 +90,9 @@ class ChatDeleteInput:
 @dataclass(frozen=True)
 class ChatDeleteOutput:
     response: str
+
+
+@dataclass(frozen=True)
+class ChatContext:
+    local_context: List[Document]
+    custom_context: List[Document]

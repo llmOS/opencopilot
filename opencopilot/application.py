@@ -18,6 +18,7 @@ from opencopilot.analytics import TrackingEventType
 from opencopilot.analytics import track
 from opencopilot.callbacks import CopilotCallbacks
 from opencopilot.callbacks import PromptBuilder
+from opencopilot.callbacks import ContextBuilder
 from opencopilot.domain import error_messages
 from opencopilot.domain.chat.models.local import LocalLLM
 from opencopilot.domain.errors import LogsDirError
@@ -136,6 +137,7 @@ class OpenCopilot:
             )
         )
 
+        self.copilot_name = copilot_name
         self.llm = llm
         self.embedding_model = embedding_model
         self.host = host
@@ -166,7 +168,7 @@ class OpenCopilot:
             or self.local_file_paths
             or self.data_urls
         ):
-            self.document_store = WeaviateDocumentStore()
+            self.document_store = WeaviateDocumentStore(self.copilot_name)
             if settings.get().WEAVIATE_URL:
                 logger.info("Connected to Weaviate vector DB.")
             else:
@@ -231,6 +233,26 @@ class OpenCopilot:
 
     def prompt_builder(self, function: PromptBuilder):
         self.callbacks.prompt_builder = function
+        return function
+
+    def context_builder(self, function: ContextBuilder):
+        """
+        Usage example:
+        from opencopilot import OpenCopilot
+        from opencopilot import ContextInput
+        from langchain.schema import Document
+
+        copilot = OpenCopilot(
+            prompt="You are a Copilot. {custom_context} {context} {history} {question}"
+        )
+
+        @copilot.context_builder
+        async def my_custom_context(context_input: ContextInput) -> List[Document]:
+            return []
+
+        copilot()
+        """
+        self.callbacks.context_builder = function
         return function
 
 
