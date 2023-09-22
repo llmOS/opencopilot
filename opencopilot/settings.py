@@ -1,4 +1,8 @@
+import json
+import os
 from dataclasses import dataclass
+from typing import Any
+from typing import Dict
 from typing import Literal
 from typing import Optional
 from typing import Union
@@ -7,6 +11,49 @@ from langchain.chat_models.base import BaseChatModel
 from langchain.embeddings.base import Embeddings
 
 from opencopilot.domain.chat.models.local import LocalLLM
+
+CONF_FILE_PATH = os.path.expanduser("~/.opencopilot/configuration.json")
+
+
+@dataclass(frozen=True)
+class AppConf:
+    copilot_name: str
+    api_port: int
+
+    def to_dict(self) -> Dict:
+        return {
+            "copilot_name": self.copilot_name,
+            "api_port": self.api_port,
+        }
+
+    @staticmethod
+    def from_dict(value: Dict) -> Optional[Any]:
+        try:
+            return AppConf(
+                copilot_name=value["copilot_name"],
+                api_port=value["api_port"],
+            )
+        except:
+            return None
+
+    @staticmethod
+    def get() -> Optional[Any]:
+        try:
+            if os.path.exists(CONF_FILE_PATH):
+                with open(CONF_FILE_PATH, "r") as file:
+                    value = json.load(file)
+                return AppConf.from_dict(value)
+        except:
+            pass
+        return None
+
+    def save(self):
+        try:
+            os.makedirs(os.path.dirname(CONF_FILE_PATH), exist_ok=True)
+            with open(CONF_FILE_PATH, "w") as file:
+                json.dump(self.to_dict(), file, indent=4)
+        except:
+            pass
 
 
 @dataclass(frozen=True)

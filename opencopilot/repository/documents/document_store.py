@@ -167,7 +167,7 @@ class WeaviateDocumentStore(DocumentStore):
             for i in tqdm.tqdm(
                 range(0, int(len(documents) / batch_size) + 1), desc="Embedding.."
             ):
-                batch = documents[i * batch_size: (i + 1) * batch_size]
+                batch = documents[i * batch_size : (i + 1) * batch_size]
                 self.vector_store.add_documents(batch)
 
             self.embeddings.save_local_cache()
@@ -249,7 +249,7 @@ class WeaviateDocumentStore(DocumentStore):
     @staticmethod
     def get_index_name(copilot_name: str = None) -> str:
         default_name = "OPENCOPILOT"
-        if not copilot_name:
+        if not copilot_name or copilot_name == "default":
             return default_name
         formatted_name = "".join([i.upper() for i in copilot_name if i.isalpha()])
         return formatted_name or default_name

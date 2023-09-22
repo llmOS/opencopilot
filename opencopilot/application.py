@@ -167,11 +167,7 @@ class OpenCopilot:
             or self.local_file_paths
             or self.data_urls
         ):
-            self.document_store = WeaviateDocumentStore(
-                copilot_name=self.copilot_name
-                if self.copilot_name != "default"
-                else None
-            )
+            self.document_store = WeaviateDocumentStore(copilot_name=self.copilot_name)
             if settings.get().WEAVIATE_URL:
                 logger.info("Connected to Weaviate vector DB.")
             else:
@@ -217,6 +213,14 @@ class OpenCopilot:
             len(self.data_urls),
         )
 
+        try:
+            app_conf = settings.AppConf(
+                copilot_name=self.copilot_name,
+                api_port=self.api_port,
+            )
+            app_conf.save()
+        except:
+            pass
         uvicorn.run(
             app,
             host=self.host,
