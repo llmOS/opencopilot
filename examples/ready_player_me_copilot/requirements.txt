@@ -1,4 +1,4 @@
-opencopilot-ai==0.3.2
+opencopilot-ai
 libmagic==1.0
 playwright==1.37.0
 beautifulsoup4
