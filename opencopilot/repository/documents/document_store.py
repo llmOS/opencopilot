@@ -98,10 +98,9 @@ class DocumentStore:
 class WeaviateDocumentStore(DocumentStore):
     ingest_batch_size = 100
 
-    weaviate_index_name = "LangChain"  # TODO: Weaviate specific?
-
-    def __init__(self):
+    def __init__(self, copilot_name: str = None):
         super().__init__()
+        self.weaviate_index_name = self.get_index_name(copilot_name)
         self.documents = []
         self.embeddings = self.get_embeddings_model()
         self.weaviate_client = self._get_weaviate_client()
@@ -160,12 +159,15 @@ class WeaviateDocumentStore(DocumentStore):
                 f"Got {len(documents)} documents, embedding with batch "
                 f"size: {batch_size}"
             )
-            self.weaviate_client.schema.delete_all()
+            try:
+                self.weaviate_client.schema.delete_class(self.weaviate_index_name)
+            except:
+                pass
 
             for i in tqdm.tqdm(
                 range(0, int(len(documents) / batch_size) + 1), desc="Embedding.."
             ):
-                batch = documents[i * batch_size : (i + 1) * batch_size]
+                batch = documents[i * batch_size: (i + 1) * batch_size]
                 self.vector_store.add_documents(batch)
 
             self.embeddings.save_local_cache()
@@ -243,6 +245,14 @@ class WeaviateDocumentStore(DocumentStore):
             raise WeaviateRuntimeError(
                 exc.message + error_messages.WEAVIATE_ERROR_EXTRA
             )
+
+    @staticmethod
+    def get_index_name(copilot_name: str = None) -> str:
+        default_name = "OPENCOPILOT"
+        if not copilot_name:
+            return default_name
+        formatted_name = "".join([i.upper() for i in copilot_name if i.isalpha()])
+        return formatted_name or default_name
 
 
 class EmptyDocumentStore(DocumentStore):

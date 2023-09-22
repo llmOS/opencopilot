@@ -136,6 +136,7 @@ class OpenCopilot:
             )
         )
 
+        self.copilot_name = copilot_name
         self.llm = llm
         self.embedding_model = embedding_model
         self.host = host
@@ -166,7 +167,11 @@ class OpenCopilot:
             or self.local_file_paths
             or self.data_urls
         ):
-            self.document_store = WeaviateDocumentStore()
+            self.document_store = WeaviateDocumentStore(
+                copilot_name=self.copilot_name
+                if self.copilot_name != "default"
+                else None
+            )
             if settings.get().WEAVIATE_URL:
                 logger.info("Connected to Weaviate vector DB.")
             else:
