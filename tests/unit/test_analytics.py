@@ -28,6 +28,25 @@ def test_tracking_enabled():
     assert mock.called
     
 
+def test_tracking_enabled_env(monkeypatch):
+    settings._settings = None
+    monkeypatch.delenv("OPENCOPILOT_DO_NOT_TRACK", raising=False)
+
+    with patch("opencopilot.analytics._track_copilot_error") as mock:
+        track(TrackingEventType.COPILOT_ERROR)
+
+    assert mock.called
+
+
+def test_tracking_disabled_env(monkeypatch):
+    settings._settings = None
+    monkeypatch.setenv("OPENCOPILOT_DO_NOT_TRACK", "true")
+
+    with patch("opencopilot.analytics._track_copilot_error") as mock:
+        track(TrackingEventType.COPILOT_ERROR)
+
+    assert not mock.called
+
 def test_get_opencopilot_version_pypi_install():
     analytics.subprocess = MagicMock()
     analytics.subprocess.check_output.return_value = "\n".join([
