@@ -10,6 +10,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 from starlette.middleware.cors import CORSMiddleware
+from starlette.staticfiles import StaticFiles
 
 import opencopilot
 from opencopilot import FrontendConf
@@ -30,6 +31,12 @@ app = FastAPI()
 app.include_router(main_router.router, prefix="/v0")
 
 html_template_path = os.path.join(os.path.dirname(opencopilot.__file__), "html")
+app.mount(
+    "/js",
+    StaticFiles(directory=os.getenv("JS_SDK_DIST_PATH", html_template_path)),
+    name="js",
+)
+
 templates = Jinja2Templates(directory=html_template_path)
 
 API_TITLE = "OpenCopilot API"
