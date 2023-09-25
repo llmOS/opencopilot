@@ -16,4 +16,4 @@ In this directory, we showcase a curated collection of sample projects that demo
 
 - **[ready_player_me_copilot](https://github.com/opencopilotdev/opencopilot/tree/main/examples/ready_player_me_copilot)**: This copilot is an interactive guide for Ready Player Me (RPM) developer documentation. It assists developers working with RPM by providing timely insights and answers.
 
-Dive deeper into each example by exploring the respective directories or the central [examples directory](https://github.com/opencopilotdev/opencopilot/tree/main/examples).
+Dive deeper into each example by exploring the respective directories.

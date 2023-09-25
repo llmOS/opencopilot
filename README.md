@@ -123,25 +123,9 @@ opencopilot chat "Hello, who are you?"
 
 After seeing how easy it is to set up a copilot, you can now create your own and level it up step by step. For this, see [docs.opencopilot.dev](https://docs.opencopilot.dev/create/iterative-development), or check a more detailed example of the AWS copilot in the [examples directory](examples/aws_copilot/).
 
-## Available Examples
+## 📖 Examples
 
-OpenCopilot provides a collection of sample projects to demonstrate its various functionalities. Here's a brief overview of each:
-
-- **aws_copilot**: Amazon Web Services (AWS) CLI copilot. An interactive version of AWS CLI documentation that interacts with developers in need of assistance. Its task is to accompany developers throughout their journey, offering valuable insights and answers.
-
-- **coding_copilot**: A copilot that writes code to solve coding problems. It ensures the code adheres to constraints and passes the test cases. Utilizes CodeLlama for its operations.
-
-- **custom_prompt_builder**: Demonstrates the usage of the `prompt_builder` decorator. It intelligently builds custom prompts based on user intent. The function identifies the intent behind a user's message and crafts a specific prompt in response.
-
-- **docker_deployment**: A hands-on example showing how to deploy a project utilizing OpenCopilot inside a docker container.
-
-- **llm_copilot**: A Large Language Model (LLM) Copilot that acts as an interactive guide for OpenCopilot developer documentation. It aids developers seeking help with OpenCopilot, pointing them to the right sections and providing valuable insights.
-
-- **oss_copilot**: A variant of the llm_copilot but uses the open-source OSS LLama-2 model instead of the proprietary OpenAI models.
-
-- **ready_player_me_copilot**: Acts as a copilot for Ready Player Me (RPM) developer documentation. It's designed to assist developers building on top of RPM, guiding them through their journey and offering assistance as needed.
-
-For a deep dive into each example, visit the [examples directory](https://github.com/opencopilotdev/opencopilot/tree/main/examples).
+We provide a variety of examples to showcase different functionalities and implementations of OpenCopilot. Check out the [examples directory](https://github.com/opencopilotdev/opencopilot/tree/main/examples) or see the detailed [README in the examples directory](https://github.com/opencopilotdev/opencopilot/tree/main/examples/README.md) for a comprehensive overview.
 
 ## 🔍 Stack Overview
 OpenCopilot provides one coherent end-to-end stack which is purposely designed for building a variety of copilots. From LLM selection (OSS LLMs upcoming), knowledge base, monitoring, evaluation, etc - it covers all the needs to build a useful copilot.
@@ -159,9 +143,6 @@ You can opt out of tracking by setting the environment variable `OPENCOPILOT_DO_
 ```bash
 export OPENCOPILOT_DO_NOT_TRACK=True
 ```
-
-## Example copilots
-
 
 ## Getting help
 
