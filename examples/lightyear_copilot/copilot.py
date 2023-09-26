@@ -10,25 +10,39 @@ Environment Variables:
 Usage:
 
 """
+import json
+from typing import Dict
 from typing import List
 
+import requests
 from langchain.schema import Document
 
 from examples.lightyear_copilot import call_copilot_use_case
 from examples.lightyear_copilot import external_router_use_case
+from examples.lightyear_copilot import get_user_info_use_case
 from examples.lightyear_copilot.external_router_use_case import ExternalRoute
 from opencopilot import OpenCopilot
 from opencopilot.callbacks import ContextInput
 
 COPILOT_NAME = "Lightyear Copilot"
 copilot = OpenCopilot(
-    prompt_file="prompt_template.txt",
+    prompt_file="prompt_template_no_context.txt",
     copilot_name=COPILOT_NAME,
     llm="gpt-4",
     api_port=3001,
+    auth_type="jwt",
+    jwt_client_id="string",
+    jwt_client_secret="string",
+    copilot_icon="https://lightyear.com/resources/favicon/favicon-32x32.png"
 )
 
-copilot.add_local_files_dir("data")
+
+def _get_instruments() -> List[Dict]:
+    res = requests.get("https://lightyear.com/api/v1/instrument")
+    return res.json()
+
+
+instruments: List[Dict] = _get_instruments()
 
 
 @copilot.context_builder
@@ -54,7 +68,7 @@ async def call_copilot(context_input: ContextInput) -> List[Document]:
             context_input
         )
     else:
-        return []
-
+        docs = await get_user_info_use_case.execute(context_input.user_id, instruments)
+        return docs
 
 copilot()
