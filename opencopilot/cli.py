@@ -57,11 +57,14 @@ def main(ctx: typer.Context):
 @app.command(help="Chat with the Copilot. Example: chat 'Hello, who are you?'")
 def chat(message: str):
     print("Message:", message)
+    from opencopilot import settings
+
+    api_port = settings.get().API_PORT
     conversation_id = uuid.uuid4()
     while message:
         print("Response: ", end="", flush=True)
         cli_chat_use_case.conversation_stream(
-            base_url="http://0.0.0.0:3000",
+            base_url=f"http://0.0.0.0:{api_port}",
             conversation_id=conversation_id,
             message=message,
             stream=True,
@@ -122,8 +125,9 @@ def retrieve(
     validate_openai_api_key(openai_api_key)
 
     from opencopilot.repository.documents.document_store import WeaviateDocumentStore
+    from opencopilot import settings
 
-    document_store = WeaviateDocumentStore()
+    document_store = WeaviateDocumentStore(settings.get().COPILOT_NAME)
 
     if text is not None:
         where_filter = (

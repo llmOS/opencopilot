@@ -1,14 +1,17 @@
 import os
+from typing import Optional
+
 from opencopilot import settings
 from opencopilot.settings import Settings
 
 
 def set_default_settings(name: str = "script"):
+    app_conf: Optional[settings.AppConf] = settings.AppConf.get()
     settings.set(
         Settings(
-            COPILOT_NAME=name,
+            COPILOT_NAME=app_conf.copilot_name if app_conf else name,
             HOST="127.0.0.1",
-            API_PORT=3000,
+            API_PORT=app_conf.api_port if app_conf else 3000,
             ENVIRONMENT=name,
             ALLOWED_ORIGINS="*",
             WEAVIATE_URL="http://localhost:8080/",
