@@ -43,7 +43,7 @@ data_loaders = [
 document_scraper.execute(data_loaders=data_loaders)
 
 copilot = OpenCopilot(
-    prompt_file="prompts/prompt_template.txt",
+    prompt_file="prompt_template.txt",
     copilot_name="rpm",
     auth_type=None,
     helicone_api_key=os.getenv("HELICONE_API_KEY")
