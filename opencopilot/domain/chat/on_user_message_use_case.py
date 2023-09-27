@@ -47,7 +47,7 @@ async def execute(
         context = document_store.find(domain_input.message)
     custom_context: List[Document] = []
     if copilot_callbacks.context_builder:
-        custom_context = copilot_callbacks.context_builder(
+        custom_context = await copilot_callbacks.context_builder(
             ContextInput(
                 conversation_id=domain_input.conversation_id,
                 user_id=domain_input.user_id,
