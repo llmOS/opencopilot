@@ -36,6 +36,9 @@ class ModelInfo:
     filename: str
     url: str
     context_size: int
+    requirements: str
+    parameters_count: int
+    license: str
 
 
 MODELS = {
@@ -47,6 +50,9 @@ MODELS = {
         filename="llama-2-7b-chat.Q4_0.gguf",
         context_size=4096,
         url="https://huggingface.co/TheBloke/Llama-2-7b-Chat-GGUF/resolve/main/llama-2-7b-chat.Q4_0.gguf",
+        requirements="Requires at least 8GB of RAM",
+        parameters_count=7_000_000_000,
+        license="https://github.com/facebookresearch/llama/blob/main/LICENSE",
     ),
     "llama-2-13b-chat": ModelInfo(
         name="Llama-2-13b-chat",
@@ -56,6 +62,9 @@ MODELS = {
         filename="llama-2-13b-chat.Q4_0.gguf",
         context_size=4096,
         url="https://huggingface.co/TheBloke/Llama-2-13B-chat-GGUF/resolve/main/llama-2-13b-chat.Q4_0.gguf",
+        requirements="Requires at least 16GB of RAM",
+        parameters_count=13_000_000_000,
+        license="https://github.com/facebookresearch/llama/blob/main/LICENSE",
     ),
     "llama-2-70b-chat": ModelInfo(
         name="Llama-2-70b-chat",
@@ -65,6 +74,9 @@ MODELS = {
         filename="llama-2-70b-chat.Q4_0.gguf",
         context_size=4096,
         url="https://huggingface.co/TheBloke/Llama-2-70B-chat-GGUF/resolve/main/llama-2-70b-chat.Q4_0.gguf",
+        requirements="Requires at least 64GB of RAM",
+        parameters_count=70_000_000_000,
+        license="https://github.com/facebookresearch/llama/blob/main/LICENSE",
     ),
     "codellama-7b": ModelInfo(
         name="CodeLlama-7b",
@@ -74,6 +86,9 @@ MODELS = {
         filename="codellama-7b.Q4_0.gguf",
         context_size=4096,
         url="https://huggingface.co/TheBloke/CodeLlama-7B-GGUF/resolve/main/codellama-7b.Q4_0.gguf",
+        requirements="Requires at least 8GB of RAM",
+        parameters_count=7_000_000_000,
+        license="https://github.com/facebookresearch/codellama/blob/main/LICENSE",
     ),
     "codellama-13b": ModelInfo(
         name="CodeLlama-13b",
@@ -83,6 +98,9 @@ MODELS = {
         filename="codellama-13b.Q4_0.gguf",
         context_size=4096,
         url="https://huggingface.co/TheBloke/CodeLlama-13B-GGUF/resolve/main/codellama-13b.Q4_0.gguf",
+        requirements="Requires at least 16GB of RAM",
+        parameters_count=13_000_000_000,
+        license="https://github.com/facebookresearch/codellama/blob/main/LICENSE",
     ),
     "codellama-34b": ModelInfo(
         name="CodeLlama-34b",
@@ -92,6 +110,9 @@ MODELS = {
         filename="codellama-34b.Q4_0.gguf",
         context_size=4096,
         url="https://huggingface.co/TheBloke/CodeLlama-34B-GGUF/resolve/main/codellama-34b.Q4_0.gguf",
+        requirements="Requires at least 64GB of RAM",
+        parameters_count=34_000_000_000,
+        license="https://github.com/facebookresearch/codellama/blob/main/LICENSE",
     ),
 }
 
@@ -200,7 +221,12 @@ def model_info(model_name: str):
         table.add_column("Label", no_wrap=True, style="bold")
         table.add_column("Value")
         table.add_row("Model Name:", model.name)
-        table.add_row("Size:", f"{model.size} GB")
+        table.add_row("System requirements:", model.requirements)
+        table.add_row("License:", model.license)
+        table.add_row(
+            "Parameters count:", "{:.0f} billion".format(model.parameters_count / 1e9)
+        )
+        table.add_row("File size:", f"{model.size} GB")
         table.add_row("Description:", model.description)
         console.print(table)
     except:
