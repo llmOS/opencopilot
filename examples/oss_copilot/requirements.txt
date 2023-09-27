@@ -1,2 +1,2 @@
-opencopilot-ai==0.3.6
+opencopilot-ai
 sentence_transformers==2.2.2

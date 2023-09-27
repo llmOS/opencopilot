@@ -123,6 +123,10 @@ opencopilot chat "Hello, who are you?"
 
 After seeing how easy it is to set up a copilot, you can now create your own and level it up step by step. For this, see [docs.opencopilot.dev](https://docs.opencopilot.dev/create/iterative-development), or check a more detailed example of the AWS copilot in the [examples directory](examples/aws_copilot/).
 
+## 📖 Examples
+
+We provide a variety of examples to showcase different functionalities and implementations of OpenCopilot. Check out the [examples directory](https://github.com/opencopilotdev/opencopilot/tree/main/examples) or see the detailed [README in the examples directory](https://github.com/opencopilotdev/opencopilot/tree/main/examples/README.md) for a comprehensive overview.
+
 ## 🔍 Stack Overview
 OpenCopilot provides one coherent end-to-end stack which is purposely designed for building a variety of copilots. From LLM selection (OSS LLMs upcoming), knowledge base, monitoring, evaluation, etc - it covers all the needs to build a useful copilot.
 

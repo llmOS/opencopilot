@@ -1,7 +1,7 @@
 from opencopilot import OpenCopilot
 
 copilot = OpenCopilot(
-    prompt_file="prompt.txt",
+    prompt_file="prompt_template.txt",
     host="0.0.0.0",
     api_port=3000,
     weaviate_url="http://weaviate:8080"
