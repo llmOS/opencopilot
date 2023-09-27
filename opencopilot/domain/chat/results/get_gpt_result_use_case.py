@@ -120,7 +120,7 @@ def _get_prompt_text(
                 chat_context.custom_context, llm
             )
             formatted_prompt = formatted_prompt.replace(
-                "{custom_context}", custom_context
+                "{custom_context}", custom_context.replace("{", "{{").replace("}", "}}")
             )
             if (
                 get_token_count_use_case.execute(formatted_prompt, llm)
