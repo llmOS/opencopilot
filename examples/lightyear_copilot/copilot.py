@@ -24,6 +24,8 @@ from examples.lightyear_copilot.external_router_use_case import ExternalRoute
 from opencopilot import OpenCopilot
 from opencopilot.callbacks import ContextInput
 
+IS_INCLUDE_COPILOT_NETWORK = False
+
 COPILOT_NAME = "Lightyear Copilot"
 copilot = OpenCopilot(
     prompt_file="prompt_template_no_context.txt",
@@ -60,7 +62,9 @@ async def call_copilot(context_input: ContextInput) -> List[Document]:
             name="Analyst copilot"
         ),
     ]
-    external_route = external_router_use_case.execute(context_input.message, copilots)
+    external_route = None
+    if IS_INCLUDE_COPILOT_NETWORK:
+        external_route = external_router_use_case.execute(context_input.message, copilots)
     if external_route and external_route.type != "self":
         return await call_copilot_use_case.execute(
             external_route.url,
