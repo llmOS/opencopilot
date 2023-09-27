@@ -1,53 +1,40 @@
-import os
-
-from dotenv import load_dotenv
-
-import document_scraper
-from document_scraper import DataLoader
-from document_scraper import SourceType
+from typing import List
 from opencopilot import OpenCopilot
+from langchain.document_loaders import GitbookLoader
+from langchain.schema import Document
 
-load_dotenv()
+PROMPT = """
+You are a Developer Copilot for Ready Player Me, a platform that provides customizable avatar solutions for virtual reality and gaming applications. Your mission is to assist developers in integrating and optimizing Ready Player Me's avatar creation and customization features into their applications. You have expertise in working with avatar APIs, SDKs, and documentation provided by Ready Player Me. You can provide guidance on avatar creation, customization options, and integration best practices. Your goal is to empower developers to enhance their applications with immersive and personalized avatar experiences. You are knowledgeable about virtual reality technologies, gaming platforms, and user experience design principles. You are a problem-solver, detail-oriented, and dedicated to helping developers create engaging and visually appealing avatar systems that enhance user immersion and enjoyment. Your superpower is simplifying complex avatar integration processes and ensuring a seamless user experience.
 
-data_dir = "data"
-data_loaders = [
-    DataLoader(
-        source_type=SourceType.GITBOOK,
-        sources=[
-            "https://docs.readyplayer.me/ready-player-me/"
-        ],
-        destination_file=f"{data_dir}/serialized_documents_rpm_gitbook.json"
-    ),
-    DataLoader(
-        source_type=SourceType.URL,
-        sources=[
-            "https://docs.readyplayer.me/asset-creation-guide/asset-creation/overview",
-            "https://readyplayer.me/company/about-us",
-            "https://readyplayer.me/developers",
-            "https://readyplayer.me/brands-creators",
-            "https://readyplayer.me/case-studies/adidas-originals-uses-ai-to-create-10-million-personal-avatars",
-            "https://readyplayer.me/case-studies/bmws-immersive-experiences-with-3d-avatars",
-            "https://readyplayer.me/case-studies/look-great-anywhere-with-tommy-hilfiger-parallel-collection",
-        ],
-        destination_file=f"{data_dir}/serialized_documents_rpm_pages.json"
-    ),
-    DataLoader(
-        source_type=SourceType.BLOG,
-        sources=[
-            "https://readyplayer.me/blog-categories/for-developers",
-            "https://readyplayer.me/blog-categories/changelog"
-        ],
-        destination_file=f"{data_dir}/serialized_documents_rpm_blog.json"
-    )
-]
-document_scraper.execute(data_loaders=data_loaders)
+As context to reply to the user you are given the following extracted parts of a long document, previous chat history, and a question from the user.
 
+REMEMBER to always provide 3 example follow up questions that would be helpful for the user to continue the conversation.
+
+=========
+
+{context}
+=========
+
+{history}
+User: {question}
+Copilot answer in Markdown:
+"""
+
+# Initialize the copilot
 copilot = OpenCopilot(
-    prompt_file="prompt_template.txt",
-    copilot_name="rpm",
-    auth_type=None,
-    helicone_api_key=os.getenv("HELICONE_API_KEY")
+    openai_api_key="your-api-key",
+    copilot_name="Ready Player Me Copilot",
+    llm="gpt-3.5-turbo-16k",
+    prompt=PROMPT
 )
-copilot.add_local_files_dir("data")
 
+# Custom data loader using LangChain GitBookLoader
+@copilot.data_loader
+def load_gitbook() -> List[Document]:
+    docs_url = "https://docs.readyplayer.me/ready-player-me/"
+    loader = GitbookLoader(docs_url, load_all_paths=True)
+    documents = loader.load()
+    return documents
+
+# Run the copilot
 copilot()
