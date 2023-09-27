@@ -33,7 +33,7 @@ from opencopilot import OpenCopilot
 load_dotenv()
 
 copilot = OpenCopilot(
-    prompt_file="prompts/prompt_template.txt",
+    prompt_file="prompt_template.txt",
     copilot_name="llm",
     weaviate_url=os.getenv("WEAVIATE_URL"),
     helicone_api_key=os.getenv("HELICONE_API_KEY"),

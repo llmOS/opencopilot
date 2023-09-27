@@ -4,7 +4,7 @@ In this directory, we showcase a curated collection of sample projects that demo
 
 - **[aws_copilot](https://github.com/opencopilotdev/opencopilot/tree/main/examples/aws_copilot)**: This copilot serves as an interactive Amazon Web Services (AWS) CLI documentation. It assists developers with AWS CLI, offering valuable insights and answers throughout their journey.
 
-- **[coding_copilot](https://github.com/opencopilotdev/opencopilot/tree/main/examples/coding_copilot)**: A specialized copilot that crafts code to address coding challenges, ensuring that solutions meet constraints and pass provided test cases. This uses the CodeLlama engine. Detailed [setup instructions](https://github.com/opencopilotdev/opencopilot/blob/main/examples/coding_copilot/README.md) are available.
+- **[oss_coding_copilot](https://github.com/opencopilotdev/opencopilot/tree/main/examples/oss_coding_copilot)**: A specialized copilot that crafts code to address coding challenges, ensuring that solutions meet constraints and pass provided test cases. This uses the CodeLlama engine. Detailed [setup instructions](https://github.com/opencopilotdev/opencopilot/blob/main/examples/oss_coding_copilot/README.md) are available.
 
 - **[intent_router](https://github.com/opencopilotdev/opencopilot/tree/main/examples/intent_router)**: An example showcasing the prompt_builder's capability. It dynamically constructs custom prompts based on detected user intent.
 

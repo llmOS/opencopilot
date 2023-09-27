@@ -1,4 +1,4 @@
-# Setup
+# Docker setup
 
 ```
 export OPENAI_API_KEY="FILL_IN"
